@@ -1,0 +1,9 @@
+syntax: glob
+auto-save-list/*
+backups/*
+elpa/*
+eshell/history
+server/*
+semanticdb/*
+bookmarks
+org-clock-save.el

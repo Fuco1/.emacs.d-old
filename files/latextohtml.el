@@ -1,0 +1,221 @@
+;; list of enviroments:
+;; simpleScreenplay - tt, center, 0.5in margin (signs on buildings, landmarks...)
+;; letter           - it, 0.3in margin (letters, recordings, broadcasts, thoughts of another person...)
+;; diary            - it (long portions of text by another person, diary, memories...)
+;; radio            - it (radio)
+;; terminal         - tt, 0.3in margin (terminal notes or notes on paper, portions of books etc.)
+;; song             - it, 0.3in margin, note symbol - #9834 (songs)
+;; center           - make text centered
+;;
+;; commands
+;;
+;; vspace          - adds a bit of a vspace (about one empty par)
+;; emph            - emphatic text. Should be enviroment-sensitive
+;; bf              - bold face.
+;; Scene           - scene separator
+;; "<              - opening quote - &laquo;
+;; ">              - closing quote - &raquo;
+;; dots            - ellipsis - &hellip;
+;; ---             - &mdash;
+;; \%              - %
+;; footnote        - footnotes, this will need some special treatment
+;; levelup         - level up notification. needs to add some text:
+;;                   Nota: Nuovo livello.
+;;               
+;;                   Nuovo vantaggio: #1
+;; normalchapter   - subtext, name of the chapter
+
+;; <SUP><A HREF="#note_to_$N" NAME="#note_from_$N">$N</A></SUP>
+;; e segnati il contenuto della nota. A fine capitolo cicla le note e metti 
+;; <P><SUP><A HREF="#note_from_$N" NAME="#note_to_$N">$N</A></SUP> Testo della nota</P>
+
+(defun gen-footnotes-internal (n)
+  "n - currently processed footnote"
+  (when (search-forward "\\footnote" nil t)
+    (let* ((x (point)) (fn (number-to-string n)))
+      (forward-sexp)
+      (let* ((y (point)) (str (buffer-substring-no-properties (+ x 1) (- y 1))))
+        (progn (message str)
+               (delete-region (- x 9) y)
+               (insert (concat 
+                        "<sup><a href=\"#note_to_"
+                        fn
+                        "\" name=\"note_from_"
+                        fn
+                        "\" >["
+                        fn
+                        "]</a></sup>"))
+               (end-of-buffer)
+               (insert (concat "
+
+<p><sup><a href=\"#note_from_"
+                               fn
+                               "\" name=\"note_to_"
+                               fn
+                               "\" >["
+                               fn
+                               "]</a></sup> "
+                               str
+                               "</p>"))
+               ;(pop-global-mark)
+               (beginning-of-buffer)
+               (gen-footnotes-internal (+ n 1))
+               ))))
+)
+
+(defun gen-footnotes ()
+  (interactive)
+  (beginning-of-buffer)
+  (gen-footnotes-internal 1)
+)
+
+(defun print-frontmatter ()
+  (beginning-of-buffer)
+  (insert "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">
+<html xmlns=\"http://www.w3.org/1999/xhtml\" dir=\"ltr\" lang=\"it\" xml:lang=\"it\">
+<head>
+<meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\" />
+<meta http-equiv=\"content-style-type\" content=\"text/css\" />
+<meta http-equiv=\"content-language\" content=\"it\" />
+
+<link rel=\"stylesheet\" href=\"style.css\" />
+</head>
+<body>")
+)
+
+(defun print-backmatter ()
+  (end-of-buffer)
+  (insert "
+
+</body>
+</html>")
+)
+
+
+(defun gen-html ()
+  (interactive)
+  (let* ((bn (buffer-name)) (bfn (buffer-file-name)) (nbfn (when (string-match ".tex" bfn)
+                                        (message (replace-match ".html" nil nil bfn)))))
+   (progn (find-file nbfn)
+          (erase-buffer)
+          (insert-buffer-substring bn))
+)
+  (end-of-buffer)
+  (insert "<hr>
+")
+  (beginning-of-buffer)
+  (gen-footnotes)
+  (beginning-of-buffer)
+  (replace-regexp "\"<" "&laquo;")
+  (beginning-of-buffer)
+  (replace-regexp "\">" "&raquo;")
+  (beginning-of-buffer)
+  (replace-regexp "\\\\dk{``A}" "&ldquo;A")
+  (beginning-of-buffer)
+  (replace-regexp "``" "&ldquo;")
+  (beginning-of-buffer)
+  (replace-regexp "''" "&rdquo;")
+  (beginning-of-buffer)
+  (replace-regexp "\\\\textasciitilde{}" "~")
+  (beginning-of-buffer)
+  (replace-regexp "\\\\textgreater{}" "&gt;")
+  (beginning-of-buffer)
+  (replace-regexp "\\\\-" "")
+  (beginning-of-buffer)
+  (replace-regexp "\\\\fussy " "")
+  (beginning-of-buffer)
+  (replace-regexp "\\\\sloppy " "")
+  (beginning-of-buffer)
+  (replace-regexp "\\\\newline" "<br>")
+  (beginning-of-buffer)
+  (replace-regexp "\\\\vspace{\\(.*?\\)}" "<div style=\"height: \\1\" ></div>")
+  (beginning-of-buffer)
+  (replace-regexp "\\\\emph{\\(.*?\\)}" "<em>\\1</em>")
+  (beginning-of-buffer)
+  (replace-regexp "{\\\\bf \\(.*?\\)}" "<strong>\\1</strong>")
+  (beginning-of-buffer)
+  (replace-regexp "\\\\Scene" "<div class=\"scene\" ></div>")
+  (beginning-of-buffer)
+  (replace-regexp "\\\\dots" "&hellip;")
+  (beginning-of-buffer)
+  (replace-regexp "---" " &mdash; ")
+  (beginning-of-buffer)
+  (replace-regexp "\\\\%" "%")
+  (beginning-of-buffer)
+  (replace-regexp "\\\\#" "#")
+  (beginning-of-buffer) ; add newlines around begin
+  (replace-regexp "\\(\\\\begin{.*?}\\)" "
+\\1
+")
+  (beginning-of-buffer) ; add newlines around end
+  (replace-regexp "\\(\\\\end{.*?}\\)" "
+\\1
+")
+  (beginning-of-buffer) ; remove excessive newlines
+  (replace-regexp "
+
+
++" "
+
+")
+  (beginning-of-buffer) ; add <p> tags
+  (replace-regexp "\\(^[^<\\
+].*?\\)
+
+" "<p>\\1</p>
+
+")
+  (beginning-of-buffer) ; change begin .letter and .terminal and .song into <blockquote>
+  (replace-regexp "\\\\begin{\\(\\(letter\\|terminal\\|song\\)\\)}" "<blockquote class=\"\\1\" >")
+  (beginning-of-buffer) ; change end .letter and .terminal .song into </blockquote>
+  (replace-regexp "\\\\end{\\(\\(letter\\|terminal\\|song\\)\\)}" "</blockquote>")
+  (beginning-of-buffer) ; memoryOrb style
+  (replace-regexp "\\\\begin{memoryOrb}" "<div class=\"memoryOrb\" >
+<div class=\"memoryOrbOpen\" >(* * *)</div>")
+  (beginning-of-buffer)
+  (replace-regexp "\\\\end{memoryOrb}" "<div class=\"memoryOrbClose\" >(* * *)</div>
+</div>")
+  (beginning-of-buffer)
+  (replace-regexp "<blockquote class=\"song\" >" "<blockquote class=\"song\" >
+<div class=\"songnote\" >&#9834;</div>")
+  (beginning-of-buffer) ; change begin to <div> element
+  (replace-regexp "\\\\begin{\\(.*?\\)}" "<div class=\"\\1\" >")
+  (beginning-of-buffer) ; change end to </div> element
+  (replace-regexp "\\\\end{\\(.*?\\)}" "</div>")
+  (beginning-of-buffer) ; fix special case where line starts with <strong|em> and doesn\t have <p>
+  (replace-regexp "^\\(<\\(strong\\|em\\)>.*?\\)
+
+" "<p>\\1</p>
+
+")
+  (beginning-of-buffer) ; fix <p>&gt; ... </p>
+  (replace-regexp "<p>\\(&gt;.*?\\)</p>" "\\1")
+  (beginning-of-buffer)
+  (replace-regexp "\\\\normalchapter\\[\\(.*?\\)\\]{\\(.*?\\)}" "<h1>\\2</h1>
+
+<p style=\"text-align:center;\" ><em>\\1</em></p>")
+  (beginning-of-buffer)
+  (replace-regexp "\\\\normalchapters\\[\\(.*?\\)\\]{\\(.*?\\)}{.*?}" "<h1>\\2</h1>
+
+<p style=\"text-align:center;\" ><em>\\1</em></p>")
+  (replace-regexp "\\\\levelup{\\(.*?\\)}" "<div class=\"levelup\" >
+<p>Nota: nuovo livello.</p>
+
+<p>Nuovo vantaggio: \\1</p>
+</div>
+
+")
+  (print-frontmatter)
+  (print-backmatter)
+  (save-buffer)
+)
+
+;; (loop for i in (make-list 12)
+;;       do
+;;       (find-file (concat "d:/download/fic/foeitalian/chapter" (number-to-string i) ".tex")))
+
+;; (loop for i in (make-list 12)
+;;       do
+;;       (progn (switch-to-buffer (concat "chapter" (number-to-string i) ".tex"))
+;;              (gen-html)
+;;              ))
