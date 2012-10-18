@@ -1,4 +1,3 @@
-
 ;;; Global key bindigns
 ;; How to Define Keyboard Shortcuts in Emacs
 ;; http://xahlee.org/emacs/keyboard_shortcuts.html
@@ -53,7 +52,7 @@
 (global-unset-key (kbd "C-x 2")) ; was split-window-vertically
 (global-unset-key (kbd "C-x 1")) ; was delete-other-windows
 (global-unset-key (kbd "C-x 0")) ; was delete-window
-(global-unset-key (kbd "C-x o")) ; was other-window
+;(global-unset-key (kbd "C-x o")) ; was other-window
 
 ;; ibuffer > list-buffers
 (global-set-key (kbd "C-x C-b") 'ibuffer)
@@ -64,10 +63,6 @@
 
 ;; Window navigation
 (windmove-default-keybindings 'meta)
-
-;; Mac OS X conventions
-(global-set-key (kbd "M-a") 'mark-whole-buffer) ; was backward-sentence.
-(add-hook 'prolog-mode-hook (lambda () (define-key prolog-mode-map (kbd "M-a") 'mark-whole-buffer)))
 
 ;; Find matching parens
 ;; (global-set-key (kbd "C-'") 'match-paren)
