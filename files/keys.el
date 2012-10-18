@@ -100,3 +100,6 @@
 (global-set-key (kbd "C-v") 'copy-line)
 
 (global-set-key (kbd "C-x C-g") 'goto-line)
+
+(global-set-key (kbd "C-M-a") 'backward-sexp)
+(global-set-key (kbd "C-M-e") 'forward-sexp)

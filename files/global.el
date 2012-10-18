@@ -49,7 +49,7 @@
 
 ;; Trailing whitespace is unnecessary
 ;;(add-hook 'before-save-hook (lambda () (whitespace-cleanup)))
-;;(add-hook 'before-save-hook 'whitespace-cleanup)
+(add-hook 'before-save-hook 'whitespace-cleanup)
 
 ;; Trash can support
 (setq delete-by-moving-to-trash t)
@@ -100,7 +100,7 @@
          (typopunct-mode 1)))
 
 ;; ... but not in Org tables
-;;(set-face-attribute 'org-table nil :inherit 'fixed-pitch)
+(set-face-attribute 'org-table nil :inherit 'fixed-pitch)
 
 ;; (custom-set-faces
 ;;  '(variable-pitch ((t (:family "Bitstream Vera Serif")))))
