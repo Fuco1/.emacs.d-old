@@ -3,11 +3,11 @@
 ;; add load paths
 (add-to-list 'load-path "~/.emacs.d")
 (add-to-list 'load-path "~/.emacs.d/vendor")
-(add-to-list 'custom-theme-load-path "~/.emacs.d/themes/emacs-color-theme-solarized")
 
 ;; add repos
-(add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
-(add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/"))
+(setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
+						 ("marmalade" . "http://marmalade-repo.org/packages/")
+						 ("melpa" . "http://melpa.milkbox.net/packages/")))
 
 ;; load config files
 (load "files/defuns")
