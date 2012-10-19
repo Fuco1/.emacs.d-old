@@ -92,9 +92,9 @@
 (defun copy-line ()
   (interactive)
   (let ((x (point)))
-    (kill-line)
-    (yank)
-    (goto-char x)))
+	(kill-line)
+	(yank)
+	(goto-char x)))
 
 (global-unset-key (kbd "C-v"))
 (global-set-key (kbd "C-v") 'copy-line)
@@ -103,3 +103,5 @@
 
 (global-set-key (kbd "C-M-a") 'backward-sexp)
 (global-set-key (kbd "C-M-e") 'forward-sexp)
+
+(global-set-key (kbd "M-y") 'helm-show-kill-ring)

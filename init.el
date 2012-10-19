@@ -1,32 +1,37 @@
 (server-start)
 
+;; add load paths
 (add-to-list 'load-path "~/.emacs.d")
 (add-to-list 'load-path "~/.emacs.d/vendor")
 (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/emacs-color-theme-solarized")
 
+;; add repos
+(add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
+(add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/"))
+
+;; load config files
 (load "files/defuns")
 (load "files/macros")
-
 (load "files/org-mode")
-
 (load "files/tabs")
 (load "files/global")
 (load "files/keys")
 (load "files/ido")
 
+;; vendor
 (vendor 'smex)
 (vendor 'yasnippet)
 (vendor 'haskell-mode)
 (vendor 'typopunct)
 (vendor 'wc-mode)
+(vendor 'ace-jump-mode)
+(vendor 'revbufs)
+(vendor 'shell-pop)
+
 
 ;; temp stuff
 (defalias 'qrr 'query-replace-regexp)
 (defalias 'rs 'replace-string)
-
-(fset 'swap-buffer-to-last-used
-   (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([24 98 return] 0 "%d")) arg)))
-(global-set-key (kbd "C-x C-a") 'swap-buffer-to-last-used)
 
 ;; ispell
 (setq-default ispell-program-name "aspell")
@@ -90,7 +95,8 @@
  '(erc-timestamp-format-right " [%H:%M:%S]")
  '(foreground-color "#839496")
  '(imenu-auto-rescan t)
- '(show-paren-mode t))
+ '(show-paren-mode t)
+ '(tooltip-mode nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -105,11 +111,11 @@
  '(erc-nick-default-face ((t (:foreground "yellow" :weight bold))) t)
  '(erc-prompt-face ((t (:background "Black" :foreground "Grey" :weight bold))) t)
  '(erc-timestamp-face ((t nil)) t)
- '(eshell-prompt ((t (:foreground "SlateBlue2" :weight bold))))
+ '(eshell-prompt ((t (:foreground "SlateBlue2" :weight bold))) t)
  '(fixed-pitch ((t (:height 100 :family "Consolas"))))
  '(fringe ((((class color) (background light)) (:background "grey95" :foreground "black"))))
  '(highlight ((((class color) (min-colors 88) (background light)) (:background "darkseagreen2" :foreground "black"))))
- '(hl-line ((t (:background "gray12"))))
+ '(hl-line ((t (:background "gray12"))) t)
  '(minibuffer-prompt ((t (:foreground "cyan"))))
  '(org-table ((t (:inherit fixed-pitch :foreground "LightSkyBlue"))))
  '(region ((((class color) (min-colors 88) (background light)) (:background "color-56"))))

@@ -8,3 +8,4 @@ semanticdb/*
 bookmarks
 org-clock-save.el
 commit.bat
+url/*
