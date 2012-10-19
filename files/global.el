@@ -90,8 +90,21 @@
   ;;        (add-hook hook (lambda () (setq indent-tabs-mode t)))
   ;;        (add-hook hook (lambda () (turn-on-visual-line-mode)))))
 
+;; Use variable width font faces in current buffer
+(defun my-buffer-face-mode-variable ()
+  "Set font to a variable width (proportional) fonts in current buffer"
+  (interactive)
+  (setq buffer-face-mode-face '(:family "Veranda" :height 120))
+  (buffer-face-mode))
+;; Use monospaced font faces in current buffer
+(defun my-buffer-face-mode-fixed ()
+  "Sets a fixed width (monospace) font in current buffer"
+  (interactive)
+  (setq buffer-face-mode-face '(:family "Consolas" :height 100))
+  (buffer-face-mode))
+
 (defun init-text-based-modes ()
-  (progn (variable-pitch-mode t)
+  (progn (my-buffer-face-mode-variable)
          (setq cursor-type 'bar)
          (setq indent-tabs-mode t)
          (turn-on-visual-line-mode)
@@ -106,9 +119,9 @@
 ;;  '(variable-pitch ((t (:family "Bitstream Vera Serif")))))
 
 (setq ibuffer-saved-filter-groups
-  (quote (("default"      
+  (quote (("default"
             ("Org" ;; all org-related buffers
-              (mode . org-mode))  
+              (mode . org-mode))
             ("emacs-config"
               (or (filename . ".emacs.d")
                   (filename . ".emacs")
@@ -118,7 +131,7 @@
                   (mode . TeX-mode)
                   (mode . latex-mode)
                   (mode . LaTeX-mode)
-				  (filename . ".tex")))
+                  (filename . ".tex")))
             ("Web"
              (or (mode . html-mode)
                  (mode . CSS-mode)
