@@ -6,8 +6,8 @@
 
 ;; add repos
 (setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
-						 ("marmalade" . "http://marmalade-repo.org/packages/")
-						 ("melpa" . "http://melpa.milkbox.net/packages/")))
+                         ("marmalade" . "http://marmalade-repo.org/packages/")
+                         ("melpa" . "http://melpa.milkbox.net/packages/")))
 
 ;; load config files
 (load "files/defuns")
@@ -17,6 +17,7 @@
 (load "files/global")
 (load "files/keys")
 (load "files/ido")
+(load "files/undo-tree")
 
 ;; vendor
 (vendor 'smex)
@@ -27,7 +28,6 @@
 (vendor 'ace-jump-mode)
 (vendor 'revbufs)
 (vendor 'shell-pop)
-
 
 ;; temp stuff
 (defalias 'qrr 'query-replace-regexp)
@@ -102,8 +102,15 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(diff-added ((t (:foreground "lime green"))))
+ '(diff-changed ((t (:foreground "orange"))))
+ '(diff-file-header ((((class color) (background light)) (:background "lightblue" :bold t))))
+ '(diff-header ((nil (:foreground "skyblue"))))
+ '(diff-refine-change ((((class color) (min-colors 88) (background dark)) (:background "navyblue"))))
+ '(diff-removed ((t (:foreground "orangered"))))
  '(comint-highlight-input ((t (:foreground "cyan"))))
  '(comint-highlight-prompt ((t (:foreground "cyan"))))
+ '(dropdown-list-face ((t (:inherit default :background "lightyellow" :foreground "black" :family "Consolas"))))
  '(erc-action-face ((t (:foreground "green"))) t)
  '(erc-current-nick-face ((t (:foreground "red" :weight bold))) t)
  '(erc-input-face ((t (:foreground "cyan"))) t)
