@@ -5,6 +5,7 @@
 (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/emacs-color-theme-solarized")
 
 (load "files/defuns")
+(load "files/macros")
 
 (load "files/org-mode")
 
@@ -64,17 +65,20 @@
 ;; Lisp
 ;;(setq inferior-lisp-program "/home/xgoljer/lisp/bin/clisp")
 
+
+;; autoopen files
+(find-file "~/.emacs.d/init.el")
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(ansi-color-names-vector ["#212526" "#ff4b4b" "#b4fa70" "#fce94f" "#729fcf" "#ad7fa8" "#8cc4ff" "#eeeeec"])
- '(background-color "#fdf6e3")
- '(background-mode light)
+ '(background-color "#002b36")
+ '(background-mode dark)
  '(blink-cursor-mode nil)
  '(column-number-mode t)
- '(cursor-color "#657b83")
+ '(cursor-color "#839496")
  '(custom-enabled-themes (quote (tango-dark)))
  '(custom-safe-themes (quote ("fc5fcb6f1f1c1bc01305694c59a1a861b008c534cae8d0e48e4d5e81ad718bc6" "1e7e097ec8cb1f8c3a912d7e1e0331caeed49fef6cff220be63bd2a6ba4cc365" default)))
  '(display-time-mode t)
@@ -84,7 +88,7 @@
  '(erc-timestamp-format "[%H:%M:%S] ")
  '(erc-timestamp-format-left "[%H:%M:%S] ")
  '(erc-timestamp-format-right " [%H:%M:%S]")
- '(foreground-color "#657b83")
+ '(foreground-color "#839496")
  '(imenu-auto-rescan t)
  '(show-paren-mode t))
 (custom-set-faces
@@ -102,9 +106,12 @@
  '(erc-prompt-face ((t (:background "Black" :foreground "Grey" :weight bold))) t)
  '(erc-timestamp-face ((t nil)) t)
  '(eshell-prompt ((t (:foreground "SlateBlue2" :weight bold))))
+ '(fixed-pitch ((t (:height 100 :family "Consolas"))))
  '(fringe ((((class color) (background light)) (:background "grey95" :foreground "black"))))
  '(highlight ((((class color) (min-colors 88) (background light)) (:background "darkseagreen2" :foreground "black"))))
  '(hl-line ((t (:background "gray12"))))
  '(minibuffer-prompt ((t (:foreground "cyan"))))
+ '(org-table ((t (:inherit fixed-pitch :foreground "LightSkyBlue"))))
  '(region ((((class color) (min-colors 88) (background light)) (:background "color-56"))))
  '(variable-pitch ((t (:height 120 :family "Verdana")))))
+(put 'narrow-to-region 'disabled nil)
