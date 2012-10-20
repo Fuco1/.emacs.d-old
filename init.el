@@ -18,6 +18,7 @@
 (load "files/keys")
 (load "files/ido")
 (load "files/undo-tree")
+(load "files/ispell")
 
 ;; vendor
 (vendor 'smex)
@@ -28,48 +29,16 @@
 (vendor 'ace-jump-mode)
 (vendor 'revbufs)
 (vendor 'shell-pop)
-
-;; temp stuff
-(defalias 'qrr 'query-replace-regexp)
-(defalias 'rs 'replace-string)
-
-;; ispell
-(setq-default ispell-program-name "aspell")
-(setq ispell-personal-dictionary "~/.emacs.d/.ispell")
-(require 'ispell)
-(global-set-key (kbd "<f8>") 'ispell-word)
-(global-set-key (kbd "C-<f8>") 'flyspell-mode)
+(vendor 'golden-ratio)
 
 ;; TEX
-;;(load "/home/xgoljer/lib/emacs/tildify.el")
 (require 'tildify)
-
-
-;; Erlang
-;(setq load-path (cons "/home/xgoljer/erlang/erlware-erlware-mode-e6d1c72" load-path))
-;(setq erlang-root-dir "/home/xgoljer/erlang/dist")
-;(setq exec-path (cons "/home/xgoljer/erlang/dist/bin" exec-path))
-;(require 'erlang-start)
-
-;; Prolog
-;; AISA
-;; (load "/packages/run.64/sicstus-4.0.8/lib/sicstus-4.0.8/emacs/sicstus_emacs_init")
-;; NYMFE
-;; (load "/packages/run/sicstus/lib/sicstus-3.12.7/emacs/sicstus_emacs_init")
-;; (autoload 'run-prolog "prolog" "Start a Prolog sub-process." t)
-;; (autoload 'prolog-mode "prolog" "Major mode for editing Prolog programs." t)
-;; (setq prolog-use-sicstus-sd t)
-;; (setq auto-mode-alist (cons '("\\.pl$" . prolog-mode) auto-mode-alist))
 
 (setq load-path (cons "/packages/run.64/sicstus-4.0.8/lib/sicstus-4.0.8/emacs" load-path))
 (autoload 'run-prolog "prolog" "Start a Prolog sub-process." t)
 (autoload 'prolog-mode "prolog" "Major mode for editing Prolog programs." t)
 (setq prolog-system 'sicstus)
 (setq auto-mode-alist (cons '("\\.pl$" . prolog-mode) auto-mode-alist))
-
-;; Lisp
-;;(setq inferior-lisp-program "/home/xgoljer/lisp/bin/clisp")
-
 
 ;; autoopen files
 (find-file "~/.emacs.d/init.el")
@@ -94,22 +63,27 @@
  '(erc-timestamp-format-left "[%H:%M:%S] ")
  '(erc-timestamp-format-right " [%H:%M:%S]")
  '(foreground-color "#839496")
+ '(global-undo-tree-mode t)
  '(imenu-auto-rescan t)
+ '(menu-bar-mode nil)
  '(show-paren-mode t)
+ '(text-mode-hook (quote (init-text-based-modes text-mode-hook-identify)))
+ '(tool-bar-mode nil)
  '(tooltip-mode nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(default ((t (:family "Consolas" :foundry "outline" :slant normal :weight normal :height 98 :width normal))))
+ '(comint-highlight-input ((t (:foreground "cyan"))))
+ '(comint-highlight-prompt ((t (:foreground "cyan"))))
  '(diff-added ((t (:foreground "lime green"))))
  '(diff-changed ((t (:foreground "orange"))))
  '(diff-file-header ((((class color) (background light)) (:background "lightblue" :bold t))))
  '(diff-header ((nil (:foreground "skyblue"))))
  '(diff-refine-change ((((class color) (min-colors 88) (background dark)) (:background "navyblue"))))
  '(diff-removed ((t (:foreground "orangered"))))
- '(comint-highlight-input ((t (:foreground "cyan"))))
- '(comint-highlight-prompt ((t (:foreground "cyan"))))
  '(dropdown-list-face ((t (:inherit default :background "lightyellow" :foreground "black" :family "Consolas"))))
  '(erc-action-face ((t (:foreground "green"))) t)
  '(erc-current-nick-face ((t (:foreground "red" :weight bold))) t)

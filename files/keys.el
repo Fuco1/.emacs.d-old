@@ -17,11 +17,9 @@
 
 ;; Keyboard macros
 (global-set-key [(shift f4)] 'kmacro-start-macro-or-insert-counter)
-;; (global-set-key [(f4)]    'kmacro-end-or-call-macro)  ;; already defined
 
 ;; Refresh-like
-;(global-set-key [(f5)]         'revert-buffer)
-;(global-set-key [(control f5)] 'revbufs)
+(global-set-key [(control f5)] 'revbufs)
 (global-set-key [(f5)] '(lambda () (interactive) (load-file (buffer-file-name))))
 
 ;; Indenting and alignment
@@ -31,8 +29,8 @@
 (global-set-key [(meta f8)]    'align-regexp)
 
 ;; regex search & replace
-(global-set-key [(f6)]         'replace-regexp)
-(global-set-key [(f7)]         'isearch-forward-regexp)
+(global-set-key [(f6)] 'replace-regexp)
+(global-set-key [(f7)] 'isearch-forward-regexp)
 
 ;; map the window manipulation keys to meta 0, 1, 2, o
 (global-set-key (kbd "M-3") 'split-window-horizontally) ; was digit-argument
@@ -92,9 +90,9 @@
 (defun copy-line ()
   (interactive)
   (let ((x (point)))
-	(kill-line)
-	(yank)
-	(goto-char x)))
+    (kill-line)
+    (yank)
+    (goto-char x)))
 
 (global-unset-key (kbd "C-v"))
 (global-set-key (kbd "C-v") 'copy-line)
