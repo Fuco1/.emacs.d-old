@@ -21,43 +21,12 @@
     (when (file-exists-p (concat personal ".el"))
       (load personal))))
 
-;; Arrows are common, especially in ruby
-(defun insert-arrow ()
-  (interactive)
-  (delete-horizontal-space)
-  (insert " => "))
-
 ;; Quickly jump back and forth between matching parens/brackets
 (defun match-paren (arg)
   "Go to the matching parenthesis if on parenthesis."
   (interactive "p")
   (cond ((looking-at "\\s\(") (forward-list 1) (backward-char 1))
         ((looking-at "\\s\)") (forward-char 1) (backward-list 1))))
-
-;; Make the whole buffer pretty and consistent
-(defun iwb()
-  "Indent Whole Buffer"
-  (interactive)
-  (delete-trailing-whitespace)
-  (indent-region (point-min) (point-max) nil)
-  (untabify (point-min) (point-max)))
-
-(defun delete-window-replacement (&optional p)
-  "Kill current window.  If called with PREFIX, kill the buffer too."
-  (interactive "P")
-  (if p
-      (kill-buffer nil))
-  (delete-window))
-
-(defun delete-other-windows-replacement (&optional p)
-  "Make the selected window fill its frame.  If called with PREFIX,
-kill all other visible buffers."
-  (interactive "P")
-  (if p
-      (dolist (window (window-list))
-        (unless (equal (window-buffer window) (current-buffer))
-          (kill-buffer (window-buffer window)))))
-  (delete-other-windows))
 
 (defun lorem ()
   (interactive)
@@ -110,10 +79,6 @@ point and around or after mark are interchanged."
        (window-list)
        buffers
        start-positions)))
-
-
-;; temp stuff
-(defalias 'qrr 'query-replace-regexp)
 
 (defun fix-basic ()
   (interactive)
@@ -219,7 +184,7 @@ point and around or after mark are interchanged."
 
 ")
   (beginning-of-buffer)
-  (replace-regexp 
+  (replace-regexp
    (concat "<span class=\"" italic-class "\">\\(.*?\\)</span>")
    "\\\\emph{\\1}")
   (beginning-of-buffer)
@@ -254,7 +219,7 @@ point and around or after mark are interchanged."
   (replace-regexp "<br />" "
 ")
   (beginning-of-buffer)
-  (replace-regexp "<hr />" "\\\\Scene")  
+  (replace-regexp "<hr />" "\\\\Scene")
   (beginning-of-buffer)
   (replace-regexp " " " ")
   (beginning-of-buffer)
@@ -262,7 +227,7 @@ point and around or after mark are interchanged."
   (beginning-of-buffer)
   (replace-regexp "\\\\emph{}" "")
 )
-  
+
 
 ; &bdquo; -- open quote „
 ; &ldquo; -- "close quote" “
