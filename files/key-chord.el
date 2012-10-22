@@ -1,5 +1,7 @@
 (key-chord-mode 1)
 
+(key-chord-define-global "fg" 'iy-go-to-char)
+
 (defun add-tex-key-chords ()
   (key-chord-define tex-mode-map "''" "`\C-q'\C-b")
   (key-chord-define tex-mode-map "$$" "$$\C-b"))

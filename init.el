@@ -20,6 +20,7 @@
 ;; load config files
 (load "files/org-mode")
 (load "files/global")
+(load "files/defuns-edit")
 (load "files/defuns")
 (load "files/macros")
 (load "files/tabs")
@@ -28,7 +29,7 @@
 (load "files/ispell")
 
 (load "files/undo-tree")
-
+(load "files/expand-region")
 
 ;; vendor
 (vendor 'smex)
