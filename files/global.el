@@ -27,10 +27,6 @@
 ;; Small fringes
 (set-fringe-mode '(1 . 1))
 
-;; Emacs gurus don't need no stinking scroll bars
-(when (fboundp 'toggle-scroll-bar)
-    (toggle-scroll-bar -1))
-
 ;; Explicitly show the end of a buffer
 (set-default 'indicate-empty-lines t)
 
@@ -69,6 +65,9 @@
 (prefer-coding-system 'utf-8)
 
 (setq calendar-week-start-day 1)
+
+;; pending deletion. Replace active region with input
+(pending-delete-mode t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Some text-mode settings
@@ -134,7 +133,7 @@
                   (filename . ".tex")))
             ("Web"
              (or (mode . html-mode)
-                 (mode . CSS-mode)
+                 (mode . css-mode)
                  (mode . PHP-mode)))
             ("Programming" ;; prog stuff not already in MyProjectX
               (or
@@ -142,6 +141,7 @@
                 (mode . perl-mode)
                 (mode . python-mode)
                 (mode . cc-mode)
+                (mode . js-mode)
                 ;; etc
                 ))))))
 

@@ -1,5 +1,11 @@
 (server-start)
 
+;; Emacs gurus don't need no stinking scroll bars & widgets
+(scroll-bar-mode -1)
+(menu-bar-mode -1)
+(tool-bar-mode -1)
+(tooltip-mode -1)
+
 ;; add load paths
 (add-to-list 'load-path "~/.emacs.d")
 (add-to-list 'load-path "~/.emacs.d/vendor")
@@ -8,17 +14,21 @@
 (setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
                          ("marmalade" . "http://marmalade-repo.org/packages/")
                          ("melpa" . "http://melpa.milkbox.net/packages/")))
+(package-initialize)
+(require 'autoinstall)
 
 ;; load config files
+(load "files/org-mode")
+(load "files/global")
 (load "files/defuns")
 (load "files/macros")
-(load "files/org-mode")
 (load "files/tabs")
-(load "files/global")
 (load "files/keys")
 (load "files/ido")
-(load "files/undo-tree")
 (load "files/ispell")
+
+(load "files/undo-tree")
+
 
 ;; vendor
 (vendor 'smex)
@@ -30,6 +40,10 @@
 (vendor 'revbufs)
 (vendor 'shell-pop)
 (vendor 'golden-ratio)
+(vendor 'multiple-cursors)
+(vendor 'iy-go-to-char)
+(vendor 'key-chord)
+(vendor 'wrap-region)
 
 ;; TEX
 (require 'tildify)

@@ -2,6 +2,19 @@
 ;; How to Define Keyboard Shortcuts in Emacs
 ;; http://xahlee.org/emacs/keyboard_shortcuts.html
 
+;; setting the PC keyboard's various keys to
+;; Super or Hyper, for emacs running on Windows.
+(setq w32-pass-lwindow-to-system nil
+      w32-pass-rwindow-to-system nil
+      w32-pass-apps-to-system nil
+      w32-lwindow-modifier 'super ; Left Windows key
+      w32-rwindow-modifier 'super ; Right Windows key
+      w32-apps-modifier 'hyper) ; Menu key
+
+;; Url & Browsing
+(global-set-key (kbd "C-c C-w") 'browse-url-at-point)
+(global-set-key (kbd "C-c w") 'browse-url)
+
 ;; Window manipulation
 (global-set-key [(control kp-6)] 'enlarge-window-horizontally)
 (global-set-key [(control kp-4)] 'shrink-window-horizontally)
@@ -41,6 +54,12 @@
 
 (global-set-key (kbd "M-O") 'rotate-windows)
 
+;; Move windows, even in org-mode (doesn't work on windows :( )
+(global-set-key (kbd "<s-right>") 'windmove-right)
+(global-set-key (kbd "<s-left>") 'windmove-left)
+(global-set-key (kbd "<s-up>") 'windmove-up)
+(global-set-key (kbd "<s-down>") 'windmove-down)
+
 ;; Replace dired's M-o
 (add-hook 'dired-mode-hook (lambda () (define-key dired-mode-map (kbd "M-o") 'other-window))) ; was dired-omit-mode
 ;; Replace ibuffer's M-o
@@ -61,12 +80,10 @@
 ;; Window navigation
 (windmove-default-keybindings 'meta)
 
-;; Find matching parens
-(global-set-key (kbd "C-'") 'match-paren)
-
 ;; Easier buffer killing
 (global-unset-key (kbd "M-k"))
 (global-set-key (kbd "M-k") 'kill-this-buffer)
+(global-set-key (kbd "M-K") (lambda () (interactive) (kill-buffer (window-buffer (next-window)))))
 
 ;; imenu
 (global-unset-key (kbd "M-.")) ;; was Find tag
@@ -85,6 +102,22 @@
   (beginning-of-line))
 
 (global-set-key (kbd "C-x a") 'select-to-the-beginning-of-line)
+;; swap C-a and M-m
+(global-unset-key (kbd "M-m"))
+(global-unset-key (kbd "C-a"))
+(global-set-key (kbd "M-m") 'beginning-of-line)
+(global-set-key (kbd "C-a") 'back-to-indentation)
+
+(defun vi-open-next-line (arg)
+  "Move to the next line (like vi) and then opens a line."
+  (interactive "p")
+  (if (looking-at "^")
+      (open-line arg)
+    (end-of-line)
+    (open-line arg)
+    (next-line 1)
+    (indent-according-to-mode)))
+(global-set-key (kbd "C-o") 'vi-open-next-line)
 
 (defun copy-line ()
   (interactive)
@@ -102,3 +135,58 @@
 (global-set-key (kbd "C-M-e") 'forward-sexp)
 
 (global-set-key (kbd "M-y") 'helm-show-kill-ring)
+
+(defun open-next-line ()
+  (interactive)
+  (newline)
+  (indent-according-to-mode))
+
+(global-set-key (kbd "RET") 'open-next-line)
+
+(defun eval-and-replace ()
+  "Replace the preceding sexp with its value."
+  (interactive)
+  (backward-kill-sexp)
+  (condition-case nil
+      (prin1 (eval (read (current-kill 0)))
+             (current-buffer))
+    (error (message "Invalid expression")
+           (insert (current-kill 0)))))
+
+(global-set-key (kbd "C-c C-e") 'eval-and-replace)
+
+(global-set-key (kbd "C-c f") 'iy-go-to-char)
+(global-set-key (kbd "C-c F") 'iy-go-to-char-backward)
+(global-set-key (kbd "C-c ;") 'iy-go-to-char-continue)
+(global-set-key (kbd "C-c ,") 'iy-go-to-char-continue-backward)
+
+
+;; 0 = previous, 2 = next
+;; but we map it to +/-1 to be more intuitive
+;; +1 -> 2
+;; -1 -> 0
+(defun copy-line-with-offset (offset)
+  (kill-ring-save (line-beginning-position (+ offset 1))
+                  (line-end-position (+ offset 1)))
+  (let ((pos (point))
+        (line (buffer-substring-no-properties (line-beginning-position) (line-end-position))))
+    (beginning-of-line)
+    (when (or (and (string-match "[:space:]" line)
+                    (> offset 0))
+              (< offset 0))
+      (newline)
+      (forward-line -1))
+    (beginning-of-line)
+    (insert (car kill-ring))
+    (goto-char pos)))
+
+(defun copy-previous-line ()
+  (interactive)
+  (copy-line-with-offset -1))
+
+(defun copy-next-line ()
+  (interactive)
+  (copy-line-with-offset 1))
+
+(global-set-key (kbd "C-c <up>") 'copy-previous-line)
+(global-set-key (kbd "C-c <down>") 'copy-next-line)

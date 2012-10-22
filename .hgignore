@@ -9,3 +9,5 @@ bookmarks
 org-clock-save.el
 commit.bat
 url/*
+overlay.el
+mark-multiple.el

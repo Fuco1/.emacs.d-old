@@ -117,6 +117,12 @@ point and around or after mark are interchanged."
   (beginning-of-buffer)
   (replace-regexp "^[[:space:]]" "")
   (beginning-of-buffer)
+  (replace-string "}\\emph{" "")
+  (beginning-of-buffer)
+  (replace-string "\\emph{}" "")
+  (beginning-of-buffer)
+  (query-replace-regexp "\\\\emph{ }" "")
+  (beginning-of-buffer)
   (replace-regexp "
 
 
