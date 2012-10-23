@@ -3,7 +3,7 @@
 ;; When you want to add multiple cursors not based on continuous lines, but based on keywords in the buffer, use:
 (global-set-key (kbd "s-.") 'mc/mark-next-like-this)
 (global-set-key (kbd "s-,") 'mc/mark-previous-like-this)
-(global-set-key (kbd "s-?") 'mc/mark-more-like-this-extended)
+(global-set-key (kbd "s-\\") 'mc/mark-more-like-this-extended)
 (global-set-key (kbd "s-/") 'mc/mark-all-like-this)
 
 

@@ -65,6 +65,9 @@
 ;; ibuffer > list-buffers
 (global-set-key (kbd "C-x C-b") 'ibuffer)
 
+;; buffer cleanup
+(global-set-key (kbd "C-c n") 'cleanup-buffer)
+
 ; buffer switching
 (global-set-key (kbd "M-]") 'previous-buffer)
 (global-set-key (kbd "M-\\") 'next-buffer)
@@ -119,3 +122,11 @@
 (global-set-key (kbd "C-c F") 'iy-go-to-char-backward)
 (global-set-key (kbd "C-c ;") 'iy-go-to-char-continue)
 (global-set-key (kbd "C-c ,") 'iy-go-to-char-continue-backward)
+
+
+;; keys for specific modes
+(defun add-html-binding ()
+  (define-key (current-local-map) (kbd "C-c <deletechar>") 'sgml-delete-tag))
+(dolist (hook '(sgml-mode-hook
+                html-mode-hook))
+  (add-hook hook 'add-html-binding))

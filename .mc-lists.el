@@ -3,8 +3,8 @@
 
 (setq mc/cmds-to-run-for-all
       '(
-        ignore
-        kill-region
+        typopunct-insert-ellipsis-or-middot
+        typopunct-insert-typographical-dashes
         ))
 
 (setq mc/cmds-to-run-once
