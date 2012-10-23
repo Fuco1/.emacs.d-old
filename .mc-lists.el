@@ -3,6 +3,7 @@
 
 (setq mc/cmds-to-run-for-all
       '(
+        mc/goto-end-of-region
         typopunct-insert-ellipsis-or-middot
         typopunct-insert-typographical-dashes
         ))

@@ -80,6 +80,10 @@ chars are not auto-inserted in major-mode"
   :group 'textmate)
 (make-variable-buffer-local 'tm/dont-activate)
 
+(defun get-buffer-mode ()
+  "Returns the major mode associated with a buffer."
+  (with-current-buffer (current-buffer) major-mode))
+
 (defun tm/initialize ()
   "Do the necessary initialization"
   (setq skeleton-pair t)
@@ -93,8 +97,10 @@ chars are not auto-inserted in major-mode"
     (tm/minor-mode-on)))
 
 (defun tm/minor-mode-on ()
+  "We do not turn this on in minibuffer, [backspace] messes up the ido"
   (interactive)
-  (tm/minor-mode 1))
+  (unless (eq (get-buffer-mode) 'minibuffer-inactive-mode)
+    (tm/minor-mode 1)))
 
 (defun tm/minor-mode-off ()
   (interactive)
@@ -108,7 +114,9 @@ chars are not auto-inserted in major-mode"
   (define-key tm/minor-mode-map [backspace] 'tm/pair-backspace)
   (dolist (arg skeleton-pair-alist)
     (define-key tm/minor-mode-map (string (car arg)) 'tm/pair-insert)
-    (define-key tm/minor-mode-map (string (car (last arg))) 'tm/pair-insert))
+    (define-key tm/minor-mode-map (condition-case ex
+                                      (string (car (last arg)))
+                                    ('error (car (last arg)))) 'tm/pair-insert))
   (tm/goto-line)
   (tm/open-next-line-binding)
   (add-to-list 'minor-mode-map-alist (cons 'tm/minor-mode tm/minor-mode-map)))
@@ -149,14 +157,17 @@ chars are not auto-inserted in major-mode"
 ;; http://www.emacswiki.org/emacs/AutoPairs#toc2
 (defun tm/pair-insert (arg)
   (interactive "P")
-  (let ((ignore-list (car (last (assoc major-mode tm/non-insert-alist))))
-        (keys (recent-keys)))
+  (let* ((ignore-list (car (last (assoc major-mode tm/non-insert-alist))))
+         (keys (recent-keys))
+         (last-but-one-char (elt keys (- (length keys) 2)))
+         (pair (assq last-but-one-char skeleton-pair-alist)))
     (cond
      ((member last-command-event ignore-list)
       (insert-char last-command-event 1))
      ((assq last-command-event skeleton-pair-alist)
       (tm/pair-open arg))
-     ((assq (elt keys (- (length keys) 2)) skeleton-pair-alist)
+     ((and pair
+           (eq (char-after) (car (last pair))))
       (forward-char))
      (t
       (tm/pair-close arg)))
@@ -171,6 +182,7 @@ chars are not auto-inserted in major-mode"
      ;; in string or comment face, do not autoinsert pairs
      ;; crude! rely on the mode's hilighting and enabled faces
      ((or (eq 'font-lock-string-face face)
+          (eq 'font-lock-doc-face face)
           (eq 'font-lock-comment-face face))
       (self-insert-command (prefix-numeric-value arg)))
      ((and (not mark-active)
@@ -200,14 +212,14 @@ chars are not auto-inserted in major-mode"
     (if pairfromlist
         (let* ((closing-pair (car (last pairfromlist)))
               (pairchar (condition-case ex
-                            (setq retval (string-to-char closing-pair))
+                            (string-to-char closing-pair)
                           ('error closing-pair))))
           (if (eq (char-after)
                   pairchar)
               (and (char-after) (delete-char 1))))))
   (if (eq tm/backspace-delete-column t)
       (tm/backward-delete-whitespace-to-column)
-    (delete-backward-char 1))))
+    (delete-backward-char 1)))
 
 ;; Thanks to Trey Jackson
 ;; http://stackoverflow.com/questions/1450169/how-do-i-emulate-vims-softtabstop-in-emacs/1450454#1450454
