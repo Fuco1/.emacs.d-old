@@ -1,11 +1,10 @@
 (key-chord-mode 1)
 
-(key-chord-define-global "fg" 'iy-go-to-char)
+(key-chord-define-global "df" 'iy-go-to-char)
 
-(defun add-tex-key-chords ()
-  (key-chord-define tex-mode-map "''" "`\C-q'\C-b")
-  (key-chord-define tex-mode-map "$$" "$$\C-b"))
-(add-hook 'tex-mode-hook 'add-tex-key-chords)
+;; (defun add-tex-key-chords ()
+;;   (key-chord-define tex-mode-map "$$" "$$\C-b"))
+;; (add-hook 'tex-mode-hook 'add-tex-key-chords)
 
 (defun add-programming-chords ()
   (key-chord-define-local ";;" "\C-e;")

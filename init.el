@@ -47,6 +47,7 @@
 (vendor 'iy-go-to-char)
 (vendor 'key-chord)
 (vendor 'wrap-region)
+(vendor 'textmate)
 
 ;; TEX
 (require 'tildify)
