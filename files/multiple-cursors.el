@@ -4,7 +4,7 @@
 (global-set-key (kbd "s-.") 'mc/mark-next-like-this)
 (global-set-key (kbd "s-,") 'mc/mark-previous-like-this)
 (global-set-key (kbd "s-\\") 'mc/mark-more-like-this-extended)
-(global-set-key (kbd "s-/") 'mc/mark-all-like-this)
+(global-set-key (kbd "s-/") 'mc/mark-all-like-this-dwim)
 
 
 ;; From active region to multiple cursors:

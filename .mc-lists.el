@@ -3,7 +3,10 @@
 
 (setq mc/cmds-to-run-for-all
       '(
+        beginning-of-region
+        end-of-region
         mc/goto-end-of-region
+        mc/mark-all-like-this-dwim
         tm/pair-backspace
         typopunct-insert-ellipsis-or-middot
         typopunct-insert-typographical-dashes

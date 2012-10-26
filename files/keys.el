@@ -68,10 +68,6 @@
 ;; buffer cleanup
 (global-set-key (kbd "C-c n") 'cleanup-buffer)
 
-; buffer switching
-(global-set-key (kbd "M-]") 'previous-buffer)
-(global-set-key (kbd "M-\\") 'next-buffer)
-
 ;; Window navigation
 (windmove-default-keybindings 'meta)
 
@@ -84,45 +80,92 @@
 (global-unset-key (kbd "M-.")) ;; was Find tag
 (global-set-key (kbd "M-.") 'ido-goto-symbol)
 
-;; jump to beginning/end of the file
-(global-unset-key [(home)]) ;; was C-a
-(global-unset-key [(end)]) ;; was C-e
-(global-set-key [(home)] 'beginning-of-buffer)
-(global-set-key [(end)] 'end-of-buffer)
+;; sexp settings
+(global-set-key (kbd "C-c C-e") 'eval-and-replace)
 
-;; line selection
-(global-set-key (kbd "H-e") 'select-to-the-end-of-line)
-(global-set-key (kbd "H-a") 'select-to-the-beginning-of-line)
-(global-set-key (kbd "H-s") 'select-line)
+(global-set-key (kbd "M-y") 'helm-show-kill-ring)
 
-(global-unset-key (kbd "C-v"))
-(global-set-key (kbd "C-v") 'copy-line)
-(global-set-key (kbd "C-c <up>") 'copy-previous-line)
-(global-set-key (kbd "C-c <down>") 'copy-next-line)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; navigation
 
+;; remove arrows, evil!
+(mapc 'global-unset-key [[up] [down] [left] [right]])
+
+;; # move by (forw/back)
+;; character
+(global-set-key (kbd "C-f") 'forward-char)
+(global-set-key (kbd "C-b") 'backward-char)
+;; word
+(global-set-key (kbd "M-f") 'forward-word)
+(global-set-key (kbd "M-b") 'backward-word)
+;; line
+(global-set-key (kbd "C-n") 'next-line)
+(global-set-key (kbd "C-p") 'previous-line)
+;; sentence
+(global-set-key (kbd "M-a") 'forward-sentence)
+(global-set-key (kbd "M-e") 'backward-sentence)
+;; paragraph
+(global-unset-key (kbd "M-{")) ;; was backward-paragraph
+(global-unset-key (kbd "M-}")) ;; was forward-paragraph
+(global-set-key (kbd "M-[") 'backward-paragraph)
+(global-set-key (kbd "M-]") 'forward-paragraph)
+(global-set-key (kbd "M-{") 'backward-paragraph-select)
+(global-set-key (kbd "M-}") 'forward-paragraph-select)
+;; screen
+(global-set-key (kbd "C-v") 'scroll-down-command)
+(global-set-key (kbd "M-v") 'scroll-up-command)
+;; sexp
+(global-set-key (kbd "C-M-f") 'forward-sexp)
+(global-set-key (kbd "C-M-b") 'backward-sexp)
+;; list
+(global-set-key (kbd "C-M-n") 'forward-list)
+(global-set-key (kbd "C-M-p") 'backward-list)
+
+;; # move to (beg/end)
+;; line
 ;; swap C-a and M-m, back-to-indentation is much more common
 (global-unset-key (kbd "M-m"))
 (global-unset-key (kbd "C-a"))
 (global-set-key (kbd "M-m") 'beginning-of-line)
 (global-set-key (kbd "C-a") 'back-to-indentation)
+(global-set-key (kbd "C-e") 'end-of-line)
+;; buffer
+(global-unset-key [(home)]) ;; was C-a
+(global-unset-key [(end)]) ;; was C-e
+(global-set-key (kbd "M-<") 'beginning-of-buffer)
+(global-set-key (kbd "M->") 'end-of-buffer)
+;; defun
+(global-set-key (kbd "M-p") 'beginning-of-defun)
+(global-set-key (kbd "M-n") 'end-of-defun)
+;; active region
+(global-set-key (kbd "C-c a") 'beginning-of-region)
+(global-set-key (kbd "C-c e") 'end-of-region)
 
-;; sexp settings
-(global-set-key (kbd "C-M-a") 'backward-sexp)
-(global-set-key (kbd "C-M-e") 'forward-sexp)
-(global-set-key (kbd "C-c C-e") 'eval-and-replace)
+;; # move into
+(global-set-key (kbd "C-M-d") 'down-list)
+(global-set-key (kbd "C-M-e") 'up-list+)
+(global-set-key (kbd "C-M-u") 'backward-up-list+)
 
-(global-set-key (kbd "M-y") 'helm-show-kill-ring)
+
+;; line selection
+(global-set-key (kbd "H-a") 'beginning-of-line-select)
+(global-set-key (kbd "H-e") 'end-of-line-select)
+(global-set-key (kbd "H-s") 'line-select)
+
+(global-set-key (kbd "H-w") 'copy-line)
+(global-set-key (kbd "C-c <up>") 'copy-previous-line)
+(global-set-key (kbd "C-c <down>") 'copy-next-line)
 
 ;; opening new lines. C-o can be called from any point on the line
 ;; ret from the end only
 (global-set-key (kbd "RET") 'open-next-line)
 (global-set-key (kbd "C-o") 'vi-open-next-line)
 
+;; go to char, also mapped to a keychord df
 (global-set-key (kbd "C-c f") 'iy-go-to-char)
 (global-set-key (kbd "C-c F") 'iy-go-to-char-backward)
 (global-set-key (kbd "C-c ;") 'iy-go-to-char-continue)
 (global-set-key (kbd "C-c ,") 'iy-go-to-char-continue-backward)
-
 
 ;; keys for specific modes
 (defun add-html-binding ()
@@ -131,5 +174,6 @@
                 html-mode-hook))
   (add-hook hook 'add-html-binding))
 
+;; sunrise
 (global-set-key [(f1)] 'sunrise)
 (global-set-key [(meta f1)] 'sunrise-cd)

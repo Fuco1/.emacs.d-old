@@ -5,6 +5,15 @@
 (menu-bar-mode -1)
 (tool-bar-mode -1)
 (tooltip-mode -1)
+;; maximize window at startup
+(defun maximize-frame ()
+  "Maximizes the active frame in Windows"
+  (interactive)
+  ;; Send a `WM_SYSCOMMAND' message to the active frame with the
+  ;; `SC_MAXIMIZE' parameter.
+  (when (eq system-type 'windows-nt)
+    (w32-send-sys-command 61488)))
+(add-hook 'window-setup-hook 'maximize-frame t)
 
 ;; add load paths
 (add-to-list 'load-path "~/.emacs.d")

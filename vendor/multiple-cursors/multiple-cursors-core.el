@@ -370,17 +370,7 @@ multiple cursors editing.")
     nil
   (setq mc/keymap (make-sparse-keymap))
   (define-key mc/keymap (kbd "C-g") 'mc/keyboard-quit)
-  (define-key mc/keymap (kbd "C-c e") 'mc/goto-end-of-region)
-  (define-key mc/keymap (kbd "C-c a") 'mc/goto-beginning-of-region)
   (define-key mc/keymap (kbd "<return>") 'multiple-cursors-mode))
-
-(defun mc/goto-beginning-of-region ()
-  (interactive)
-  (goto-char (region-beginning)))
-
-(defun mc/goto-end-of-region ()
-  (interactive)
-  (goto-char (region-end)))
 
 (defun mc--all-equal (entries)
   "Are all these entries equal?"
