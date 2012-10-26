@@ -11,3 +11,7 @@ commit.bat
 url/*
 overlay.el
 mark-multiple.el
+desktop/*
+eshell/lastdir
+files/sunrise-x-w32-addons.vbs
+tramp

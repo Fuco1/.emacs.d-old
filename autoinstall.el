@@ -2,7 +2,11 @@
 (require 'cl)
 
 (defvar prelude-packages
-  '(undo-tree helm expand-region)
+  '(dired+
+    expand-region
+    helm
+    undo-tree
+    w32-browser)
   "A list of packages to ensure are installed at launch.")
 
 (defun prelude-packages-installed-p ()

@@ -130,3 +130,6 @@
 (dolist (hook '(sgml-mode-hook
                 html-mode-hook))
   (add-hook hook 'add-html-binding))
+
+(global-set-key [(f1)] 'sunrise)
+(global-set-key [(meta f1)] 'sunrise-cd)

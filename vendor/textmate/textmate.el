@@ -80,6 +80,11 @@ chars are not auto-inserted in major-mode"
   :group 'textmate)
 (make-variable-buffer-local 'tm/dont-activate)
 
+(defcustom tm/ignore-modes-list ()
+  "Modes where tm mode is not activated"
+  :type 'list
+  :group 'textmate)
+
 (defun get-buffer-mode ()
   "Returns the major mode associated with a buffer."
   (with-current-buffer (current-buffer) major-mode))
@@ -99,7 +104,7 @@ chars are not auto-inserted in major-mode"
 (defun tm/minor-mode-on ()
   "We do not turn this on in minibuffer, [backspace] messes up the ido"
   (interactive)
-  (unless (eq (get-buffer-mode) 'minibuffer-inactive-mode)
+  (unless (member (get-buffer-mode) tm/ignore-modes-list)
     (tm/minor-mode 1)))
 
 (defun tm/minor-mode-off ()

@@ -4,5 +4,9 @@
 ;;(http://code.google.com/p/emacs-textmate/).
 
 (tm/initialize)
+(add-to-list 'tm/ignore-modes-list 'sr-mode)
+(add-to-list 'tm/ignore-modes-list 'minibuffer-inactive-mode)
+(add-to-list 'tm/ignore-modes-list 'ibuffer-mode)
+
 (setq tm/use-open-next-line nil)
 (setq skeleton-autowrap nil)

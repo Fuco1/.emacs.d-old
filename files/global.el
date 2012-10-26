@@ -2,7 +2,7 @@
 ;;; Generic emacs settings I cannot live without
 
 ;; Winner mode
-; C-c left C-c right switch between window configurations, M-arrows to jump between windows
+;; C-c left C-c right switch between window configurations, M-arrows to jump between windows
 (when (fboundp 'winner-mode)
   (winner-mode 1))
 
@@ -44,8 +44,7 @@
 (setq truncate-partial-width-windows nil)
 
 ;; Trailing whitespace is unnecessary
-;;(add-hook 'before-save-hook (lambda () (whitespace-cleanup)))
-(add-hook 'before-save-hook 'whitespace-cleanup)
+(add-hook 'before-save-hook 'cleanup-buffer-safe)
 
 ;; Trash can support
 (setq delete-by-moving-to-trash t)
@@ -78,16 +77,12 @@
 (setq-default cursor-type 'box)
 ;; variable width font in text buffers ...
 (dolist (hook '(text-mode-hook
-        erc-mode-hook
-        LaTeX-mode-hook
-        org-mode-hook
-        markdown-mode-hook
-        gnus-article-mode-hook))
+                erc-mode-hook
+                LaTeX-mode-hook
+                org-mode-hook
+                markdown-mode-hook
+                gnus-article-mode-hook))
   (add-hook hook 'init-text-based-modes))
-  ;; (progn (add-hook hook (lambda () (variable-pitch-mode t)))
-  ;;        (add-hook hook (lambda () (setq cursor-type 'bar)))
-  ;;        (add-hook hook (lambda () (setq indent-tabs-mode t)))
-  ;;        (add-hook hook (lambda () (turn-on-visual-line-mode)))))
 
 ;; Use variable width font faces in current buffer
 (defun my-buffer-face-mode-variable ()
@@ -118,33 +113,37 @@
 ;;  '(variable-pitch ((t (:family "Bitstream Vera Serif")))))
 
 (setq ibuffer-saved-filter-groups
-  (quote (("default"
-            ("Org" ;; all org-related buffers
-              (mode . org-mode))
-            ("emacs-config"
-              (or (filename . ".emacs.d")
-                  (filename . ".emacs")
-                  (filename . "emacs-config")))
-            ("TeX"
-              (or (mode . tex-mode)
-                  (mode . TeX-mode)
-                  (mode . latex-mode)
-                  (mode . LaTeX-mode)
-                  (filename . ".tex")))
-            ("Web"
-             (or (mode . html-mode)
-                 (mode . css-mode)
-                 (mode . PHP-mode)))
-            ("Programming" ;; prog stuff not already in MyProjectX
-              (or
-                (mode . c-mode)
-                (mode . perl-mode)
-                (mode . python-mode)
-                (mode . cc-mode)
-                (mode . js-mode)
-                ;; etc
-                ))))))
+      (quote (("default"
+               ("Org" ;; all org-related buffers
+                (mode . org-mode))
+               ("emacs-config"
+                (or (filename . ".emacs.d")
+                    (filename . ".emacs")
+                    (filename . "emacs-config")))
+               ("TeX"
+                (or (mode . tex-mode)
+                    (mode . TeX-mode)
+                    (mode . latex-mode)
+                    (mode . LaTeX-mode)
+                    (filename . ".tex")))
+               ("Web"
+                (or (mode . html-mode)
+                    (mode . css-mode)
+                    (mode . PHP-mode)))
+               ("Sunrise"
+                (or (mode . sr-mode)))
+               ("Programming" ;; prog stuff not already in MyProjectX
+                (or
+                 (mode . c-mode)
+                 (mode . perl-mode)
+                 (mode . python-mode)
+                 (mode . cc-mode)
+                 (mode . js-mode)
+                 ;; etc
+                 ))))))
 
-(add-hook 'ibuffer-mode-hook
-  (lambda ()
-    (ibuffer-switch-to-saved-filter-groups "default")))
+(defun customize-ibuffer-mode ()
+  (ibuffer-switch-to-saved-filter-groups "default")
+  (setq ibuffer-hidden-filter-groups
+        (push "Sunrise" ibuffer-hidden-filter-groups)))
+(add-hook 'ibuffer-mode-hook 'customize-ibuffer-mode)
