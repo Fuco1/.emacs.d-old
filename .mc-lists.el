@@ -3,10 +3,10 @@
 
 (setq mc/cmds-to-run-for-all
       '(
-        beginning-of-region
-        end-of-region
+        c-electric-delete-forward
+        c-electric-semi&comma
+        iy-go-to-char
         mc/goto-end-of-region
-        mc/mark-all-like-this-dwim
         tm/pair-backspace
         typopunct-insert-ellipsis-or-middot
         typopunct-insert-typographical-dashes
@@ -14,5 +14,6 @@
 
 (setq mc/cmds-to-run-once
       '(
+        mc/mark-all-like-this-dwim
         typopunct-insert-mp
         ))
