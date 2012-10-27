@@ -177,3 +177,8 @@
 ;; sunrise
 (global-set-key [(f1)] 'sunrise)
 (global-set-key [(meta f1)] 'sunrise-cd)
+
+;; mark commands
+(global-set-key (kbd "C-`") 'push-mark-no-activate)
+(global-set-key (kbd "M-`") 'jump-to-mark)
+(define-key global-map [remap exchange-point-and-mark] 'exchange-point-and-mark-no-activate)

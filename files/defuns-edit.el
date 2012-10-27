@@ -58,7 +58,7 @@ to the active mode"
   (goto-char (region-end)))
 
 (defun backward-up-list+ ()
-  "Same as backward-up-list, but can also move out from withing a string"
+  "Same as `backward-up-list', but can also move out from withing a string"
   (interactive)
   (if (in-string-p)
       (while (in-string-p)
@@ -66,7 +66,7 @@ to the active mode"
     (backward-up-list)))
 
 (defun up-list+ ()
-  "Same as up-list, but can also move out from withing a string"
+  "Same as `up-list', but can also move out from withing a string"
   (interactive)
   (if (in-string-p)
       (while (in-string-p)
