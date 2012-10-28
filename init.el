@@ -59,6 +59,8 @@
 (vendor 'wrap-region)
 (vendor 'textmate)
 (vendor 'sunrise-commander)
+(vendor 'change-inner)
+(vendor 'smart-forward)
 
 ;restore the s-c tabs
 (load "files/desktop")
@@ -153,3 +155,4 @@
  '(sr-tabs-inactive-face ((t (:foreground "#fcaf3e" :width extra-expanded))))
  '(variable-pitch ((t (:height 120 :family "Verdana")))))
 (put 'narrow-to-region 'disabled nil)
+(put 'narrow-to-page 'disabled nil)

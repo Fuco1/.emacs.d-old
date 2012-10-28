@@ -120,6 +120,9 @@
 ;; list
 (global-set-key (kbd "C-M-n") 'forward-list)
 (global-set-key (kbd "C-M-p") 'backward-list)
+;; semantic unit
+(global-set-key (kbd "M-\\") 'smart-forward)
+(global-set-key (kbd "M-'") 'smart-backward)
 
 ;; # move to (beg/end)
 ;; line
@@ -133,7 +136,10 @@
 (global-unset-key [(home)]) ;; was C-a
 (global-unset-key [(end)]) ;; was C-e
 (global-set-key (kbd "M-<") 'beginning-of-buffer)
+(global-set-key (kbd "C-M-,") 'beginning-of-buffer)
 (global-set-key (kbd "M->") 'end-of-buffer)
+(global-set-key (kbd "C-M-.") 'end-of-buffer)
+
 ;; defun
 (global-set-key (kbd "M-p") 'beginning-of-defun)
 (global-set-key (kbd "M-n") 'end-of-defun)
@@ -146,11 +152,12 @@
 (global-set-key (kbd "C-M-e") 'up-list+)
 (global-set-key (kbd "C-M-u") 'backward-up-list+)
 
-
 ;; line selection
 (global-set-key (kbd "H-a") 'beginning-of-line-select)
 (global-set-key (kbd "H-e") 'end-of-line-select)
 (global-set-key (kbd "H-s") 'line-select)
+
+(global-set-key (kbd "M-i") 'change-inner)
 
 (global-set-key (kbd "H-w") 'copy-line)
 (global-set-key (kbd "C-c <up>") 'copy-previous-line)
