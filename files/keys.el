@@ -102,8 +102,8 @@
 (global-set-key (kbd "C-n") 'next-line)
 (global-set-key (kbd "C-p") 'previous-line)
 ;; sentence
-(global-set-key (kbd "M-a") 'forward-sentence)
-(global-set-key (kbd "M-e") 'backward-sentence)
+(global-set-key (kbd "M-e") 'forward-sentence)
+(global-set-key (kbd "M-a") 'backward-sentence)
 ;; paragraph
 (global-unset-key (kbd "M-{")) ;; was backward-paragraph
 (global-unset-key (kbd "M-}")) ;; was forward-paragraph
@@ -112,8 +112,8 @@
 (global-set-key (kbd "M-{") 'backward-paragraph-select)
 (global-set-key (kbd "M-}") 'forward-paragraph-select)
 ;; screen
-(global-set-key (kbd "C-v") 'scroll-down-command)
-(global-set-key (kbd "M-v") 'scroll-up-command)
+(global-set-key (kbd "C-v") 'scroll-up-command)
+(global-set-key (kbd "M-v") 'scroll-down-command)
 ;; sexp
 (global-set-key (kbd "C-M-f") 'forward-sexp)
 (global-set-key (kbd "C-M-b") 'backward-sexp)
@@ -129,9 +129,9 @@
 ;; swap C-a and M-m, back-to-indentation is much more common
 (global-unset-key (kbd "M-m"))
 (global-unset-key (kbd "C-a"))
-(global-set-key (kbd "M-m") 'beginning-of-line)
+(global-set-key (kbd "M-m") 'move-beginning-of-line)
 (global-set-key (kbd "C-a") 'back-to-indentation)
-(global-set-key (kbd "C-e") 'end-of-line)
+(global-set-key (kbd "C-e") 'move-end-of-line)
 ;; buffer
 (global-unset-key [(home)]) ;; was C-a
 (global-unset-key [(end)]) ;; was C-e
@@ -189,3 +189,8 @@
 (global-set-key (kbd "C-`") 'push-mark-no-activate)
 (global-set-key (kbd "M-`") 'jump-to-mark)
 (define-key global-map [remap exchange-point-and-mark] 'exchange-point-and-mark-no-activate)
+
+;; calc settings
+(global-set-key (kbd "<pause>") 'calc-dispatch)
+(global-set-key (kbd "<home>") 'calc-same-interface)
+(global-set-key (kbd "C-c c") 'my-mini-calc)

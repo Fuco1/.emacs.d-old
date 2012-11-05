@@ -84,6 +84,20 @@ This is the same as using \\[set-mark-command] with the prefix argument."
   (exchange-point-and-mark)
   (deactivate-mark nil))
 
+;; usefull mini calculator
+(defun my-mini-calc (expr &optional arg)
+  "Calculate expression
+
+If ARG is given, then insert the result to current-buffer"
+  (interactive
+   (list (read-from-minibuffer "Enter expression: ")
+     current-prefix-arg))
+
+  (let ((result (calc-eval expr)))
+    (if arg
+    (insert result)
+      (message (format "Result: [%s] = %s" expr result)))))
+
 (defun fix-basic ()
   (interactive)
   (beginning-of-buffer)

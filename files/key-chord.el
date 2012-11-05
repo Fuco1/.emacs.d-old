@@ -2,9 +2,9 @@
 
 (key-chord-define-global "df" 'iy-go-to-char)
 
-;; (defun add-tex-key-chords ()
-;;   (key-chord-define tex-mode-map "$$" "$$\C-b"))
-;; (add-hook 'tex-mode-hook 'add-tex-key-chords)
+(defun add-tex-key-chords ()
+  (key-chord-define tex-mode-map "wq" "$"))
+(add-hook 'tex-mode-hook 'add-tex-key-chords)
 
 (defun add-programming-chords ()
   (key-chord-define-local ";;" "\C-e;")
