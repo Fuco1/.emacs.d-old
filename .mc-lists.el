@@ -3,11 +3,8 @@
 
 (setq mc/cmds-to-run-for-all
       '(
-        c-electric-delete-forward
-        c-electric-semi&comma
-        iy-go-to-char
-        mc/goto-end-of-region
         tm/pair-backspace
+        tm/pair-insert
         typopunct-insert-ellipsis-or-middot
         typopunct-insert-typographical-dashes
         ))

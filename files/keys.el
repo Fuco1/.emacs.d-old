@@ -81,7 +81,7 @@
 (global-set-key (kbd "M-.") 'ido-goto-symbol)
 
 ;; sexp settings
-(global-set-key (kbd "C-c C-e") 'eval-and-replace)
+(global-set-key (kbd "C-c e") 'eval-and-replace)
 
 (global-set-key (kbd "M-y") 'helm-show-kill-ring)
 
@@ -162,6 +162,8 @@
 (global-set-key (kbd "H-w") 'copy-line)
 (global-set-key (kbd "C-c <up>") 'copy-previous-line)
 (global-set-key (kbd "C-c <down>") 'copy-next-line)
+(global-set-key (kbd "M-<up>") 'move-line-up)
+(global-set-key (kbd "M-<down>") 'move-line-down)
 
 ;; opening new lines. C-o can be called from any point on the line
 ;; ret from the end only

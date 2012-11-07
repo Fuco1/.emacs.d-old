@@ -5,6 +5,8 @@
   '(dired+
     expand-region
     helm
+    ido-ubiquitous
+    parenface
     undo-tree
     w32-browser)
   "A list of packages to ensure are installed at launch.")
