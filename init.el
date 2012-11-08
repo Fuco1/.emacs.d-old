@@ -55,7 +55,6 @@
 (vendor 'golden-ratio)
 (vendor 'multiple-cursors)
 (vendor 'iy-go-to-char)
-(vendor 'key-chord)
 (vendor 'textmate)    ;; we need to call textmate before wrap-region, so the fallback works properly
 (vendor 'wrap-region)
 (vendor 'sunrise-commander)
@@ -86,6 +85,7 @@
  '(background-color "#002b36")
  '(background-mode dark)
  '(blink-cursor-mode nil)
+ '(calc-settings-file "~\\.emacs.d\\my-calc.el")
  '(column-number-mode t)
  '(cursor-color "#839496")
  '(custom-enabled-themes (quote (tango-dark)))
@@ -159,3 +159,4 @@
  '(variable-pitch ((t (:height 120 :family "Verdana")))))
 (put 'narrow-to-region 'disabled nil)
 (put 'narrow-to-page 'disabled nil)
+(put 'set-goal-column 'disabled nil)

@@ -130,7 +130,7 @@
 (global-unset-key (kbd "M-m"))
 (global-unset-key (kbd "C-a"))
 (global-set-key (kbd "M-m") 'move-beginning-of-line)
-(global-set-key (kbd "C-a") 'back-to-indentation)
+(global-set-key (kbd "C-a") 'back-to-indentation-or-beginning)
 (global-set-key (kbd "C-e") 'move-end-of-line)
 ;; buffer
 (global-unset-key [(home)]) ;; was C-a
@@ -176,6 +176,10 @@
 (global-set-key (kbd "C-c ;") 'iy-go-to-char-continue)
 (global-set-key (kbd "C-c ,") 'iy-go-to-char-continue-backward)
 
+;; deleting stuff
+(keyboard-translate ?\C-i ?\H-i)
+(global-set-key (kbd "H-i") 'backward-kill-word)
+
 ;; keys for specific modes
 (defun add-html-binding ()
   (define-key (current-local-map) (kbd "C-c <deletechar>") 'sgml-delete-tag))
@@ -193,6 +197,7 @@
 (define-key global-map [remap exchange-point-and-mark] 'exchange-point-and-mark-no-activate)
 
 ;; calc settings
+(require 'calculator)
 (global-set-key (kbd "<pause>") 'calc-dispatch)
 (global-set-key (kbd "<home>") 'calc-same-interface)
 (global-set-key (kbd "C-c c") 'my-mini-calc)
