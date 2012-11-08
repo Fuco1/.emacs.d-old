@@ -131,7 +131,7 @@
 (global-unset-key (kbd "C-a"))
 (global-set-key (kbd "M-m") 'move-beginning-of-line)
 (global-set-key (kbd "C-a") 'back-to-indentation-or-beginning)
-(global-set-key (kbd "C-e") 'move-end-of-line)
+(global-set-key (kbd "C-e") 'end-of-code-or-line)
 ;; buffer
 (global-unset-key [(home)]) ;; was C-a
 (global-unset-key [(end)]) ;; was C-e

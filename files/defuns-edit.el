@@ -1,3 +1,5 @@
+(require 'thingatpt)
+
 ;; line selection functions
 (defun line-select ()
   "Set the active region to current line"
@@ -139,6 +141,40 @@ move the current line down and yank"
 (defun copy-next-line ()
   (interactive)
   (copy-line-with-offset 1))
+
+(defun back-to-indentation-or-beginning ()
+  (interactive)
+  (if (= (point) (save-excursion (back-to-indentation) (point)))
+      (beginning-of-line)
+    (back-to-indentation)))
+
+(defun point-in-comment ()
+  "Determine if the point is inside a comment"
+  (interactive)
+  (let ((syn (syntax-ppss)))
+    (and (nth 8 syn)
+         (not (nth 3 syn)))))
+
+(defun end-of-code-or-line (arg)
+  "Move to the end of code. If already there, move to the end of line,
+that is after the possible comment. If at the end of line, move to the
+end of code.
+
+Comments are recognized in any mode that sets syntax-ppss properly."
+  (interactive "P")
+  (let ((eoc (save-excursion
+               (move-end-of-line arg)
+               (while (point-in-comment)
+                 (backward-char))
+               (skip-chars-backward " \t")
+               (point))))
+    (cond ((= (point) eoc)
+           (move-end-of-line arg))
+          (t
+           (move-end-of-line arg)
+           (while (point-in-comment)
+             (backward-char))
+           (skip-chars-backward " \t")))))
 
 (defun mc/mark-all-like-this-dwim (arg)
   "Uses some sane defaults to guess what the user want to do:
