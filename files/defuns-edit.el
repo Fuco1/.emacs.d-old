@@ -151,30 +151,28 @@ move the current line down and yank"
 (defun point-in-comment ()
   "Determine if the point is inside a comment"
   (interactive)
-  (let ((syn (syntax-ppss)))
-    (and (nth 8 syn)
-         (not (nth 3 syn)))))
+  (let ((face (plist-get (text-properties-at (point)) 'face)))
+    (or (eq 'font-lock-comment-face face)
+        (eq 'font-lock-comment-delimiter-face face))))
 
 (defun end-of-code-or-line (arg)
   "Move to the end of code. If already there, move to the end of line,
 that is after the possible comment. If at the end of line, move to the
 end of code.
-
+nn
 Comments are recognized in any mode that sets syntax-ppss properly."
   (interactive "P")
   (let ((eoc (save-excursion
                (move-end-of-line arg)
-               (while (point-in-comment)
+               (while (and (point-in-comment)
+                           (> (point) 1))
                  (backward-char))
                (skip-chars-backward " \t")
                (point))))
     (cond ((= (point) eoc)
            (move-end-of-line arg))
           (t
-           (move-end-of-line arg)
-           (while (point-in-comment)
-             (backward-char))
-           (skip-chars-backward " \t")))))
+           (goto-char eoc)))))
 
 (defun mc/mark-all-like-this-dwim (arg)
   "Uses some sane defaults to guess what the user want to do:

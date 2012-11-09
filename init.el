@@ -61,6 +61,8 @@
 (vendor 'change-inner)
 (vendor 'smart-forward)
 
+(require 'parenface)
+
 ;restore the s-c tabs
 (load "files/desktop")
 
