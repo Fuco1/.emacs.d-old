@@ -144,9 +144,9 @@ move the current line down and yank"
 
 (defun back-to-indentation-or-beginning ()
   (interactive)
-  (if (= (point) (save-excursion (back-to-indentation) (point)))
-      (beginning-of-line)
-    (back-to-indentation)))
+  (if (= (point) (save-excursion (back-to-indentation-logical-or-visual) (point)))
+      (beginning-of-line-logical-or-visual)
+    (back-to-indentation-logical-or-visual)))
 
 (defun point-in-comment ()
   "Determine if the point is inside a comment"
@@ -155,22 +155,48 @@ move the current line down and yank"
     (or (eq 'font-lock-comment-face face)
         (eq 'font-lock-comment-delimiter-face face))))
 
-(defun end-of-code-or-line (arg)
+(defun back-to-visual-indentation ()
+  "Move point to the first non-whitespace character on this visual line."
+  (interactive)
+  (interactive)
+  (beginning-of-visual-line)
+  (skip-syntax-forward " " (line-end-position))
+  (backward-prefix-chars))
+
+(defun back-to-indentation-logical-or-visual ()
+  "Move back to logical or visual indentation."
+  (interactive)
+  (if (visual-line-mode) (back-to-visual-indentation) (back-to-indentation)))
+
+(defun end-of-line-logical-or-visual ()
+  "Move to the end of visual line if visual mode is enabled
+   or to the logical end otherwise."
+  (interactive)
+  (if (visual-line-mode) (end-of-visual-line) (move-end-of-line)))
+
+(defun beginning-of-line-logical-or-visual ()
+  "Move to the beginning of visual line if visual mode is enabled
+   or logical beginning otherwise"
+  (interactive)
+  (if (visual-line-mode) (beginning-of-visual-line) (move-beginning-of-line)))
+
+(defun end-of-code-or-line ()
   "Move to the end of code. If already there, move to the end of line,
 that is after the possible comment. If at the end of line, move to the
 end of code.
-nn
+
 Comments are recognized in any mode that sets syntax-ppss properly."
-  (interactive "P")
+  (interactive)
   (let ((eoc (save-excursion
-               (move-end-of-line arg)
+               (end-of-line-logical-or-visual)
                (while (and (point-in-comment)
+                           (not (bolp))
                            (> (point) 1))
                  (backward-char))
                (skip-chars-backward " \t")
                (point))))
     (cond ((= (point) eoc)
-           (move-end-of-line arg))
+           (end-of-line-logical-or-visual))
           (t
            (goto-char eoc)))))
 
