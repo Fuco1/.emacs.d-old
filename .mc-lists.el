@@ -3,6 +3,8 @@
 
 (setq mc/cmds-to-run-for-all
       '(
+        kill-region
+        kill-visual-line
         tm/pair-backspace
         tm/pair-insert
         typopunct-insert-ellipsis-or-middot

@@ -16,3 +16,4 @@ eshell/lastdir
 files/sunrise-x-w32-addons.vbs
 tramp
 calc.el
+vendor/smartparens/.git/*

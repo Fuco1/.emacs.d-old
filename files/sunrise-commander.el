@@ -4,10 +4,8 @@
 (require 'sunrise-x-tabs)
 (require 'sunrise-x-w32-addons)
 
-(define-key sr-tabs-mode-map [(control ?p)] nil)
-(define-key sr-tabs-mode-map [(control ?n)] nil)
-(define-key sr-tabs-mode-map [(control ?P)] 'sr-tabs-prev)
-(define-key sr-tabs-mode-map [(control ?N)] 'sr-tabs-next)
+(define-key sr-tabs-mode-map [(control ?p)] 'sr-tabs-prev)
+(define-key sr-tabs-mode-map [(control ?n)] 'sr-tabs-next)
 
 (defun my-sunrise-init ()
   (define-key sr-mode-map [(backspace)] 'sr-dired-prev-subdir)

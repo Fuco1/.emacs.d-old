@@ -77,7 +77,6 @@
 (setq-default cursor-type 'box)
 ;; variable width font in text buffers ...
 (dolist (hook '(text-mode-hook
-                erc-mode-hook
                 LaTeX-mode-hook
                 org-mode-hook
                 markdown-mode-hook
