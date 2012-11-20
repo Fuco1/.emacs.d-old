@@ -82,7 +82,7 @@ chars are not auto-inserted in major-mode"
 
 (defcustom tm/ignore-modes-list ()
   "Modes where tm mode is not activated"
-  :type 'list
+  :type '(repeat symbol)
   :group 'textmate)
 
 (defun get-buffer-mode ()

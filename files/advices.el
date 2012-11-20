@@ -33,3 +33,12 @@
           (progn (forward-char 1)
                  (just-one-space 0)
                  (backward-char 1)))))
+
+(defadvice message (after message-tail activate)
+  "goto point max after a message"
+  (with-current-buffer "*Messages*"
+    (goto-char (point-max))
+    (let ((windows (get-buffer-window-list (current-buffer) nil t)))
+      (while windows
+        (set-window-point (car windows) (point-max))
+        (setq windows (cdr windows))))))

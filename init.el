@@ -55,11 +55,10 @@
 (vendor 'golden-ratio)
 (vendor 'multiple-cursors)
 (vendor 'iy-go-to-char)
-(vendor 'textmate)    ;; we need to call textmate before wrap-region, so the fallback works properly
-(vendor 'wrap-region)
 (vendor 'sunrise-commander)
 (vendor 'change-inner)
 (vendor 'smart-forward)
+(vendor 'smartparens)
 
 (require 'parenface)
 
@@ -68,12 +67,6 @@
 
 ;; TEX
 (require 'tildify)
-
-(setq load-path (cons "/packages/run.64/sicstus-4.0.8/lib/sicstus-4.0.8/emacs" load-path))
-(autoload 'run-prolog "prolog" "Start a Prolog sub-process." t)
-(autoload 'prolog-mode "prolog" "Major mode for editing Prolog programs." t)
-(setq prolog-system 'sicstus)
-(setq auto-mode-alist (cons '("\\.pl$" . prolog-mode) auto-mode-alist))
 
 ;; autoopen files
 (find-file "~/.emacs.d/init.el")
@@ -147,6 +140,7 @@
  '(fringe ((((class color) (background light)) (:background "grey95" :foreground "black"))))
  '(highlight ((((class color) (min-colors 88) (background light)) (:background "darkseagreen2" :foreground "black"))))
  '(hl-line ((t (:background "gray12"))))
+ '(markdown-pre-face ((t (:inherit font-lock-constant-face :family "Consolas"))))
  '(minibuffer-prompt ((t (:foreground "cyan"))))
  '(org-table ((t (:inherit fixed-pitch :foreground "LightSkyBlue"))))
  '(paren-face ((t (:foreground "thistle4"))))

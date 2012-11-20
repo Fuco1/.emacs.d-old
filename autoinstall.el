@@ -2,7 +2,9 @@
 (require 'cl)
 
 (defvar prelude-packages
-  '(dired+
+  '(
+    dash
+    dired+
     expand-region
     helm
     ido-ubiquitous

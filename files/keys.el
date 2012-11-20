@@ -34,7 +34,7 @@
 
 ;; Indenting and alignment
 (global-set-key [(f8)]         'indent-region)
-(global-set-key [(control f8)] 'align)
+(global-set-key [(control f8)] 'indent-buffer)
 (global-set-key [(shift f8)]   'align-current)
 (global-set-key [(meta f8)]    'align-regexp)
 
