@@ -197,7 +197,6 @@
 (define-key global-map [remap exchange-point-and-mark] 'exchange-point-and-mark-no-activate)
 
 ;; calc settings
-(require 'calculator)
 (global-set-key (kbd "<pause>") 'calc-dispatch)
 (global-set-key (kbd "<home>") 'calc-same-interface)
 (global-set-key (kbd "C-c c") 'my-mini-calc)

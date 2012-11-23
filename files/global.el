@@ -36,6 +36,9 @@
 ;; Make sure all backup files only live in one place
 (setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
 
+;; Autoload modes
+(add-to-list 'auto-mode-alist '("\\.md$" . markdown-mode))
+
 ;; Gotta see matching parens
 (show-paren-mode t)
 
@@ -64,9 +67,6 @@
 (prefer-coding-system 'utf-8)
 
 (setq calendar-week-start-day 1)
-
-;; pending deletion. Replace active region with input
-(pending-delete-mode t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Some text-mode settings
