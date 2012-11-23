@@ -3,14 +3,20 @@
 
 (setq mc/cmds-to-run-for-all
       '(
-        kill-region
-        kill-visual-line
+        back-to-indentation-or-beginning
+        end-of-region
+        fill-paragraph
+        scroll-down-command
+        smart-tab
+        tm/pair-backspace
+        tm/pair-insert
         typopunct-insert-ellipsis-or-middot
         typopunct-insert-typographical-dashes
         ))
 
 (setq mc/cmds-to-run-once
       '(
+        beautify-smex
         mc/mark-all-like-this-dwim
         typopunct-insert-mp
         ))
