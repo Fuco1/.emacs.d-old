@@ -103,6 +103,7 @@
  '(ls-lisp-dirs-first t)
  '(menu-bar-mode nil)
  '(show-paren-mode t)
+ '(sp-ignore-modes-list (quote (calc-mode dired-mode ibuffer-mode minibuffer-inactive-mode sr-mode)))
  '(sr-attributes-display-mask (quote (nil nil nil nil t t t)))
  '(sr-listing-switches "-alh")
  '(sr-popviewer-enabled nil)
