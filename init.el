@@ -43,11 +43,13 @@
 (load "files/undo-tree")
 (load "files/expand-region")
 
+(load "files/emacs-lisp-mode")
+
 ;; vendor
 (vendor 'smex)
 (vendor 'yasnippet)
 (vendor 'haskell-mode)
-(vendor 'typopunct)
+(vendor 'typopunct 'typopunct-change-language 'typopunct-mode)
 (vendor 'wc-mode)
 (vendor 'ace-jump-mode)
 (vendor 'revbufs)

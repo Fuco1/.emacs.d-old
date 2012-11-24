@@ -97,13 +97,10 @@
   (buffer-face-mode))
 
 (defun init-text-based-modes ()
-  (progn (my-buffer-face-mode-variable)
-         (setq cursor-type 'bar)
-         (setq indent-tabs-mode t)
-         (turn-on-visual-line-mode)
-         (require 'typopunct)
-         (typopunct-change-language 'english)
-         (typopunct-mode 1)))
+  (my-buffer-face-mode-variable)
+  (setq cursor-type 'bar)
+  (setq indent-tabs-mode t)
+  (turn-on-visual-line-mode))
 
 ;; ... but not in Org tables
 (set-face-attribute 'org-table nil :inherit 'fixed-pitch)
