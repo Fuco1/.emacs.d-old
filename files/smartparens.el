@@ -4,6 +4,24 @@
 ;; virtually `delete-selection-mode' emulation.
 (sp-turn-on-delete-selection-mode)
 
+;;; key binds
+(define-key sp-keymap (kbd "C-M-f") 'sp-forward-sexp)
+(define-key sp-keymap (kbd "C-M-b") 'sp-backward-sexp)
+
+(define-key sp-keymap (kbd "C-M-d") 'sp-down-sexp)
+(define-key sp-keymap (kbd "C-M-a") 'sp-backward-down-sexp)
+
+(define-key sp-keymap (kbd "C-M-e") 'sp-up-sexp)
+(define-key sp-keymap (kbd "C-M-u") 'sp-backward-up-sexp)
+
+(define-key sp-keymap (kbd "C-M-n") 'sp-next-sexp)
+(define-key sp-keymap (kbd "C-M-p") 'sp-previous-sexp)
+
+(define-key sp-keymap (kbd "C-M-k") 'sp-kill-sexp)
+
+;; (define-key sp-keymap (kbd "C-M-n") 'sp-next-sexp)
+;; (define-key sp-keymap (kbd "C-M-p") 'sp-previous-sexp)
+
 ;;; add new pairs
 (sp-add-pair "*" "*")
 (sp-add-pair "$" "$")
