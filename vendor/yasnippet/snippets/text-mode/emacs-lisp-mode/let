@@ -1,6 +1,0 @@
-#name : let template
-#contributor : Matus Goljer
-# --
-(let (($0)
-     )
-)

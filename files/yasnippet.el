@@ -2,15 +2,13 @@
 
 (require 'dropdown-list)
 
-(yas/global-mode 1)
+(yas-global-mode 1)
 
-(yas/load-directory "~/.emacs.d/vendor/yasnippet/snippets")
+(setq yas-snippet-dirs '("~/.emacs.d/vendor/yasnippet/snippets"))
 
-(setq yas/prompt-functions '(yas/ido-prompt
-							 yas/dropdown-prompt
-							 yas/completing-prompt))
+(setq yas-prompt-functions '(yas-ido-prompt))
 
 ;; Replace yasnippets's TAB
-(add-hook 'yas/minor-mode-hook
-		  (lambda () (define-key yas/minor-mode-map
-					   (kbd "TAB") 'smart-tab))) ; was yas/expand
+(add-hook 'yas-minor-mode-hook
+          (lambda () (define-key yas-minor-mode-map
+                       (kbd "TAB") 'smart-tab))) ; was yas/expand

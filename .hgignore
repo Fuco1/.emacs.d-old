@@ -17,3 +17,12 @@ files/sunrise-x-w32-addons.vbs
 tramp
 calc.el
 vendor/smartparens/.git/*
+vendor/yasnippet/yasnippet-debug.el
+vendor/yasnippet/yasnippet-tests.el
+vendor/yasnippet/.git/*
+vendor/yasnippet/.gitignore
+vendor/yasnippet/.gitmodules
+vendor/yasnippet/doc/*
+vendor/yasnippet/README.mdown
+vendor/yasnippet/README.org
+vendor/yasnippet/Rakefile
