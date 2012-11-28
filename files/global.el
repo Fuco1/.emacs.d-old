@@ -68,6 +68,8 @@
 
 (setq calendar-week-start-day 1)
 
+(setq message-log-max 10000)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Some text-mode settings
 

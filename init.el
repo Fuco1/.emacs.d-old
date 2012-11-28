@@ -26,6 +26,9 @@
 (package-initialize)
 (require 'autoinstall)
 
+;; autoloads
+(autoload 'calc-same-interface "calc" nil t)
+
 ;; load config files
 (load "files/org-mode")
 (load "files/global")
@@ -51,15 +54,15 @@
 (vendor 'haskell-mode)
 (vendor 'typopunct 'typopunct-change-language 'typopunct-mode)
 (vendor 'wc-mode)
-(vendor 'ace-jump-mode)
-(vendor 'revbufs)
-(vendor 'shell-pop)
+(vendor 'ace-jump-mode 'ace-jump-mode)
+(vendor 'revbufs 'revbufs)
+(vendor 'shell-pop 'shell-pop)
 (vendor 'golden-ratio)
 (vendor 'multiple-cursors)
-(vendor 'iy-go-to-char)
+(vendor 'iy-go-to-char 'iy-go-to-char 'iy-go-to-char-backward)
 (vendor 'sunrise-commander)
-(vendor 'change-inner)
-(vendor 'smart-forward)
+(vendor 'change-inner 'change-inner 'change-outer)
+(vendor 'smart-forward 'smart-forward 'smart-backward 'smart-up 'smart-down)
 (vendor 'smartparens)
 
 (require 'parenface)

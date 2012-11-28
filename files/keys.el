@@ -66,7 +66,7 @@
 (global-set-key (kbd "C-x C-b") 'ibuffer)
 
 ;; buffer cleanup
-(global-set-key (kbd "C-c n") 'cleanup-buffer)
+(global-set-key (kbd "C-c u") 'cleanup-buffer)
 
 ;; Window navigation
 (windmove-default-keybindings 'meta)
@@ -175,6 +175,10 @@
 (global-set-key (kbd "C-c F") 'iy-go-to-char-backward)
 (global-set-key (kbd "C-c ;") 'iy-go-to-char-continue)
 (global-set-key (kbd "C-c ,") 'iy-go-to-char-continue-backward)
+
+;;; scrollers
+(global-set-key (kbd "C-c n") 'my-scroll-up)
+(global-set-key (kbd "C-c p") 'my-scroll-down)
 
 ;; deleting stuff
 (keyboard-translate ?\C-i ?\H-i)

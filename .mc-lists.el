@@ -4,10 +4,9 @@
 (setq mc/cmds-to-run-for-all
       '(
         back-to-indentation-or-beginning
-        end-of-region
-        fill-paragraph
-        scroll-down-command
-        smart-tab
+        end-of-code-or-line
+        sp-wrap-cancel
+        sp-wrap-tag-done
         tm/pair-backspace
         tm/pair-insert
         typopunct-insert-ellipsis-or-middot
@@ -16,7 +15,7 @@
 
 (setq mc/cmds-to-run-once
       '(
-        beautify-smex
+        handle-switch-frame
         mc/mark-all-like-this-dwim
         typopunct-insert-mp
         ))

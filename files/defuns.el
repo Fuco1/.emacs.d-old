@@ -101,6 +101,28 @@ If ARG is given, then insert the result to current-buffer"
     (insert result)
       (message (format "Result: [%s] = %s" expr result)))))
 
+(defun my-scroll-down (arg)
+  "Scroll down ARG lines.  If ARG is nil, scroll 4 lines."
+  (interactive "P")
+  (let ((arg (or arg 4))
+        (cont t)
+        ev)
+    (message "%s" arg)
+    (while cont
+      (setq ev (read-event))
+      (cond
+       ((eq ev ?p)
+        (scroll-down arg))
+       ((eq ev ?n)
+        (scroll-up arg))
+       (t (setq cont nil))))))
+
+(defun my-scroll-up (arg)
+  "Scroll up ARG lines.  If ARG is nil, scroll 4 lines."
+  (interactive "P")
+  (my-scroll-down (or arg 4)))
+
+
 (defun fix-basic ()
   (interactive)
   (beginning-of-buffer)
