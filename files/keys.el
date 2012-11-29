@@ -79,6 +79,7 @@
 ;; imenu
 (global-unset-key (kbd "M-.")) ;; was Find tag
 (global-set-key (kbd "M-.") 'ido-goto-symbol)
+(global-set-key (kbd "M-,") 'find-function)
 
 ;; sexp settings
 (global-set-key (kbd "C-c e") 'eval-and-replace)

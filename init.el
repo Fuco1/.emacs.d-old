@@ -51,7 +51,6 @@
 ;; vendor
 (vendor 'smex)
 (vendor 'yasnippet)
-(vendor 'haskell-mode)
 (vendor 'typopunct 'typopunct-change-language 'typopunct-mode)
 (vendor 'wc-mode)
 (vendor 'ace-jump-mode 'ace-jump-mode)
@@ -64,8 +63,6 @@
 (vendor 'change-inner 'change-inner 'change-outer)
 (vendor 'smart-forward 'smart-forward 'smart-backward 'smart-up 'smart-down)
 (vendor 'smartparens)
-
-(require 'parenface)
 
 ;restore the s-c tabs
 (load "files/desktop")

@@ -6,8 +6,11 @@
     dash
     dired+
     expand-region
+    haskell-mode
     helm
     ido-ubiquitous
+    markdown-mode
+    markdown-mode+
     parenface
     undo-tree
     w32-browser)
