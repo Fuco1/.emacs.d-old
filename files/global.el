@@ -39,9 +39,6 @@
 ;; Autoload modes
 (add-to-list 'auto-mode-alist '("\\.md$" . markdown-mode))
 
-;; Gotta see matching parens
-(show-paren-mode t)
-
 ;; Don't truncate lines
 (setq truncate-lines t)
 (setq truncate-partial-width-windows nil)
@@ -69,6 +66,9 @@
 (setq calendar-week-start-day 1)
 
 (setq message-log-max 10000)
+
+;; cua-selection-mode for all the goodies ;)
+(cua-selection-mode t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Some text-mode settings

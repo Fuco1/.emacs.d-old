@@ -1,8 +1,7 @@
 (smartparens-global-mode t)
 
-;; pending deletion. Replace active region with input. This is
-;; virtually `delete-selection-mode' emulation.
-(sp-turn-on-delete-selection-mode)
+;; highlights matching pairs
+(show-smartparens-global-mode t)
 
 ;;; key binds
 (define-key sp-keymap (kbd "C-M-f") 'sp-forward-sexp)
@@ -19,8 +18,17 @@
 
 (define-key sp-keymap (kbd "C-M-k") 'sp-kill-sexp)
 
-;; (define-key sp-keymap (kbd "C-M-n") 'sp-next-sexp)
-;; (define-key sp-keymap (kbd "C-M-p") 'sp-previous-sexp)
+(define-key sp-keymap (kbd "M-<delete>") 'sp-unwrap-sexp)
+(define-key sp-keymap (kbd "M-<backspace>") 'sp-backward-unwrap-sexp)
+
+(define-key sp-keymap (kbd "C-<right>") 'sp-forward-slurp-sexp)
+(define-key sp-keymap (kbd "C-<left>") 'sp-forward-barf-sexp)
+(define-key sp-keymap (kbd "C-M-<left>") 'sp-backward-slurp-sexp)
+(define-key sp-keymap (kbd "C-M-<right>") 'sp-backward-barf-sexp)
+
+(define-key sp-keymap (kbd "M-D") 'sp-splice-sexp)
+(define-key sp-keymap (kbd "C-M-<delete>") 'sp-splice-sexp-killing-forward)
+(define-key sp-keymap (kbd "C-M-<backspace>") 'sp-splice-sexp-killing-backward)
 
 ;;; add new pairs
 (sp-add-pair "*" "*")
@@ -58,10 +66,11 @@
 ;;; markdown-mode
 ;; you can also use the `sp-with' macro. It will automatically add the
 ;; mode to the end of each call. How cool is that!
-(sp-with 'markdown-mode
+(sp-with '(markdown-mode rst-mode)
          (sp-add-local-pair "`" "`")
          ;; this also disables '*' in all other modes
-         (sp-add-local-allow-insert-pair "*"))
+         (sp-add-local-allow-insert-pair "*")
+         (sp-add-tag-pair "2" "**" "**" nil))
 
 ;;; tex-mode latex-mode
 (sp-with '(tex-mode latex-mode) ;; yes, this works with lists too!

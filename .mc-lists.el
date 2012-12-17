@@ -3,8 +3,8 @@
 
 (setq mc/cmds-to-run-for-all
       '(
-        back-to-indentation-or-beginning
-        end-of-code-or-line
+        end-of-region
+        sp-cua-replace-region
         sp-wrap-cancel
         sp-wrap-tag-done
         tm/pair-backspace

@@ -5,4 +5,3 @@
 (shell-pop-set-internal-mode-shell "/bin/zsh")
 (shell-pop-set-window-height 50)         ; the number as a percentage
 (shell-pop-set-window-position "bottom") ; pop-up position. (top or bottom)
-(global-set-key [f9] 'shell-pop)

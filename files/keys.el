@@ -38,6 +38,9 @@
 (global-set-key [(shift f8)]   'align-current)
 (global-set-key [(meta f8)]    'align-regexp)
 
+;; shell pop
+(global-set-key [(f9)] 'shell-pop)
+
 ;; regex search & replace
 (global-set-key [(f6)] 'replace-regexp)
 (global-set-key [(f7)] 'isearch-forward-regexp)
