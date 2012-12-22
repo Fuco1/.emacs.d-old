@@ -38,7 +38,7 @@
     (substring name 0 (match-beginning 0)))
    (t name)))
 
-(define-ibuffer-column name
+(define-ibuffer-column name-trans
   (:inline t
    :header-mouse-map ibuffer-name-header-map
    :props
@@ -53,7 +53,8 @@
        (cond ((zerop bufs) "No buffers")
          ((= 1 bufs) "1 buffer")
          (t (format "%s buffers" bufs))))))
-  (propertize (my-transform-buffer-name (buffer-name)) 'font-lock-face (ibuffer-buffer-name-face buffer mark)))
+  (propertize (my-transform-buffer-name (buffer-name))
+              'font-lock-face (ibuffer-buffer-name-face buffer mark)))
 
 (define-ibuffer-column size-h
   (:name "Size"
@@ -79,7 +80,7 @@
 ;; Modify the default ibuffer-formats
 (setq ibuffer-formats
   '((mark modified read-only
-          " " (name 25 25 :left :elide)
+          " " (name-trans 25 25 :left :elide)
           " " (size-h 9 -1 :right)
           " " (mode 16 16 :left :elide)
           " " filename-and-process)
