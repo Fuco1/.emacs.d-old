@@ -36,6 +36,9 @@
 ;; Make sure all backup files only live in one place
 (setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
 
+;; Make backups of files, even when they're in version control
+(setq vc-make-backup-files t)
+
 ;; Autoload modes
 (add-to-list 'auto-mode-alist '("\\.md$" . markdown-mode))
 
@@ -106,42 +109,3 @@
 
 ;; ... but not in Org tables
 (set-face-attribute 'org-table nil :inherit 'fixed-pitch)
-
-;; (custom-set-faces
-;;  '(variable-pitch ((t (:family "Bitstream Vera Serif")))))
-
-(setq ibuffer-saved-filter-groups
-      (quote (("default"
-               ("Org" ;; all org-related buffers
-                (mode . org-mode))
-               ("emacs-config"
-                (or (filename . ".emacs.d")
-                    (filename . ".emacs")
-                    (filename . "emacs-config")))
-               ("TeX"
-                (or (mode . tex-mode)
-                    (mode . TeX-mode)
-                    (mode . latex-mode)
-                    (mode . LaTeX-mode)
-                    (filename . ".tex")))
-               ("Web"
-                (or (mode . html-mode)
-                    (mode . css-mode)
-                    (mode . PHP-mode)))
-               ("Sunrise"
-                (or (mode . sr-mode)))
-               ("Programming" ;; prog stuff not already in MyProjectX
-                (or
-                 (mode . c-mode)
-                 (mode . perl-mode)
-                 (mode . python-mode)
-                 (mode . cc-mode)
-                 (mode . js-mode)
-                 ;; etc
-                 ))))))
-
-(defun customize-ibuffer-mode ()
-  (ibuffer-switch-to-saved-filter-groups "default")
-  (setq ibuffer-hidden-filter-groups
-        (push "Sunrise" ibuffer-hidden-filter-groups)))
-(add-hook 'ibuffer-mode-hook 'customize-ibuffer-mode)

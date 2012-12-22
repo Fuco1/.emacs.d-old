@@ -43,10 +43,10 @@
 (load "files/ispell")
 (load "files/dired")
 (load "files/markdown")
-
+(load "files/tramp")
+(load "files/ibuffer")
 (load "files/undo-tree")
 (load "files/expand-region")
-
 (load "files/emacs-lisp-mode")
 
 ;; vendor
@@ -83,6 +83,7 @@
  '(background-color "#002b36")
  '(background-mode dark)
  '(blink-cursor-mode nil)
+ '(blink-matching-paren nil)
  '(calc-settings-file "~\\.emacs.d\\my-calc.el")
  '(column-number-mode t)
  '(cursor-color "#839496")
@@ -99,6 +100,9 @@
  '(erc-timestamp-format-right " [%H:%M:%S]")
  '(foreground-color "#839496")
  '(global-undo-tree-mode t)
+ '(golden-ratio-exclude-buffer-names (quote ("*helm kill-ring*")))
+ '(ibuffer-fontification-alist (quote ((10 buffer-read-only font-lock-constant-face) (15 (and buffer-file-name (string-match ibuffer-compressed-file-name-regexp buffer-file-name)) font-lock-doc-face) (20 (string-match "^*" (buffer-name)) font-lock-keyword-face) (25 (and (string-match "^ " (buffer-name)) (null buffer-file-name)) italic) (30 (memq major-mode ibuffer-help-buffer-modes) font-lock-comment-face) (35 (memq major-mode (quote (dired-mode sr-mode))) font-lock-function-name-face))))
+ '(ibuffer-show-empty-filter-groups t)
  '(ido-ubiquitous-command-exceptions (quote (smex-major-mode-commands beautify-smex ido-goto-symbol grep-read-files highlight-phrase)))
  '(ido-ubiquitous-function-exceptions (quote (hi-lock-read-face-name)))
  '(ido-ubiquitous-mode t)
@@ -107,6 +111,7 @@
  '(menu-bar-mode nil)
  '(sp-autoinsert-quote-if-followed-by-closing-pair nil)
  '(sp-ignore-modes-list (quote (calc-mode dired-mode ibuffer-mode minibuffer-inactive-mode sr-mode help-mode)))
+ '(sp-navigate-consider-symbols t)
  '(sr-attributes-display-mask (quote (nil nil nil nil t t t)))
  '(sr-listing-switches "-alh")
  '(sr-popviewer-enabled nil)
