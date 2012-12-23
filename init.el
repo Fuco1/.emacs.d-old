@@ -84,6 +84,7 @@
  '(background-mode dark)
  '(blink-cursor-mode nil)
  '(blink-matching-paren nil)
+ '(bmkp-last-as-first-bookmark-file "~\\.emacs.d\\bookmarks")
  '(calc-settings-file "~\\.emacs.d\\my-calc.el")
  '(column-number-mode t)
  '(cursor-color "#839496")

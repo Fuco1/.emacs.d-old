@@ -8,7 +8,10 @@
 
 (setq yas-prompt-functions '(yas-ido-prompt))
 
+(defun my-yas-startup ()
+  ;; stupid yasnippet :/ we define <tab> behaviour elsewhere
+  (define-key yas-minor-mode-map [(tab)] nil)
+  (define-key yas-minor-mode-map (kbd "TAB") nil))
+
 ;; Replace yasnippets's TAB
-(add-hook 'yas-minor-mode-hook
-          (lambda () (define-key yas-minor-mode-map
-                       (kbd "TAB") 'smart-tab))) ; was yas/expand
+(add-hook 'yas-minor-mode-hook 'my-yas-startup) ; was yas/expand

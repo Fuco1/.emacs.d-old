@@ -30,9 +30,9 @@
 (define-key sp-keymap (kbd "C-M-<delete>") 'sp-splice-sexp-killing-forward)
 (define-key sp-keymap (kbd "C-M-<backspace>") 'sp-splice-sexp-killing-backward)
 
-(define-key input-decode-map (kbd "C-[") (kbd "H-["))
-(define-key sp-keymap (kbd "C-]") 'sp-select-next-thing)
-(define-key sp-keymap (kbd "H-[") 'sp-select-previous-thing)
+(define-key sp-keymap (kbd "C-]") 'sp-select-next-thing-exchange)
+(define-key sp-keymap (kbd "C-<left_bracket>") 'sp-select-previous-thing)
+(define-key sp-keymap (kbd "C-M-]") 'sp-select-next-thing)
 
 ;;; add new pairs
 (sp-add-pair "*" "*")

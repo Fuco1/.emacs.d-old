@@ -1,3 +1,4 @@
+(require 'ibuffer)
 ;; filter groups
 (setq ibuffer-saved-filter-groups
       (quote (("default"

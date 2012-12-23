@@ -21,7 +21,8 @@ function on `my-emacs-lisp-open-line-list'."
   (when (and (save-excursion
                (forward-char)
                (backward-sexp)
-               (member (car (sexp-at-point)) my-emacs-lisp-open-line-list))
+               (when (listp (sexp-at-point))
+                 (memq (car (sexp-at-point)) my-emacs-lisp-open-line-list)))
              (thing-at-point 'sexp)
              (eq (following-char) ?\)))
     (newline)

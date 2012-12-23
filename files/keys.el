@@ -11,6 +11,22 @@
       w32-rwindow-modifier 'super ; Right Windows key
       w32-apps-modifier 'hyper) ; Menu key
 
+;;; stupid terminal key sequence remapping
+(define-key key-translation-map [return] [?\r])
+(define-key key-translation-map [?\C-\m] [(control m-key)])
+(define-key function-key-map [return] nil)
+(define-key function-key-map [?\r] nil)
+
+(define-key key-translation-map [tab] [?\t])
+(define-key key-translation-map [?\C-\i] [(control i-key)])
+(define-key function-key-map [tab] nil)
+(define-key function-key-map [?\t] nil)
+
+(define-key key-translation-map [escape] [?\e])
+(define-key input-decode-map [?\C-\[] [(control left_bracket)])
+(define-key function-key-map [escape] nil)
+(define-key function-key-map [?\e] nil)
+
 ;; Url & Browsing
 (global-set-key (kbd "C-c C-w") 'browse-url-at-point)
 (global-set-key (kbd "C-c w") 'browse-url)
@@ -185,8 +201,7 @@
 (global-set-key (kbd "C-c p") 'my-scroll-down)
 
 ;; deleting stuff
-(keyboard-translate ?\C-i ?\H-i)
-(global-set-key (kbd "H-i") 'backward-kill-word)
+(global-set-key (kbd "C-<i-key>") 'backward-kill-word)
 
 ;; keys for specific modes
 (defun add-html-binding ()
