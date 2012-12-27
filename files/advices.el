@@ -1,4 +1,4 @@
-(defadvice sgml-delete-tag (after reindent-buffer activate)
+(defadvice sgml-delete-tag (after reindent-buffer)
   (cleanup-buffer))
 
 (defadvice sr-tabs-add (after remove-sunrise-from-name activate)

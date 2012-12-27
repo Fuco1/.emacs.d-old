@@ -37,6 +37,7 @@
 ;;; add new pairs
 (sp-add-pair "*" "*")
 (sp-add-pair "$" "$")
+(sp-add-pair "<" ">") ;; in html only!
 
 ;;; global
 (sp-add-ban-insert-pair-in-string "'")
@@ -79,3 +80,11 @@
 ;;; tex-mode latex-mode
 (sp-with '(tex-mode latex-mode) ;; yes, this works with lists too!
          (sp-add-local-allow-insert-pair "$"))
+
+;;; python-mode
+(sp-with 'python-mode
+         (sp-add-local-ban-insert-pair "`"))
+
+;;; html-mode
+(sp-with '(html-mode sgml-mode)
+         (sp-add-local-allow-insert-pair "<"))

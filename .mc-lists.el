@@ -4,6 +4,7 @@
 (setq mc/cmds-to-run-for-all
       '(
         end-of-region
+        my-emacs-lisp-open-line
         sp-cua-replace-region
         sp-wrap-cancel
         sp-wrap-tag-done
@@ -15,6 +16,7 @@
 
 (setq mc/cmds-to-run-once
       '(
+        eval-and-replace
         handle-switch-frame
         mc/mark-all-like-this-dwim
         typopunct-insert-mp

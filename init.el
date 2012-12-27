@@ -48,6 +48,7 @@
 (load "files/undo-tree")
 (load "files/expand-region")
 (load "files/emacs-lisp-mode")
+(load "files/multi-web-mode")
 
 ;; vendor
 (vendor 'smex)
@@ -110,6 +111,8 @@
  '(imenu-auto-rescan t)
  '(ls-lisp-dirs-first t)
  '(menu-bar-mode nil)
+ '(sp-autoescape-string-quote-if-empty (quote (python-mode)))
+ '(sp-autoinsert-inhibit-functions nil)
  '(sp-autoinsert-quote-if-followed-by-closing-pair nil)
  '(sp-ignore-modes-list (quote (calc-mode dired-mode ibuffer-mode minibuffer-inactive-mode sr-mode help-mode)))
  '(sp-navigate-consider-symbols t)
@@ -120,7 +123,7 @@
  '(sr-tabs-max-tabsize 18)
  '(sr-traditional-other-window nil)
  '(sr-windows-locked nil)
- '(text-mode-hook (quote (init-text-based-modes text-mode-hook-identify)))
+ '(text-mode-hook (quote (text-mode-hook-identify)))
  '(tool-bar-mode nil)
  '(tooltip-mode nil))
 (custom-set-faces

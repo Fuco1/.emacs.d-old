@@ -7,7 +7,9 @@
                ("emacs-config"
                 (or (filename . ".emacs.d")))
                ("emacs"
-                (or (mode . emacs-lisp-mode)))
+                (or (mode . emacs-lisp-mode)
+                    (mode . lisp-interaction-mode)
+                    (mode . inferior-emacs-lisp-mode)))
                ("TeX"
                 (or (mode . tex-mode)
                     (mode . TeX-mode)
@@ -16,7 +18,8 @@
                ("Web"
                 (or (mode . html-mode)
                     (mode . css-mode)
-                    (mode . PHP-mode)))
+                    (mode . php-mode)
+                    (mode . js-mode)))
                ("Sunrise"
                 (or (mode . sr-mode)))
                ("Tramp"
@@ -27,7 +30,6 @@
                  (mode . perl-mode)
                  (mode . python-mode)
                  (mode . cc-mode)
-                 (mode . js-mode)
                  ;; etc
                  ))))))
 

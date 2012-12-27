@@ -81,8 +81,7 @@
 
 (setq-default cursor-type 'box)
 ;; variable width font in text buffers ...
-(dolist (hook '(text-mode-hook
-                LaTeX-mode-hook
+(dolist (hook '(LaTeX-mode-hook
                 org-mode-hook
                 markdown-mode-hook
                 gnus-article-mode-hook))
