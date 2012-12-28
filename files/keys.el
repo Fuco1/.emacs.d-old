@@ -101,7 +101,7 @@
 (global-set-key (kbd "M-,") 'find-function)
 
 ;; sexp settings
-(global-set-key (kbd "C-c e") 'eval-and-replace)
+(global-set-key (kbd "C-x e") 'eval-and-replace)
 
 (global-set-key (kbd "M-y") 'helm-show-kill-ring)
 
@@ -223,3 +223,6 @@
 (global-set-key (kbd "<pause>") 'calc-dispatch)
 (global-set-key (kbd "<home>") 'calc-same-interface)
 (global-set-key (kbd "C-c c") 'my-mini-calc)
+
+;; you can select the key you prefer to (hyperfind!)
+(define-key global-map (kbd "H-f") 'ace-jump-mode)

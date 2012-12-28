@@ -51,7 +51,8 @@
              (sp-add-local-ban-insert-pair 'tex-mode)
              (sp-add-local-ban-insert-pair 'latex-mode)
              (sp-add-local-ban-insert-pair 'text-mode)
-             (sp-add-local-ban-insert-pair 'log-edit-mode))
+             (sp-add-local-ban-insert-pair 'log-edit-mode)
+             (sp-add-local-ban-insert-pair 'org-mode))
 
 ;; now, we could've also done just this:
 ;; (sp-add-local-ban-insert-pair "'"

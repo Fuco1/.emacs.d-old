@@ -101,6 +101,10 @@ If ARG is given, then insert the result to current-buffer"
     (insert result)
       (message (format "Result: [%s] = %s" expr result)))))
 
+(defsubst buffer-narrowed-p ()
+  "Return non-nil if the current buffer is narrowed."
+  (/= (- (point-max) (point-min)) (buffer-size)))
+
 (defun my-scroll-down (arg)
   "Scroll down ARG lines.  If ARG is nil, scroll 4 lines."
   (interactive "P")

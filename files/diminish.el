@@ -1,0 +1,5 @@
+(require 'diminish)
+(diminish 'yas-minor-mode)
+(diminish 'undo-tree-mode)
+(diminish 'visual-line-mode)
+(diminish 'buffer-face-mode)
