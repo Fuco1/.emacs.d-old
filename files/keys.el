@@ -60,6 +60,14 @@
 ;; regex search & replace
 (global-set-key [(f6)] 'replace-regexp)
 (global-set-key [(f7)] 'isearch-forward-regexp)
+(define-key isearch-mode-map (kbd "C-v") 'my-isearch-forward-to-beginning)
+(defun my-isearch-forward-to-beginning ()
+  "Repeat the forward search and place the point before the
+matched text."
+  (interactive)
+  (isearch-repeat 'forward)
+  (goto-char isearch-other-end))
+
 
 ;; map the window manipulation keys to meta 0, 1, 2, o
 (global-set-key (kbd "M-3") 'split-window-horizontally) ; was digit-argument
