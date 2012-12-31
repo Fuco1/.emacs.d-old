@@ -2,4 +2,5 @@
 (diminish 'yas-minor-mode)
 (diminish 'undo-tree-mode)
 (diminish 'visual-line-mode)
-(diminish 'buffer-face-mode)
+(eval-after-load "face-remap"
+  '(diminish 'buffer-face-mode))

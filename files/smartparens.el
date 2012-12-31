@@ -80,7 +80,8 @@
 
 ;;; tex-mode latex-mode
 (sp-with '(tex-mode latex-mode) ;; yes, this works with lists too!
-         (sp-add-local-allow-insert-pair "$"))
+         (sp-add-local-allow-insert-pair "$")
+         (sp-add-tag-pair "i" "\"<" "\">" nil))
 
 ;;; python-mode
 (sp-with 'python-mode

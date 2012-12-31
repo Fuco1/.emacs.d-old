@@ -29,7 +29,7 @@
    ;; display nothing.
    (:propertize (:eval
                  (when buffer-file-name
-                   (abbreviate-file-name default-directory)))
+                   (my-abbreviate-file-name default-directory)))
                 face mode-line-secondary)
 
    ;; buffer name
@@ -60,6 +60,8 @@
                         (line-number-at-pos (point-max)))))
         ")")
        ))
+
+   " (" mode-line-mule-info ")"
    ))
 
 (defface mode-line-secondary
@@ -69,3 +71,19 @@
 (defface mode-line-modified-status
   '((t (:inherit font-lock-warning-face :weight normal)))
   "Face used for modified status in mode line.")
+
+(setq my-abbrev-file-name-alist
+      `((,abbreviated-home-dir . "~/")
+        ("^d:/Languages/" . ":L:")
+        ("^d:/progs/emacs-24.1/lisp/" . ":E:")
+        ("^d:/download/fic/" . ":FIC:")
+        ("~/.emacs.d/elpa/" . ":ELPA:")
+        ("~/.emacs.d/" . ":ED:")))
+
+(defun my-abbreviate-file-name (filename)
+  "Shorten the FILENAME or directory according to
+`my-abbrev-file-name-alist'. "
+  (dolist (p my-abbrev-file-name-alist)
+    (when (string-match (car p) filename)
+      (setq filename (replace-match (cdr p) nil nil filename))))
+  filename)

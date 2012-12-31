@@ -1,8 +1,8 @@
 ;; insert a footnote to the text. The footnote is in a format
 ;; [i] Text of the footnote...
 ;; It will search for the first [i] in the text body and place \footnote{...} there
-(fset 'fninsert
-   [?\C-\M-f ?\C-f ?\C-  ?\M-e ?\M-w ?\M-a ?\C-s ?\C-w ?\C-w ?\C-s ?\C-s ?\C-m ?\C-  ?\C-\M-b delete ?\M-x ?f ?n ?o ?t ?e return])
+(setq last-kbd-macro
+   [?\C-\M-f ?\C-f ?\C-  ?\M-e ?\M-w ?\M-` ?\C-a ?\C-s ?\C-w ?\C-w ?\C-r ?\C-r ?\C-\] delete ?\M-x ?f ?n ?o ?t ?e return])
 
 (defun fnote ()
   (interactive)

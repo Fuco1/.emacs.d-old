@@ -12,9 +12,8 @@
                     (mode . inferior-emacs-lisp-mode)))
                ("TeX"
                 (or (mode . tex-mode)
-                    (mode . TeX-mode)
-                    (mode . latex-mode)
-                    (mode . LaTeX-mode)))
+                    (mode . plain-tex-mode)
+                    (mode . latex-mode)))
                ("Web"
                 (or (mode . html-mode)
                     (mode . css-mode)
