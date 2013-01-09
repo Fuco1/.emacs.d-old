@@ -7,6 +7,7 @@
 (defadvice kill-line (before kill-line-autoreindent activate)
   (if (member major-mode
               '(
+                lisp-interaction-mode
                 emacs-lisp-mode
                 scheme-mode
                 lisp-mode
@@ -22,6 +23,7 @@
 (defadvice kill-visual-line (before kill-line-autoreindent activate)
   (if (member major-mode
               '(
+                lisp-interaction-mode
                 emacs-lisp-mode
                 scheme-mode
                 lisp-mode

@@ -29,6 +29,7 @@
 (define-key sp-keymap (kbd "M-D") 'sp-splice-sexp)
 (define-key sp-keymap (kbd "C-M-<delete>") 'sp-splice-sexp-killing-forward)
 (define-key sp-keymap (kbd "C-M-<backspace>") 'sp-splice-sexp-killing-backward)
+(define-key sp-keymap (kbd "C-S-<backspace>") 'sp-splice-sexp-killing-around)
 
 (define-key sp-keymap (kbd "C-]") 'sp-select-next-thing-exchange)
 (define-key sp-keymap (kbd "C-<left_bracket>") 'sp-select-previous-thing)
@@ -57,17 +58,13 @@
 ;; now, we could've also done just this:
 ;; (sp-add-local-ban-insert-pair "'"
 ;;                               '(markdown-mode
-;;                                 tex-mode
-;;                                 latex-mode
-;;                                 text-mode
-;;                                 log-edit-mode))
+;;                                 ...))
 ;; but I wanted to show you how to use the sp-with-tag macro :)
 
-;;; emacs-lisp-mode
-(sp-add-local-ban-insert-pair "'" 'emacs-lisp-mode)
-(sp-add-local-ban-insert-pair "'" 'inferior-emacs-lisp-mode)
-(sp-add-local-ban-insert-pair-in-code "`" 'emacs-lisp-mode)
-(sp-add-local-ban-insert-pair-in-code "`" 'inferior-emacs-lisp-mode)
+;;; emacs-lisp-mode(s)
+(sp-with '(emacs-lisp-mode inferior-emacs-lisp-mode lisp-interaction-mode)
+         (sp-add-local-ban-insert-pair "'")
+         (sp-add-local-ban-insert-pair-in-code "`"))
 
 ;;; markdown-mode
 ;; you can also use the `sp-with' macro. It will automatically add the
@@ -76,7 +73,8 @@
          (sp-add-local-pair "`" "`")
          ;; this also disables '*' in all other modes
          (sp-add-local-allow-insert-pair "*")
-         (sp-add-tag-pair "2" "**" "**" nil))
+         (sp-add-tag-pair "2" "**" "**" nil)
+         (sp-add-tag-pair "s" "```scheme" "```" nil))
 
 ;;; tex-mode latex-mode
 (sp-with '(tex-mode latex-mode) ;; yes, this works with lists too!

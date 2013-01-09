@@ -147,10 +147,11 @@ is extension of default `tango-dark' face.")
    `(sr-active-path-face ((,class (:background ,alum-6 :foreground ,blue-1))))
    `(sr-passive-path-face ((,class (:background ,alum-6 :foreground ,alum-4))))
    `(sr-editing-path-face ((,class (:background "red" :foreground "yellow")))) ;; what is this?
-   `(sr-highlight-path-face ((,class (:background ,alum-7 :foreground ,blue-1)))) ;; what is this?
+   ;; hilight current directory path at the top
+   `(sr-highlight-path-face ((,class (:background ,alum-7 :foreground ,blue-1))))
    `(sr-mirror-path-face ((,class (:background "blue" :foreground "yellow")))) ;; what is this?
-   `(sr-tabs-active-face ((,class (:inherit default :foreground ,red-0))))
-   `(sr-tabs-inactive-face ((,class (:inherit sr-tabs-active-face :foreground ,orange-1))))
+   `(sr-tabs-active-face ((,class (:foreground ,red-0))))
+   `(sr-tabs-inactive-face ((,class (:foreground ,orange-1))))
    ;; Ido faces
    `(ido-first-match ((,class :foreground ,choc-1 :weight bold)))
    `(ido-only-match ((,class :foreground ,cham-2)))
@@ -163,8 +164,9 @@ is extension of default `tango-dark' face.")
    `(fixed-pitch ((,class (:height 100 :family "Consolas"))))
    `(hl-line ((,class (:inherit nil :background ,alum-7))))
    `(markdown-pre-face ((,class (:inherit font-lock-constant-face :family "Consolas"))))
+   `(markdown-inline-code-face ((,class (:inherit markdown-pre-face))))
    `(org-table ((,class (:inherit fixed-pitch :foreground ,blue-0))))
-   `(paren-face ((,class (:foreground ,plum-2))))
+   `(paren-face ((,class (:foreground ,alum-4))))
    `(variable-pitch ((,class (:height 120 :family "Verdana")))))
 
   (custom-theme-set-variables

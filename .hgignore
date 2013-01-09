@@ -31,3 +31,7 @@ vendor/smartparens/smartparens-pkg.el
 vendor/smartparens/smartparens.elc
 vendor/smartparens/smartparens.org
 vendor/smartparens/talk.org
+ac-comphist.dat
+test.el
+vendor/smartparens.wiki/*
+vendor/smartparens/smartparens-ui.el

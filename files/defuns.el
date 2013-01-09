@@ -15,11 +15,12 @@
      ((file-exists-p suffix)  (set 'found t)))
     (when found
       (if autoload-functions
-          (progn (dolist (autoload-function autoload-functions)
-                   (autoload autoload-function (symbol-name library) nil t))
-                 (eval-after-load library
-                   `(when (file-exists-p (concat ,personal ".el"))
-                      (load ,personal))))
+          (progn
+            (dolist (autoload-function autoload-functions)
+              (autoload autoload-function (symbol-name library) nil t))
+            (eval-after-load library
+              `(when (file-exists-p (concat ,personal ".el"))
+                 (load ,personal))))
         (require library)
         (when (file-exists-p (concat personal ".el"))
           (load personal))))))
@@ -187,6 +188,8 @@ If ARG is given, then insert the result to current-buffer"
   (beginning-of-buffer) ; fix the hyphen before emph end
   (replace-regexp "\\([^-]\\)-}" "\\1---}")
   (beginning-of-buffer)
+  (query-replace-regexp "- " "---")
+  (beginning-of-buffer)
   (replace-regexp "!!+" "!")
   (beginning-of-buffer)
   (replace-regexp "\\?\\?+" "?")
@@ -252,6 +255,8 @@ If ARG is given, then insert the result to current-buffer"
   (replace-regexp "&bdquo;" "„")
   (beginning-of-buffer)
   (replace-regexp "&ldquo;" "“")
+  (beginning-of-buffer)
+  (replace-regexp "&rdquo;" "”")
   (beginning-of-buffer)
   (replace-regexp "&#39;" "'")
   (beginning-of-buffer)
