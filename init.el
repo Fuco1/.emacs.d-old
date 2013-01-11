@@ -30,6 +30,8 @@
 ;; autoloads
 (autoload 'calc-same-interface "calc" nil t)
 (autoload 'dired-w32-browser "w32-browser" nil t)
+(autoload 'zap-up-to-char "misc"
+  "Kill up to, but not including ARGth occurrence of CHAR." t)
 
 ;; load config files
 (load "files/org-mode")
@@ -40,6 +42,7 @@
 (load "files/advices")
 (load "files/macros")
 (load "files/keys")
+(load "files/isearch")
 (load "files/tabs")
 (load "files/ido")
 (load "files/ispell")
