@@ -5,6 +5,7 @@
       '(
         end-of-region
         my-emacs-lisp-open-line
+        smart-tab
         sp-cua-replace-region
         sp-wrap-cancel
         sp-wrap-tag-done
