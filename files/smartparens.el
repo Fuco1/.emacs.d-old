@@ -35,6 +35,9 @@
 (define-key sp-keymap (kbd "C-<left_bracket>") 'sp-select-previous-thing)
 (define-key sp-keymap (kbd "C-M-]") 'sp-select-next-thing)
 
+(define-key sp-keymap (kbd "M-F") 'sp-forward-symbol)
+(define-key sp-keymap (kbd "M-B") 'sp-backward-symbol)
+
 ;;; add new pairs
 (sp-add-pair "*" "*")
 (sp-add-pair "$" "$")
