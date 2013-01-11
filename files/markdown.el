@@ -13,8 +13,12 @@
 (eval-after-load "markdown-mode"
   '(progn
      (define-key markdown-mode-map (kbd "S-<return>") 'my-markdown-newline)
-     (setq imenu-generic-expression markdown-imenu-generic-expression)
      ))
+
+(defun my-markdown-init ()
+  (setq imenu-generic-expression markdown-imenu-generic-expression))
+
+(add-hook 'markdown-mode-hook 'my-markdown-init)
 
 (defun my-markdown-newline ()
   "If we're inside a list, jump to next line and open up a new
@@ -30,6 +34,13 @@ number."
         (insert "* ")
       (setq n (1+ (string-to-int (match-string 0))))
       (insert (concat (int-to-string n) ". ")))))
+
+(defun -repeat (n x)
+  "Return a list with X repeated N times.
+Returns nil if N is less than 1."
+  (let (ret)
+    (--dotimes n (!cons x ret))
+    ret))
 
 (defun my-markdown-toc ()
   "Generate table of content from # to ####### headers."
