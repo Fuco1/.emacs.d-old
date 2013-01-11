@@ -27,6 +27,8 @@
  '(ido-ubiquitous-function-exceptions (quote (hi-lock-read-face-name)))
  '(ido-ubiquitous-mode t)
  '(imenu-auto-rescan t)
+ '(ispell-personal-dictionary "~/.emacs.d/.ispell")
+ '(ispell-program-name "d:\\progs\\Aspell\\bin\\aspell.exe")
  '(ls-lisp-dirs-first t)
  '(markdown-link-space-sub-char "-")
  '(sp-autoescape-string-quote-if-empty (quote (python-mode)))

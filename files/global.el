@@ -52,9 +52,6 @@
 ;; Trash can support
 (setq delete-by-moving-to-trash t)
 
-;; zap-up-to-char, forward-to-word, backward-to-word, etc
-(require 'misc)
-
 ;; Syntax hilight
 (global-font-lock-mode t)
 (setq font-lock-maximum-decoration t)
