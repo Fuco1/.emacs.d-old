@@ -57,18 +57,6 @@
 ;; shell pop
 (global-set-key [(f9)] 'shell-pop)
 
-;; regex search & replace
-(global-set-key [(f6)] 'replace-regexp)
-(global-set-key [(f7)] 'isearch-forward-regexp)
-(define-key isearch-mode-map (kbd "C-v") 'my-isearch-forward-to-beginning)
-(defun my-isearch-forward-to-beginning ()
-  "Repeat the forward search and place the point before the
-matched text."
-  (interactive)
-  (isearch-repeat 'forward)
-  (goto-char isearch-other-end))
-
-
 ;; map the window manipulation keys to meta 0, 1, 2, o
 (global-set-key (kbd "M-3") 'split-window-horizontally) ; was digit-argument
 (global-set-key (kbd "M-2") 'split-window-vertically)   ; was digit-argument
@@ -234,3 +222,7 @@ matched text."
 
 ;; you can select the key you prefer to (hyperfind!)
 (define-key global-map (kbd "H-f") 'ace-jump-mode)
+
+;; zapping
+(global-set-key (kbd "M-z") 'zap-up-to-char)
+(global-set-key (kbd "M-Z") 'zap-to-char)
