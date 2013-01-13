@@ -1,3 +1,11 @@
+(defface markdown-language-keyword-face
+  '((t (:inherit font-lock-keyword-face :family "Consolas")))
+  "Face for langauge identifier in 'pre' text."
+  :group 'markdown-faces)
+
+(defvar markdown-language-keyword-face 'markdown-language-keyword-face
+  "Face for language identifier in 'pre' text.")
+
 (setq markdown-imenu-generic-expression
       '(("title"  "^\\(.*\\)[\n]=+$" 1)
         ("h2-"    "^\\(.*\\)[\n]-+$" 1)
@@ -10,15 +18,35 @@
         ("fn"     "^\\[\\^\\(.*\\)\\]" 1)
         ))
 
-(eval-after-load "markdown-mode"
-  '(progn
-     (define-key markdown-mode-map (kbd "S-<return>") 'my-markdown-newline)
-     ))
-
 (defun my-markdown-init ()
   (setq imenu-generic-expression markdown-imenu-generic-expression))
 
 (add-hook 'markdown-mode-hook 'my-markdown-init)
+
+(eval-after-load "markdown-mode"
+  '(progn
+     (define-key markdown-mode-map (kbd "S-<return>") 'my-markdown-newline)
+     ;; add github flavored code block fontification
+     (font-lock-add-keywords 'markdown-mode '((markdown-match-quoted-code-blocks
+                                               .
+                                               ((0 markdown-pre-face t t)
+                                                (1 markdown-language-keyword-face t t)
+                                                (2 markdown-pre-face t t)
+                                                ))))
+     ))
+
+(defun markdown-match-quoted-code-blocks (last)
+  "Match quoted code blocks from the point to LAST."
+  (cond ((search-forward-regexp "^\\(```\\).*$" last t)
+         (beginning-of-line)
+         (let ((beg (point))
+               (end (progn (end-of-line) (point))))
+           (forward-line)
+           (cond ((search-forward-regexp (match-string 1) last t)
+                  (set-match-data (list beg (+ beg 3) (+ beg 3) end (1+ end) (point)))
+                  t)
+                 (t nil))))
+        (t nil)))
 
 (defun my-markdown-newline ()
   "If we're inside a list, jump to next line and open up a new
