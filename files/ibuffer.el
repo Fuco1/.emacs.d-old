@@ -5,7 +5,12 @@
                ("Org" ;; all org-related buffers
                 (mode . org-mode))
                ("emacs-config"
-                (or (filename . ".emacs.d")))
+                (or (predicate
+                     .
+                     (let ((bfn (buffer-file-name (current-buffer))))
+                       (when bfn
+                         (and (string-match-p "\\.emacs\\.d" bfn)
+                              (eq major-mode 'emacs-lisp-mode)))))))
                ("emacs"
                 (or (mode . emacs-lisp-mode)
                     (mode . lisp-interaction-mode)
@@ -14,6 +19,8 @@
                 (or (mode . tex-mode)
                     (mode . plain-tex-mode)
                     (mode . latex-mode)))
+               ("Markdown" (or (mode . markdown-mode)
+                               (mode . gfm-mode)))
                ("Web"
                 (or (mode . html-mode)
                     (mode . css-mode)
