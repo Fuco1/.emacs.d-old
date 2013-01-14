@@ -40,7 +40,7 @@
 (setq vc-make-backup-files t)
 
 ;; Autoload modes
-(add-to-list 'auto-mode-alist '("\\.md$" . markdown-mode))
+(add-to-list 'auto-mode-alist '("\\.md$" . gfm-mode))
 
 ;; Don't truncate lines
 (setq truncate-lines t)
