@@ -32,7 +32,6 @@
  '(ls-lisp-dirs-first t)
  '(markdown-link-space-sub-char "-")
  '(sp-autoescape-string-quote-if-empty (quote (python-mode)))
- '(sp-autoinsert-quote-if-followed-by-closing-pair nil)
  '(sp-ignore-modes-list (quote (calc-mode dired-mode ibuffer-mode minibuffer-inactive-mode sr-mode help-mode)))
  '(sp-navigate-consider-symbols t)
  '(sr-attributes-display-mask (quote (nil nil nil nil t t t)))

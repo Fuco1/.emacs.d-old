@@ -3,6 +3,7 @@
 
 (setq mc/cmds-to-run-for-all
       '(
+        cua-delete-region
         end-of-region
         my-emacs-lisp-open-line
         smart-tab

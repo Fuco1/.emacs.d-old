@@ -31,3 +31,4 @@ test.el
 vendor/smartparens.wiki/*
 vendor/smartparens/*
 .ispell
+vendor/markdown-mode/*
