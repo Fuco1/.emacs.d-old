@@ -48,11 +48,12 @@
 ;;; markdown-mode
 (sp-add-pair "*" "*")
 
-(sp-with '(markdown-mode rst-mode)
+(sp-with '(markdown-mode gfm-mode rst-mode)
   ;; this also disables '*' in all other modes
   (sp-add-local-allow-insert-pair "*")
   (sp-add-tag-pair "2" "**" "**" nil)
-  (sp-add-tag-pair "s" "```scheme" "```" nil))
+  (sp-add-tag-pair "s" "```scheme" "```" nil)
+  (sp-add-tag-pair "<"  "<_>" "</_>" 'sp-match-sgml-tags))
 
 ;;; tex-mode latex-mode
 (sp-with '(tex-mode plain-tex-mode latex-mode)
