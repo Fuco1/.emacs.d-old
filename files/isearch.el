@@ -5,9 +5,9 @@ matched text."
   (isearch-repeat 'forward)
   (goto-char isearch-other-end))
 
-(defun my-isearch-kill-match (&optional arg)
-  "Kill the last matched text."
-  (interactive "p")
+(defun my-isearch-kill-match ()
+  "Kill the text last matched by isearch."
+  (interactive)
   (isearch-exit)
   (kill-region (point) isearch-other-end))
 
