@@ -1,9 +1,13 @@
+;;;;;;;;;
+;; global
 (smartparens-global-mode t)
 
 ;; highlights matching pairs
 (show-smartparens-global-mode t)
 
-;;; key binds
+;;;;;;;;;;;;;;;;;;;;;;;;
+;; keybinding management
+
 (define-key sp-keymap (kbd "C-M-f") 'sp-forward-sexp)
 (define-key sp-keymap (kbd "C-M-b") 'sp-backward-sexp)
 
@@ -38,50 +42,20 @@
 (define-key sp-keymap (kbd "M-F") 'sp-forward-symbol)
 (define-key sp-keymap (kbd "M-B") 'sp-backward-symbol)
 
-;;; add new pairs
-(sp-add-pair "*" "*")
-(sp-add-pair "$" "$")
-(sp-add-pair "<" ">") ;; in html only!
-
-;;; global
-(sp-add-ban-insert-pair-in-string "'")
-
-;; you can also use the `sp-with-tag' macro. It will automatically add
-;; the tag to each function. Use this only with functions where the
-;; first argument is the opening pair! Here, we want to disable ' pair
-;; in a bunch of text modes
-(sp-with-tag "'"
-  (sp-add-local-ban-insert-pair 'markdown-mode)
-  (sp-add-local-ban-insert-pair 'tex-mode)
-  (sp-add-local-ban-insert-pair 'latex-mode)
-  (sp-add-local-ban-insert-pair 'text-mode)
-  (sp-add-local-ban-insert-pair 'log-edit-mode)
-  (sp-add-local-ban-insert-pair 'org-mode))
-
-;; now, we could've also done just this:
-;; (sp-add-local-ban-insert-pair "'"
-;;                               '(markdown-mode
-;;                                 ...))
-;; but I wanted to show you how to use the sp-with-tag macro :)
-
-;;; emacs-lisp-mode(s)
-(sp-with '(emacs-lisp-mode inferior-emacs-lisp-mode lisp-interaction-mode)
-  (sp-add-local-ban-insert-pair "'")
-  (sp-add-local-ban-insert-pair-in-code "`"))
+;;;;;;;;;;;;;;;;;;
+;; pair management
 
 ;;; markdown-mode
-;; you can also use the `sp-with' macro. It will automatically add the
-;; mode to the end of each call. How cool is that!
+(sp-add-pair "*" "*")
+
 (sp-with '(markdown-mode rst-mode)
-  (sp-add-local-pair "`" "`")
   ;; this also disables '*' in all other modes
   (sp-add-local-allow-insert-pair "*")
   (sp-add-tag-pair "2" "**" "**" nil)
   (sp-add-tag-pair "s" "```scheme" "```" nil))
 
 ;;; tex-mode latex-mode
-(sp-with '(tex-mode plain-tex-mode latex-mode) ;; yes, this works with lists too!
-  (sp-add-local-allow-insert-pair "$")
+(sp-with '(tex-mode plain-tex-mode latex-mode)
   (sp-add-tag-pair "i" "\"<" "\">" nil))
 
 ;;; python-mode
@@ -89,11 +63,14 @@
   (sp-add-local-ban-insert-pair "`"))
 
 ;;; html-mode
+(sp-add-pair "<" ">") ;; in html only!
 (sp-with '(html-mode sgml-mode)
   (sp-add-local-allow-insert-pair "<"))
 
-;;; custom defuns & macros
+;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Custom defuns and macros
 (defun my-wrap-with-paren (&optional arg)
+  "Select ARG next things and wrap them with a () pair."
   (interactive "p")
   (sp-select-next-thing-exchange arg)
   (execute-kbd-macro (kbd "(")))
