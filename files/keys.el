@@ -98,6 +98,7 @@
 
 ;; sexp settings
 (global-set-key (kbd "C-x e") 'eval-and-replace)
+(global-set-key (kbd "C-;") 'eval-expression)
 
 (global-set-key (kbd "M-y") 'helm-show-kill-ring)
 
@@ -185,6 +186,7 @@
 ;; ret from the end only
 (global-set-key (kbd "RET") 'open-next-line)
 (global-set-key (kbd "C-o") 'vi-open-next-line)
+(global-set-key (kbd "C-S-o") 'forward-line-and-indent)
 
 ;; go to char, also mapped to a keychord df
 (global-set-key (kbd "C-c f") 'iy-go-to-char)

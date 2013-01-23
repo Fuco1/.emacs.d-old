@@ -37,6 +37,11 @@ to the active mode"
     (next-line 1)
     (indent-according-to-mode)))
 
+(defun forward-line-and-indent (arg)
+  (interactive "p")
+  (forward-line arg)
+  (indent-according-to-mode))
+
 (defun forward-paragraph-select ()
   "Set the active region from point to end of current paragraph"
   (interactive)
