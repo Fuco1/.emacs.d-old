@@ -31,6 +31,7 @@ function on `my-emacs-lisp-open-line-list'."
 
 (defun my-emacs-lisp-init ()
   (define-key emacs-lisp-mode-map (kbd "RET") 'my-emacs-lisp-open-line)
-  (define-key emacs-lisp-mode-map (kbd "M-RET") 'open-next-line))
+  (define-key emacs-lisp-mode-map (kbd "M-RET") 'open-next-line)
+  (letcheck-mode t))
 
 (add-hook 'emacs-lisp-mode-hook 'my-emacs-lisp-init)
