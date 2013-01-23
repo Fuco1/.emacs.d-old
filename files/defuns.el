@@ -25,6 +25,18 @@
         (when (file-exists-p (concat personal ".el"))
           (load personal))))))
 
+(defmacro save-kill-ring (&rest body)
+  "Save the kill ring and execute the BODY.  After BODY is
+executed, the kill-ring value is restored to the state before
+BODY was executed"
+  (declare (indent 0))
+  ;; initialize new binding for the ,@body.  It starts with the global
+  ;; original value.  After ,@body is executed, the new binding is
+  ;; thrown away!
+  `(let ((kill-ring kill-ring))
+     ,@body))
+(font-lock-add-keywords 'emacs-lisp-mode '(("\\<save-kill-ring\\>" . font-lock-keyword-face)) 'append)
+
 ;; Quickly jump back and forth between matching parens/brackets
 (defun match-paren (arg)
   "Go to the matching parenthesis if on parenthesis."
@@ -170,6 +182,8 @@ If ARG is given, then insert the result to current-buffer"
   (replace-string "\\emph{}" "")
   (beginning-of-buffer)
   (query-replace-regexp "\\\\emph{ }" "")
+  (beginning-of-buffer)
+  (replace-string "'' ``" "''\n\n``")
   (beginning-of-buffer)
   (replace-regexp "
 
