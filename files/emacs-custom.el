@@ -32,7 +32,7 @@
  '(ls-lisp-dirs-first t)
  '(markdown-link-space-sub-char "-")
  '(sp-autoescape-string-quote-if-empty (quote (python-mode)))
- '(sp-ignore-modes-list (quote (calc-mode dired-mode ibuffer-mode minibuffer-inactive-mode sr-mode help-mode)))
+ '(sp-ignore-modes-list (quote (calc-mode dired-mode gnus-article-mode gnus-group-mode gnus-summary-mode ibuffer-mode magit-branch-manager-mode magit-commit-mode magit-diff-mode magit-key-mode magit-log-mode magit-reflog-mode magit-stash-mode magit-status-mode magit-wazzup-mode monky-mode sr-mode)))
  '(sp-navigate-consider-symbols t)
  '(sr-attributes-display-mask (quote (nil nil nil nil t t t)))
  '(sr-listing-switches "-alh")

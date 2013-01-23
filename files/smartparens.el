@@ -45,6 +45,8 @@
 ;;;;;;;;;;;;;;;;;;
 ;; pair management
 
+(sp-add-local-ban-insert-pair "'" 'minibuffer-inactive-mode)
+
 ;;; markdown-mode
 (sp-add-pair "*" "*")
 
