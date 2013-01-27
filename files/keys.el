@@ -228,3 +228,36 @@
 ;; zapping
 (global-set-key (kbd "M-z") 'zap-up-to-char)
 (global-set-key (kbd "M-Z") 'zap-to-char)
+
+;; input methods
+;;(global-set-key (kbd "C-\\") 'toggle-input-method)
+(global-set-key (kbd "C-\\") 'my-cycle-language)
+(defvar my-input-method :english)
+
+(defun my-cycle-language ()
+  (interactive)
+  (case my-input-method
+   (:slovak  (setq my-input-method :german)
+             (my-toggle-input-method "german"))
+   (:german  (setq my-input-method :english)
+             (my-toggle-input-method nil))
+   (:english (setq my-input-method :slovak)
+             (my-toggle-input-method "slovak"))))
+
+(defun my-toggle-input-method (new-input-method)
+  (interactive)
+  (if toggle-input-method-active
+      (error "Recursive use of `toggle-input-method'"))
+  (if (and current-input-method (not new-input-method))
+      (inactivate-input-method)
+    (let ((toggle-input-method-active t)
+          (default (or (car input-method-history) default-input-method)))
+      (if (and default (equal current-input-method default)
+               (> (length input-method-history) 1))
+          (setq default (nth 1 input-method-history)))
+      (activate-input-method new-input-method))
+    (unless default-input-method
+      (prog1
+          (setq default-input-method current-input-method)
+        (when new-input-method
+          (customize-mark-as-set 'default-input-method)))))))
