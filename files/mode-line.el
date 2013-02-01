@@ -4,7 +4,8 @@
  '("%b  ;  %*"
    (:eval (when (buffer-file-name)
             (concat "  ;  "
-                    (abbreviate-file-name default-directory))))))
+                    (abbreviate-file-name default-directory))))
+   " - Emacs"))
 
 ;; set line format
 (setq-default
