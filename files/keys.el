@@ -260,4 +260,4 @@
       (prog1
           (setq default-input-method current-input-method)
         (when new-input-method
-          (customize-mark-as-set 'default-input-method)))))))
+          (customize-mark-as-set 'default-input-method))))))
