@@ -72,6 +72,7 @@
 (vendor 'change-inner 'change-inner 'change-outer)
 (vendor 'smart-forward 'smart-forward 'smart-backward 'smart-up 'smart-down)
 (vendor 'smartparens)
+(vendor 'letcheck 'letcheck-mode)
 
 ;; Diminish modeline clutter
 (load "files/diminish")
@@ -85,6 +86,9 @@
 ;; Customize
 (setq custom-file "~/.emacs.d/files/emacs-custom.el")
 (load custom-file)
+
+;; Reload theme -- hackish
+(load "~/.emacs.d/themes/my-tango-dark-theme")
 
 ;; autoopen files
 (find-file "~/.emacs.d/init.el")
