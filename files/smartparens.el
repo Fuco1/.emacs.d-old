@@ -45,30 +45,22 @@
 ;;;;;;;;;;;;;;;;;;
 ;; pair management
 
-(sp-add-local-ban-insert-pair "'" 'minibuffer-inactive-mode)
+(sp-local-pair 'minibuffer-inactive-mode "'" nil :actions nil)
 
 ;;; markdown-mode
-(sp-add-pair "*" "*")
-
-(sp-with '(markdown-mode gfm-mode rst-mode)
-  ;; this also disables '*' in all other modes
-  (sp-add-local-allow-insert-pair "*")
-  (sp-add-tag-pair "2" "**" "**" nil)
-  (sp-add-tag-pair "s" "```scheme" "```" nil)
-  (sp-add-tag-pair "<"  "<_>" "</_>" 'sp-match-sgml-tags))
+(sp-with-modes '(markdown-mode gfm-mode rst-mode)
+  (sp-local-pair "*" "*")
+  (sp-local-tag "2" "**" "**")
+  (sp-local-tag "s" "```scheme" "```")
+  (sp-local-tag "<"  "<_>" "</_>" :transform 'sp-match-sgml-tags))
 
 ;;; tex-mode latex-mode
-(sp-with '(tex-mode plain-tex-mode latex-mode)
-  (sp-add-tag-pair "i" "\"<" "\">" nil))
-
-;;; python-mode
-(sp-with 'python-mode
-  (sp-add-local-ban-insert-pair "`"))
+(sp-with-modes '(tex-mode plain-tex-mode latex-mode)
+  (sp-local-tag "i" "\"<" "\">"))
 
 ;;; html-mode
-(sp-add-pair "<" ">") ;; in html only!
-(sp-with '(html-mode sgml-mode)
-  (sp-add-local-allow-insert-pair "<"))
+(sp-with-modes '(html-mode sgml-mode)
+  (sp-local-pair "<" ">"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Custom defuns and macros
