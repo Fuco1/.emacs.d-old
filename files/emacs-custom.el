@@ -3,6 +3,8 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(ahk-bin "d:\\progs\\AutoHotkey\\AutoHotkey.exe")
+ '(ahk-syntax-directory "d:/progs/AutoHotkey/Extras/Editors/Syntax/")
  '(ange-ftp-ftp-program-name "d:\\progs\\ftp.exe")
  '(ansi-color-names-vector ["#212526" "#ff4b4b" "#b4fa70" "#fce94f" "#729fcf" "#ad7fa8" "#8cc4ff" "#eeeeec"])
  '(background-color "#002b36")
