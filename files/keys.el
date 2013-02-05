@@ -187,6 +187,10 @@
 (global-set-key (kbd "RET") 'open-next-line)
 (global-set-key (kbd "C-o") 'vi-open-next-line)
 (global-set-key (kbd "C-S-o") 'forward-line-and-indent)
+(global-set-key (kbd "M-j")
+                (lambda ()
+                  (interactive)
+                  (join-line -1)))
 
 ;; go to char, also mapped to a keychord df
 (global-set-key (kbd "C-c f") 'iy-go-to-char)
