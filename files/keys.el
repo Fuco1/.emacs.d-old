@@ -261,3 +261,50 @@
           (setq default-input-method current-input-method)
         (when new-input-method
           (customize-mark-as-set 'default-input-method))))))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Jump to "logical" top/bottom of buffer in listing buffers
+
+(defmacro my-special-buffer-back-to-top (mode &rest forms)
+  (let ((fname (make-symbol (concat "my-" (symbol-name mode) "-back-to-top")))
+        (mode-map) (make-symbol (concat (symbol-name mode) "-mode-map")))
+    `(progn
+       (defun ,fname ()
+         (interactive)
+         (beginning-of-buffer)
+         ,@forms
+         )
+       (define-key ,mode-map [remap beginning-of-buffer] (quote ,fname)))))
+
+(defmacro my-special-buffer-jump-to-bottom (mode &rest forms)
+  (let ((fname (make-symbol (concat "my-" (symbol-name mode) "-jump-to-bottom")))
+        (mode-map) (make-symbol (concat (symbol-name mode) "-mode-map")))
+    `(progn
+       (defun ,fname ()
+         (interactive)
+         (end-of-buffer)
+         ,@forms
+         )
+       (define-key ,mode-map [remap end-of-buffer] (quote ,fname)))))
+
+;; dired & sunrise
+(defun my-special-buffer-back-to-top (dired)
+  (dired-next-line (if dired-omit-mode 2 4)))
+
+(defun my-special-buffer-jump-to-bottom (dired)
+  (dired-previous-line 1))
+
+;; occur mode
+(defun my-special-buffer-back-to-top (occur)
+  (occur-next 1))
+
+(defun my-special-buffer-jump-to-bottom (occur)
+  (occur-prev 1))
+
+;; ibuffer
+(defun my-special-buffer-back-to-top (ibuffer)
+  (ibuffer-forward-line 1))
+
+(defun my-special-buffer-jump-to-bottom (ibuffer)
+  (ibuffer-backward-line 1))
