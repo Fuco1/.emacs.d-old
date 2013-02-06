@@ -83,6 +83,9 @@
 ;; buffer cleanup
 (global-set-key (kbd "C-c u") 'cleanup-buffer)
 
+;; buffer switching using cycbuf
+(global-set-key (kbd "C-x C-a") 'cycbuf-switch-to-next-buffer)
+
 ;; Window navigation
 (windmove-default-keybindings 'meta)
 
@@ -99,6 +102,10 @@
 ;; sexp settings
 (global-set-key (kbd "C-x e") 'eval-and-replace)
 (global-set-key (kbd "C-;") 'eval-expression)
+
+;; minibuffer history
+(define-key minibuffer-local-map (kbd "C-p") 'previous-history-element)
+(define-key minibuffer-local-map (kbd "C-n") 'next-history-element)
 
 (global-set-key (kbd "M-y") 'helm-show-kill-ring)
 
