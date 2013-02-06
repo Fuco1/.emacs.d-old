@@ -181,8 +181,6 @@
 (global-set-key (kbd "H-e") 'end-of-line-select)
 (global-set-key (kbd "H-s") 'line-select)
 
-(global-set-key (kbd "M-i") 'change-inner)
-
 (global-set-key (kbd "H-w") 'copy-line)
 (global-set-key (kbd "C-c <up>") 'copy-previous-line)
 (global-set-key (kbd "C-c <down>") 'copy-next-line)
