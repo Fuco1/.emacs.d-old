@@ -20,6 +20,8 @@
   (set-mark (point))
   (end-of-line))
 
+;; TODO: if inside a comment, on enter should continue with comment
+;; (call indent-new-comment-line was M-j)... or is this really useful?
 (defun open-next-line ()
   "Instead of going to the beginning of line, autoindent according
 to the active mode"
@@ -147,12 +149,6 @@ move the current line down and yank"
   (interactive)
   (copy-line-with-offset 1))
 
-(defun back-to-indentation-or-beginning ()
-  (interactive)
-  (if (= (point) (save-excursion (back-to-indentation-logical-or-visual) (point)))
-      (beginning-of-line-logical-or-visual)
-    (back-to-indentation-logical-or-visual)))
-
 (defun point-in-comment ()
   "Determine if the point is inside a comment"
   (interactive)
@@ -160,50 +156,65 @@ move the current line down and yank"
     (or (eq 'font-lock-comment-face face)
         (eq 'font-lock-comment-delimiter-face face))))
 
-(defun back-to-visual-indentation ()
-  "Move point to the first non-whitespace character on this visual line."
+(defun my-back-to-indentation-or-beginning ()
+  "Jump back to indentation of the current line.  If already
+there, jump to the beginning of current line.  If visual mode is
+enabled, move according to the visual lines."
   (interactive)
-  (interactive)
-  (beginning-of-visual-line)
-  (skip-syntax-forward " " (line-end-position))
-  (backward-prefix-chars))
+  (flet ((my-back-to-indentation
+          ()
+          (if (visual-line-mode)
+              (flet ((beginning-of-line (arg) (beginning-of-visual-line arg)))
+                (back-to-indentation))
+            (back-to-indentation))))
+    (if (= (point) (save-excursion
+                     (my-back-to-indentation)
+                     (point)))
+        (if (visual-line-mode)
+            (beginning-of-visual-line)
+          (move-beginning-of-line))
+      (my-back-to-indentation))))
 
-(defun back-to-indentation-logical-or-visual ()
-  "Move back to logical or visual indentation."
-  (interactive)
-  (if (visual-line-mode) (back-to-visual-indentation) (back-to-indentation)))
+(defun my-end-of-code-or-line ()
+  "Move to the end of code.  If already there, move to the end of line,
+that is after the possible comment.  If at the end of line, move
+to the end of code.
 
-(defun end-of-line-logical-or-visual ()
-  "Move to the end of visual line if visual mode is enabled
-   or to the logical end otherwise."
-  (interactive)
-  (if (visual-line-mode) (end-of-visual-line) (move-end-of-line)))
+Example:
+  (serious |code here)1 ;; useless commend2
 
-(defun beginning-of-line-logical-or-visual ()
-  "Move to the beginning of visual line if visual mode is enabled
-   or logical beginning otherwise"
-  (interactive)
-  (if (visual-line-mode) (beginning-of-visual-line) (move-beginning-of-line)))
+In the example, | is the current point, 1 is the position of
+point after one invocation of this funciton, 2 is position after
+repeated invocation. On subsequent calls the point jumps between
+1 and 2.
 
-(defun end-of-code-or-line ()
-  "Move to the end of code. If already there, move to the end of line,
-that is after the possible comment. If at the end of line, move to the
-end of code.
-
-Comments are recognized in any mode that sets syntax-ppss properly."
+Comments are recognized in any mode that sets syntax-ppss
+properly."
   (interactive)
-  (let ((eoc (save-excursion
-               (end-of-line-logical-or-visual)
-               (while (and (point-in-comment)
-                           (not (bolp))
-                           (> (point) 1))
-                 (backward-char))
-               (skip-chars-backward " \t")
-               (point))))
-    (cond ((= (point) eoc)
-           (end-of-line-logical-or-visual))
-          (t
-           (goto-char eoc)))))
+  (flet ((end-of-line-lov () (if (visual-line-mode)
+                                 (end-of-visual-line)
+                               (move-end-of-line)))
+         (beg-of-line-lov () (if (visual-line-mode)
+                                 (beginning-of-visual-line)
+                               (move-beginning-of-line))))
+    (let ((eoc (save-excursion
+                 (end-of-line-lov)
+                 (while (and (point-in-comment)
+                             (not (bolp)))
+                   (backward-char))
+                 (skip-syntax-backward " ")
+                 ;; if we skipped all the way to the beginning, that
+                 ;; means there's only comment on this line, so this
+                 ;; should just jump to the end.
+                 (if (= (point) (save-excursion
+                                  (beg-of-line-lov)
+                                  (point)))
+                     (progn (end-of-line-lov)
+                            (point))
+                   (point)))))
+      (if (= (point) eoc)
+          (end-of-line-lov)
+        (goto-char eoc)))))
 
 (defun mc/mark-all-like-this-dwim (arg)
   "Uses some sane defaults to guess what the user want to do:
