@@ -18,6 +18,7 @@
  '(custom-enabled-themes (quote (my-tango-dark)))
  '(custom-safe-themes (quote ("18b79c737a005b87246232739c5cd21aab19f8c15f3a822d64b8cbb8dbbc8525" "9eb325147f82880372869ae998bd6c93adb34fc80b1b5cb2976744fb4dc73cb7" "32807962da64511b0529913b8fc19d527b7bc1d32e6dc298066e53e5d67de571" default)))
  '(custom-theme-directory "~/.emacs.d/themes/")
+ '(cycbuf-buffer-sort-function (quote cycbuf-sort-by-recency))
  '(desktop-buffer-filter (quote my-desktop-filter))
  '(desktop-save t)
  '(foreground-color "#839496")
@@ -34,7 +35,6 @@
  '(ls-lisp-dirs-first t)
  '(markdown-link-space-sub-char "-")
  '(sp-autoescape-string-quote-if-empty (quote (python-mode)))
- '(sp-ignore-modes-list (quote (calc-mode dired-mode gnus-article-mode gnus-group-mode gnus-summary-mode ibuffer-mode magit-branch-manager-mode magit-commit-mode magit-diff-mode magit-key-mode magit-log-mode magit-reflog-mode magit-stash-mode magit-status-mode magit-wazzup-mode monky-mode sr-mode)))
  '(sp-navigate-consider-symbols t)
  '(sr-attributes-display-mask (quote (nil nil nil nil t t t)))
  '(sr-listing-switches "-alh")
@@ -49,7 +49,8 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
+ '(cycbuf-current-face ((t (:inherit hl-line))))
+ '(cycbuf-header-face ((t (:inherit font-lock-type-face)))))
 (put 'narrow-to-region 'disabled nil)
 (put 'narrow-to-page 'disabled nil)
 (put 'set-goal-column 'disabled nil)
