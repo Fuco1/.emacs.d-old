@@ -1,1 +1,1 @@
-(global-set-key (kbd "s-'") 'er/expand-region)
+(bind-key "s-'" 'er/expand-region)

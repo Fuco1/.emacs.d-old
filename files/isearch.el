@@ -46,10 +46,11 @@ This is useful when followed by an immediate kill."
   (isearch-yank-internal (lambda () (sp-forward-symbol) (point))))
 
 ;; keybindings
-(global-set-key [(f6)] 'replace-regexp)
-(global-set-key [(f7)] 'isearch-forward-regexp)
-(define-key isearch-mode-map (kbd "C-v") 'my-isearch-forward-to-beginning)
-(define-key isearch-mode-map (kbd "C-2") 'my-isearch-kill-match)
-(define-key isearch-mode-map (kbd "C-3") 'my-isearch-exit-other-end)
-(define-key isearch-mode-map (kbd "C-M-w") 'my-isearch-yank-symbol)
-(define-key isearch-mode-map (kbd "M-z") 'my-isearch-zap-to-match)
+(bind-key "<f6>" 'replace-regexp)
+
+(bind-key "C-v" 'my-isearch-forward-to-beginning isearch-mode-map)
+(bind-key "C-2" 'my-isearch-kill-match           isearch-mode-map)
+(bind-key "C-3" 'my-isearch-exit-other-end       isearch-mode-map)
+(bind-key "C-M-w" 'my-isearch-yank-symbol        isearch-mode-map)
+(bind-key "M-z" 'my-isearch-zap-to-match         isearch-mode-map)
+(bind-key "<f2>" 'isearch-occur                  isearch-mode-map)

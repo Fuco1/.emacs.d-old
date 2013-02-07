@@ -1,6 +1,4 @@
 ;;; Global key bindigns
-;; How to Define Keyboard Shortcuts in Emacs
-;; http://xahlee.org/emacs/keyboard_shortcuts.html
 
 ;; setting the PC keyboard's various keys to
 ;; Super or Hyper, for emacs running on Windows.
@@ -28,86 +26,60 @@
 (define-key function-key-map [?\e] nil)
 
 ;; Url & Browsing
-(global-set-key (kbd "C-c C-w") 'browse-url-at-point)
-(global-set-key (kbd "C-c w") 'browse-url)
-
-;; Window manipulation
-(global-set-key [(control kp-6)] 'enlarge-window-horizontally)
-(global-set-key [(control kp-4)] 'shrink-window-horizontally)
-(global-set-key [(control kp-8)] 'enlarge-window)
-(global-set-key [(control kp-2)] 'shrink-window)
+(bind-key "C-c C-w" 'browse-url-at-point)
+(bind-key "C-c w" 'browse-url)
 
 ;; Find stuff
-(global-set-key [(f2)]              'ack-default-directory)
-(global-set-key [(control f2)]      'ack-same)
-(global-set-key [(control meta f2)] 'ack)
-(global-set-key [(meta f2)]         'find-name-dired)
-(global-set-key [(shift f2)]        'occur)
+(bind-key "M-<f2>" 'find-name-dired)
+(bind-key "<f2>" 'occur)
 
 ;; refresh-like
-(global-set-key [(control f5)] 'revbufs)
-(global-set-key [(f5)] '(lambda () (interactive) (load-file (buffer-file-name))))
+(bind-key "C-<f5>" 'revbufs)
+(bind-key "<f5>" '(lambda () (interactive) (load-file (buffer-file-name))))
 
 ;; Indenting and alignment
-(global-set-key [(f8)]         'indent-region)
-(global-set-key [(control f8)] 'indent-buffer)
-(global-set-key [(shift f8)]   'align-current)
-(global-set-key [(meta f8)]    'align-regexp)
+(bind-key "<f8>" 'align-regexp)
+(bind-key "C-<f8>" 'indent-buffer)
 
 ;; shell pop
-(global-set-key [(f9)] 'shell-pop)
+(bind-key "<f9>" 'shell-pop)
 
-;; map the window manipulation keys to meta 0, 1, 2, o
-(global-set-key (kbd "M-3") 'split-window-horizontally) ; was digit-argument
-(global-set-key (kbd "M-2") 'split-window-vertically)   ; was digit-argument
-(global-set-key (kbd "M-1") 'delete-other-windows)      ; was digit-argument
-(global-set-key (kbd "M-0") 'delete-window)             ; was digit-argument
-(global-set-key (kbd "M-o") 'other-window)              ; was facemenu-keymap
+(bind-key "M-0" 'delete-window)
+(bind-key "M-o" 'other-window)
+(bind-key "M-O" 'rotate-windows)
 
-(global-set-key (kbd "M-O") 'rotate-windows)
-
-;; Move windows, even in org-mode (doesn't work on windows :( )
-(global-set-key (kbd "<s-right>") 'windmove-right)
-(global-set-key (kbd "<s-left>") 'windmove-left)
-(global-set-key (kbd "<s-up>") 'windmove-up)
-(global-set-key (kbd "<s-down>") 'windmove-down)
-
-;; Replace dired's M-o
-(add-hook 'dired-mode-hook (lambda () (define-key dired-mode-map (kbd "M-o") 'other-window))) ; was dired-omit-mode
-;; Replace ibuffer's M-o
-(add-hook 'ibuffer-mode-hook (lambda () (define-key ibuffer-mode-map (kbd "M-o") 'other-window))) ; was ibuffer-visit-buffer-1-window
+(add-hook 'dired-mode-hook (lambda () (bind-key "M-o" 'other-window dired-mode-map)))
+(add-hook 'ibuffer-mode-hook (lambda () (bind-key "M-o" 'other-window ibuffer-mode-map)))
 
 ;; ibuffer > list-buffers
-(global-set-key (kbd "C-x C-b") 'ibuffer)
+(bind-key "C-x C-b" 'ibuffer)
 
 ;; buffer cleanup
-(global-set-key (kbd "C-c u") 'cleanup-buffer)
+(bind-key "C-c u" 'cleanup-buffer)
 
 ;; buffer switching using cycbuf
-(global-set-key (kbd "C-x C-a") 'cycbuf-switch-to-next-buffer)
+;;(bind-key "C-x C-a" 'cycbuf-switch-to-next-buffer)
 
 ;; Window navigation
 (windmove-default-keybindings 'meta)
 
 ;; Easier buffer killing
-(global-unset-key (kbd "M-k"))
-(global-set-key (kbd "M-k") 'kill-this-buffer)
-(global-set-key (kbd "M-K") (lambda () (interactive) (kill-buffer (window-buffer (next-window)))))
+(bind-key "M-k" 'kill-this-buffer)
+(bind-key "M-K" (lambda () (interactive) (kill-buffer (window-buffer (next-window)))))
 
 ;; imenu
-(global-unset-key (kbd "M-.")) ;; was Find tag
-(global-set-key (kbd "M-.") 'ido-goto-symbol)
-(global-set-key (kbd "M-,") 'find-function)
+(bind-key "M-." 'ido-goto-symbol) ;; was Find tag
+(bind-key "M-," 'find-function)
 
 ;; sexp settings
-(global-set-key (kbd "C-x e") 'eval-and-replace)
-(global-set-key (kbd "C-;") 'eval-expression)
+(bind-key "C-x e" 'eval-and-replace)
+(bind-key "C-;" 'eval-expression)
 
 ;; minibuffer history
-(define-key minibuffer-local-map (kbd "C-p") 'previous-history-element)
-(define-key minibuffer-local-map (kbd "C-n") 'next-history-element)
+(bind-key "C-p" 'previous-history-element minibuffer-local-map)
+(bind-key "C-n" 'next-history-element minibuffer-local-map)
 
-(global-set-key (kbd "M-y") 'helm-show-kill-ring)
+(bind-key "M-y" 'helm-show-kill-ring)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; navigation
@@ -117,142 +89,150 @@
 
 ;; # move by (forw/back)
 ;; character
-(global-set-key (kbd "C-f") 'forward-char)
-(global-set-key (kbd "C-b") 'backward-char)
+(bind-key "C-f" 'forward-char)
+(bind-key "C-b" 'backward-char)
 ;; word
-(global-set-key (kbd "M-f") 'forward-word)
-(global-set-key (kbd "M-b") 'backward-word)
+(bind-key "M-f" 'forward-word)
+(bind-key "M-b" 'backward-word)
 ;; line
-(global-set-key (kbd "C-n") 'next-line)
-(global-set-key (kbd "C-p") 'previous-line)
+(bind-key "C-n" 'next-line)
+(bind-key "C-p" 'previous-line)
 ;; sentence
-(global-set-key (kbd "M-e") 'forward-sentence)
-(global-set-key (kbd "M-a") 'backward-sentence)
+(bind-key "M-e" 'forward-sentence)
+(bind-key "M-a" 'backward-sentence)
 ;; paragraph
-(global-unset-key (kbd "M-{")) ;; was backward-paragraph
-(global-unset-key (kbd "M-}")) ;; was forward-paragraph
-(global-set-key (kbd "M-[") 'backward-paragraph)
-(global-set-key (kbd "M-]") 'forward-paragraph)
-(global-set-key (kbd "M-{") 'backward-paragraph-select)
-(global-set-key (kbd "M-}") 'forward-paragraph-select)
+(bind-key "M-[" 'backward-paragraph)
+(bind-key "M-]" 'forward-paragraph)
+(bind-key "M-{" 'backward-paragraph-select)
+(bind-key "M-}" 'forward-paragraph-select)
 ;; screen
-(global-set-key (kbd "C-v") 'scroll-up-command)
-(global-set-key (kbd "M-v") 'scroll-down-command)
+(bind-key "C-v" 'scroll-up-command)
+(bind-key "M-v" 'scroll-down-command)
 ;; sexp
-(global-set-key (kbd "C-M-f") 'forward-sexp)
-(global-set-key (kbd "C-M-b") 'backward-sexp)
+(bind-key "C-M-f" 'forward-sexp)
+(bind-key "C-M-b" 'backward-sexp)
 ;; list
-(global-set-key (kbd "C-M-n") 'forward-list)
-(global-set-key (kbd "C-M-p") 'backward-list)
+(bind-key "C-M-n" 'forward-list)
+(bind-key "C-M-p" 'backward-list)
 ;; semantic unit
-(global-set-key (kbd "M-\\") 'smart-forward)
-(global-set-key (kbd "M-'") 'smart-backward)
+(bind-key "M-\\" 'smart-forward)
+(bind-key "M-'" 'smart-backward)
 
 ;; # move to (beg/end)
 ;; line
 ;; swap C-a and M-m, back-to-indentation is much more common
-(global-unset-key (kbd "M-m"))
-(global-unset-key (kbd "C-a"))
-(global-set-key (kbd "M-m") 'move-beginning-of-line)
-(global-set-key (kbd "C-a") 'my-back-to-indentation-or-beginning)
-(global-set-key (kbd "C-e") 'my-end-of-code-or-line)
+(bind-key "M-m" 'move-beginning-of-line)
+(bind-key "C-a" 'my-back-to-indentation-or-beginning)
+(bind-key "C-e" 'my-end-of-code-or-line)
 ;; buffer
-(global-unset-key [(home)]) ;; was C-a
-(global-unset-key [(end)]) ;; was C-e
-(global-set-key (kbd "M-<") 'beginning-of-buffer)
-(global-set-key (kbd "C-M-,") 'beginning-of-buffer)
-(global-set-key (kbd "M->") 'end-of-buffer)
-(global-set-key (kbd "C-M-.") 'end-of-buffer)
+(unbind-key "<home>")
+(unbind-key "<end>")
+(bind-key "M-<" 'beginning-of-buffer)
+(bind-key "C-M-," 'beginning-of-buffer)
+(bind-key "M->" 'end-of-buffer)
+(bind-key "C-M-." 'end-of-buffer)
 
 ;; defun
-(global-set-key (kbd "M-p") 'beginning-of-defun)
-(global-set-key (kbd "M-n") 'end-of-defun)
+(bind-key "M-p" 'beginning-of-defun)
+(bind-key "M-n" 'end-of-defun)
 ;; active region
-(global-set-key (kbd "C-c a") 'beginning-of-region)
-(global-set-key (kbd "C-c e") 'end-of-region)
+(bind-key "C-c a" 'beginning-of-region)
+(bind-key "C-c e" 'end-of-region)
 
 ;; # move into
-(global-set-key (kbd "C-M-d") 'down-list)
+(bind-key "C-M-d" 'down-list)
 
-(global-set-key (kbd "C-c <up>") 'copy-previous-line)
-(global-set-key (kbd "C-c <down>") 'copy-next-line)
-(global-set-key (kbd "M-<up>") 'move-line-up)
-(global-set-key (kbd "M-<down>") 'move-line-down)
+(bind-key "C-c <up>" 'copy-previous-line)
+(bind-key "C-c <down>" 'copy-next-line)
+(bind-key "M-<up>" 'move-line-up)
+(bind-key "M-<down>" 'move-line-down)
 
 ;; opening new lines. C-o can be called from any point on the line
 ;; ret from the end only
-(global-set-key (kbd "RET") 'open-next-line)
-(global-set-key (kbd "C-o") 'vi-open-next-line)
-(global-set-key (kbd "C-S-o") 'forward-line-and-indent)
-(global-set-key (kbd "M-j")
-                (lambda ()
-                  (interactive)
-                  (join-line -1)))
+(bind-key "RET" 'open-next-line)
+(bind-key "C-o" 'vi-open-next-line)
+(bind-key "C-S-o" 'forward-line-and-indent)
+(bind-key "M-j"
+          (lambda ()
+            (interactive)
+            (join-line -1)))
 
 ;; go to char, also mapped to a keychord df
-(global-set-key (kbd "C-c f") 'iy-go-to-char)
-(global-set-key (kbd "C-c F") 'iy-go-to-char-backward)
-(global-set-key (kbd "C-c ;") 'iy-go-to-char-continue)
-(global-set-key (kbd "C-c ,") 'iy-go-to-char-continue-backward)
+(bind-key "C-c f" 'iy-go-to-char)
+(bind-key "C-c F" 'iy-go-to-char-backward)
+(bind-key "C-c ;" 'iy-go-to-char-continue)
+(bind-key "C-c ," 'iy-go-to-char-continue-backward)
 
 ;;; scrollers
-(global-set-key (kbd "C-c n") 'my-scroll-up)
-(global-set-key (kbd "C-c p") 'my-scroll-down)
+(bind-key "C-c n" 'my-scroll-up)
+(bind-key "C-c p" 'my-scroll-down)
 
 ;; deleting stuff
-(global-set-key (kbd "C-<i-key>") 'backward-kill-word)
-(global-set-key (kbd "C-<backspace>") 'my-kill-whitespace)
+(bind-key "C-<i-key>" 'backward-kill-word)
+(bind-key "C-<backspace>" 'my-kill-whitespace)
 
 ;;;;; multiple cursors
-(global-set-key (kbd "C-c C-S-c") 'mc/edit-lines)
-(global-set-key (kbd "s-.") 'mc/mark-next-like-this)
-(global-set-key (kbd "s-,") 'mc/mark-previous-like-this)
-(global-set-key (kbd "s-\\") 'mc/mark-more-like-this-extended)
-(global-set-key (kbd "s-/") 'mc/mark-all-like-this-dwim)
-(global-set-key (kbd "H-SPC") 'set-rectangular-region-anchor)
+(bind-key "C-c C-S-c" 'mc/edit-lines)
+(bind-key "s-." 'mc/mark-next-like-this)
+(bind-key "s-," 'mc/mark-previous-like-this)
+(bind-key "s-\\" 'mc/mark-more-like-this-extended)
+(bind-key "s-/" 'mc/mark-all-like-this-dwim)
+(bind-key "H-SPC" 'set-rectangular-region-anchor)
 
-;; keys for specific modes
-(defun add-html-binding ()
-  (define-key (current-local-map) (kbd "C-c <deletechar>") 'sgml-delete-tag))
-(dolist (hook '(sgml-mode-hook
-                html-mode-hook))
-  (add-hook hook 'add-html-binding))
+(add-hook 'html-mode-hook (lambda () (bind-key "C-c <deletechar>" 'sgml-delete-tag html-mode-map)))
 
 ;; sunrise
-(global-set-key [(f1)] 'sunrise)
-(global-set-key [(meta f1)] 'sunrise-cd)
+(bind-key "<f1>" 'sunrise)
+(bind-key "M-<f1>" 'sunrise-cd)
 
 ;; mark commands
-(global-set-key (kbd "C-`") 'push-mark-no-activate)
-(global-set-key (kbd "M-`") 'jump-to-mark)
-(define-key global-map [remap exchange-point-and-mark] 'exchange-point-and-mark-no-activate)
+(bind-key "C-`" 'push-mark-no-activate)
+(bind-key "M-`" 'jump-to-mark)
+(global-set-key [remap exchange-point-and-mark] 'exchange-point-and-mark-no-activate)
 
 ;; calc settings
-(global-set-key (kbd "<pause>") 'calc-dispatch)
-(global-set-key (kbd "<home>") 'calc-same-interface)
-(global-set-key (kbd "C-c c") 'my-mini-calc)
+(bind-key "<pause>" 'calc-dispatch)
+(bind-key "<home>" 'calc-same-interface)
+
+;; customize
+(defvar customize-map)
+(define-prefix-command 'customize-map)
+(bind-key "C-c c" 'customize-map)
+(bind-key "C-c c v" 'customize-variable)
+(bind-key "C-c c f" 'customize-face)
+(bind-key "C-c c g" 'customize-group)
+
+(bind-key "C-c c c" 'my-mini-calc)
+
+(defvar lisp-find-map)
+(define-prefix-command 'lisp-find-map)
+(bind-key "C-h e" 'lisp-find-map)
+(bind-key "C-h e F" 'find-face-definition)
+(bind-key "C-h e k" 'find-function-on-key)
+(bind-key "C-h e l" 'find-library)
+(bind-key "C-h e v" 'find-variable)
 
 ;; you can select the key you prefer to (hyperfind!)
-(define-key global-map (kbd "H-f") 'ace-jump-mode)
+(bind-key "H-f" 'ace-jump-mode)
 
 ;; zapping
-(global-set-key (kbd "M-z") 'zap-up-to-char)
-(global-set-key (kbd "M-Z") 'zap-to-char)
+(bind-key "M-z" 'zap-up-to-char)
+(bind-key "M-Z" 'zap-to-char)
 
 ;; input methods
-;;(global-set-key (kbd "C-\\") 'toggle-input-method)
-(global-set-key (kbd "C-\\") 'my-cycle-language)
+;;(bind-key "C-\\" 'toggle-input-method)
+(bind-key "C-\\" 'my-cycle-language)
 (defvar my-input-method :english)
 
 (defun my-cycle-language ()
   (interactive)
   (case my-input-method
-   (:slovak  (setq my-input-method :german)
-             (my-toggle-input-method "german"))
-   (:german  (setq my-input-method :english)
-             (my-toggle-input-method nil))
-   (:english (setq my-input-method :slovak)
-             (my-toggle-input-method "slovak"))))
+    (:slovak  (setq my-input-method :german)
+              (my-toggle-input-method "german"))
+    (:german  (setq my-input-method :english)
+              (my-toggle-input-method nil))
+    (:english (setq my-input-method :slovak)
+              (my-toggle-input-method "slovak"))))
 
 (defun my-toggle-input-method (new-input-method)
   (interactive)
@@ -271,7 +251,6 @@
           (setq default-input-method current-input-method)
         (when new-input-method
           (customize-mark-as-set 'default-input-method))))))
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Jump to "logical" top/bottom of buffer in listing buffers

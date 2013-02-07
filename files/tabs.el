@@ -63,4 +63,4 @@
     (indent-for-tab-command)))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(global-set-key (kbd "TAB") 'smart-tab)
+(bind-key "TAB" 'smart-tab)

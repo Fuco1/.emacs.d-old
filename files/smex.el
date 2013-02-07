@@ -9,7 +9,7 @@
                          (smex))
     (setq ido-decorations (quote ("\n-> " "" "\n   " "\n   ..." "[" "]" " [No match]" " [Matched]" " [Not readable]" " [Too big]" " [Confirm]")))))
 
-(global-set-key (kbd "M-x") 'beautify-smex)
-(global-set-key (kbd "M-X") 'smex-major-mode-commands)
+(bind-key "M-x" 'beautify-smex)
+(bind-key "M-X" 'smex-major-mode-commands)
 ;; This is your old M-x.
-(global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
+(bind-key "C-c C-c M-x" 'execute-extended-command)

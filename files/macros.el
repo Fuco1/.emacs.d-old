@@ -13,8 +13,7 @@
 ;; swap between two last used buffers
 (fset 'swap-buffer-to-last-used
    (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([24 98 return] 0 "%d")) arg)))
-(global-set-key (kbd "C-x C-a") 'swap-buffer-to-last-used)
-
+(bind-key "C-x C-a" 'swap-buffer-to-last-used)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ALIASES

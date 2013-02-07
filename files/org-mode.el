@@ -2,11 +2,11 @@
 (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
 (add-hook 'org-mode-hook 'turn-on-font-lock) ; not needed when global-font-lock-mode is on
 
-(global-set-key "\C-cl" 'org-store-link)
-(global-set-key (kbd "<f12>") 'org-agenda)
-(global-set-key "\C-cb" 'org-iswitchb)
+(bind-key "C-c l" 'org-store-link)
+(bind-key "<f12>" 'org-agenda)
+(bind-key "C-c b" 'org-iswitchb)
 
-(global-set-key (kbd "<f11>") 'org-clock-goto)
+(bind-key "<f11>" 'org-clock-goto)
 
 (setq org-modules (quote (org-habit)))
 
@@ -40,7 +40,7 @@
 (setq org-default-notes-file "~/org/refile.org")
 
 ;; I use C-M-r to start capture mode
-(global-set-key (kbd "C-M-r") 'org-capture)
+(bind-key "C-M-r" 'org-capture)
 
 ;; Capture templates for: TODO tasks, Notes, appointments, phone calls, and org-protocol
 (setq org-capture-templates

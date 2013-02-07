@@ -29,6 +29,7 @@
 (package-initialize)
 (require 'autoinstall)
 (require 'parenface)
+(vendor 'use-package)
 
 ;; autoloads
 (autoload 'calc-same-interface "calc" nil t)
