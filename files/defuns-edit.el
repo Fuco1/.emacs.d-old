@@ -1,5 +1,16 @@
 (require 'thingatpt)
 
+(defun my-kill-whitespace (&optional forward)
+  "Kill all the whitespace characters backwards until hitting
+  non-whitespace character.  With prefix argument, kill in the
+  forward direction."
+  (interactive "P")
+  (let ((old-point (point)))
+    (if forward
+        (skip-syntax-forward " ")
+      (skip-syntax-backward " "))
+    (delete-region old-point (point))))
+
 ;; line selection functions
 (defun line-select ()
   "Set the active region to current line"

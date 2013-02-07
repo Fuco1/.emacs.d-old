@@ -209,6 +209,7 @@
 
 ;; deleting stuff
 (global-set-key (kbd "C-<i-key>") 'backward-kill-word)
+(global-set-key (kbd "C-<backspace>") 'my-kill-whitespace)
 
 ;; keys for specific modes
 (defun add-html-binding ()
