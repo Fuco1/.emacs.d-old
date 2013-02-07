@@ -173,15 +173,7 @@
 
 ;; # move into
 (global-set-key (kbd "C-M-d") 'down-list)
-(global-set-key (kbd "C-M-e") 'up-list+)
-(global-set-key (kbd "C-M-u") 'backward-up-list+)
 
-;; line selection
-(global-set-key (kbd "H-a") 'beginning-of-line-select)
-(global-set-key (kbd "H-e") 'end-of-line-select)
-(global-set-key (kbd "H-s") 'line-select)
-
-(global-set-key (kbd "H-w") 'copy-line)
 (global-set-key (kbd "C-c <up>") 'copy-previous-line)
 (global-set-key (kbd "C-c <down>") 'copy-next-line)
 (global-set-key (kbd "M-<up>") 'move-line-up)

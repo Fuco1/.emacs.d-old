@@ -11,26 +11,6 @@
       (skip-syntax-backward " "))
     (delete-region old-point (point))))
 
-;; line selection functions
-(defun line-select ()
-  "Set the active region to current line"
-  (interactive)
-  (back-to-indentation)
-  (set-mark (point))
-  (end-of-line))
-
-(defun beginning-of-line-select ()
-  "Set the active region from beginning of current line to the point"
-  (interactive)
-  (set-mark (point))
-  (back-to-indentation))
-
-(defun end-of-line-select ()
-  "Set the active region from point to the end of current line"
-  (interactive)
-  (set-mark (point))
-  (end-of-line))
-
 ;; TODO: if inside a comment, on enter should continue with comment
 ;; (call indent-new-comment-line was M-j)... or is this really useful?
 (defun open-next-line ()
@@ -76,31 +56,6 @@ to the active mode"
   "Move cursor to the end of active region"
   (interactive)
   (goto-char (region-end)))
-
-(defun backward-up-list+ ()
-  "Same as `backward-up-list', but can also move out from withing a string"
-  (interactive)
-  (if (in-string-p)
-      (while (in-string-p)
-        (backward-char))
-    (backward-up-list)))
-
-(defun up-list+ ()
-  "Same as `up-list', but can also move out from withing a string"
-  (interactive)
-  (if (in-string-p)
-      (while (in-string-p)
-        (forward-char))
-    (up-list)))
-
-(defun copy-line ()
-  "Copy line (from point to end) to the kill ring but restore it afterwards"
-  (interactive)
-  (save-excursion
-    (let ((x (point)))
-      (kill-line)
-      (yank)
-      (goto-char x))))
 
 ;; from https://github.com/skeeto/.emacs.d/blob/master/my-funcs.el
 (defun move-line (n)
