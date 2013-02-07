@@ -13,6 +13,7 @@
     markdown-mode
     markdown-mode+
     multi-web-mode
+    multiple-cursors
     parenface
     php-mode
     rainbow-mode

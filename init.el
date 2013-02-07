@@ -66,7 +66,6 @@
 (vendor 'revbufs 'revbufs)
 (vendor 'shell-pop 'shell-pop)
 (vendor 'golden-ratio)
-(vendor 'multiple-cursors)
 (vendor 'iy-go-to-char 'iy-go-to-char 'iy-go-to-char-backward)
 (vendor 'sunrise-commander)
 (vendor 'smart-forward 'smart-forward 'smart-backward 'smart-up 'smart-down)

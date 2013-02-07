@@ -203,6 +203,14 @@
 (global-set-key (kbd "C-<i-key>") 'backward-kill-word)
 (global-set-key (kbd "C-<backspace>") 'my-kill-whitespace)
 
+;;;;; multiple cursors
+(global-set-key (kbd "C-c C-S-c") 'mc/edit-lines)
+(global-set-key (kbd "s-.") 'mc/mark-next-like-this)
+(global-set-key (kbd "s-,") 'mc/mark-previous-like-this)
+(global-set-key (kbd "s-\\") 'mc/mark-more-like-this-extended)
+(global-set-key (kbd "s-/") 'mc/mark-all-like-this-dwim)
+(global-set-key (kbd "H-SPC") 'set-rectangular-region-anchor)
+
 ;; keys for specific modes
 (defun add-html-binding ()
   (define-key (current-local-map) (kbd "C-c <deletechar>") 'sgml-delete-tag))
