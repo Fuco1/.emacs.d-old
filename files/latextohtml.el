@@ -21,12 +21,12 @@
 ;; footnote        - footnotes, this will need some special treatment
 ;; levelup         - level up notification. needs to add some text:
 ;;                   Nota: Nuovo livello.
-;;               
+;;
 ;;                   Nuovo vantaggio: #1
 ;; normalchapter   - subtext, name of the chapter
 
 ;; <SUP><A HREF="#note_to_$N" NAME="#note_from_$N">$N</A></SUP>
-;; e segnati il contenuto della nota. A fine capitolo cicla le note e metti 
+;; e segnati il contenuto della nota. A fine capitolo cicla le note e metti
 ;; <P><SUP><A HREF="#note_from_$N" NAME="#note_to_$N">$N</A></SUP> Testo della nota</P>
 
 (defun gen-footnotes-internal (n)
@@ -37,7 +37,7 @@
       (let* ((y (point)) (str (buffer-substring-no-properties (+ x 1) (- y 1))))
         (progn (message str)
                (delete-region (- x 9) y)
-               (insert (concat 
+               (insert (concat
                         "<sup><a href=\"#note_to_"
                         fn
                         "\" name=\"note_from_"
@@ -219,3 +219,189 @@
 ;;       (progn (switch-to-buffer (concat "chapter" (number-to-string i) ".tex"))
 ;;              (gen-html)
 ;;              ))
+
+; &bdquo; -- open quote „
+; &ldquo; -- "close quote" “
+; &#39; -- '
+; &nbsp; -- " " < space
+; &hellip; -- …
+
+(defun fix-basic ()
+  (interactive)
+  (beginning-of-buffer)
+  (replace-regexp "…" "\\\\dots ")
+  (beginning-of-buffer)
+  (replace-regexp "\\.\\.\\." "\\\\dots ")
+  (beginning-of-buffer)
+  (replace-regexp "\\\\dots[[:space:]]+)" "\\\\dots)")
+  (beginning-of-buffer)
+  (replace-regexp "[[:space:]][[:space:]]+" " ")
+  (beginning-of-buffer)
+  (replace-regexp "[[:space:]]+--[[:space:]]+" "---")
+  (beginning-of-buffer)
+  (replace-regexp "[[:space:]]+–[[:space:]]+" "---")
+  (beginning-of-buffer)
+  (replace-regexp "[[:space:]]+-[[:space:]]+" "---")
+  (beginning-of-buffer)
+  (replace-regexp "“" "``")
+  (beginning-of-buffer)
+  (replace-regexp "„" "``")
+  (beginning-of-buffer)
+  (replace-regexp "”" "''")
+  (beginning-of-buffer)
+  (replace-regexp "‘" "`")
+  (beginning-of-buffer)
+  (replace-regexp "‚" "`")
+  (beginning-of-buffer)
+  (replace-regexp "’" "'")
+  (beginning-of-buffer)
+  (replace-regexp "~" "\\\\textasciitilde{}")
+  (beginning-of-buffer)
+  (replace-regexp "\\\\dots[[:space:]]+''" "\\\\dots''")
+  (beginning-of-buffer)
+  (replace-regexp "\\([^\\]\\)%" "\\1\\\\%")
+  (beginning-of-buffer)
+  (replace-regexp "^[[:space:]]" "")
+  (beginning-of-buffer)
+  (replace-string "}\\emph{" "")
+  (beginning-of-buffer)
+  (replace-string "\\emph{}" "")
+  (beginning-of-buffer)
+  (query-replace-regexp "\\\\emph{ }" "")
+  (beginning-of-buffer)
+  (replace-string "'' ``" "''\n\n``")
+  (beginning-of-buffer)
+  (replace-regexp "
+
+
++" "
+
+")
+  (beginning-of-buffer)
+  (replace-regexp "``-\\([^-]\\)" "``---\\1")
+  (beginning-of-buffer)
+  (replace-regexp "``---\\([^}]\\)" "\\\\dk{``---}\\1")
+  (beginning-of-buffer) ; fix the hyphen at the end of quotation
+  (replace-regexp "\\([^-]\\)-''" "\\1---''")
+  (beginning-of-buffer)
+  (query-replace-regexp "---''\\([^}]\\)" "\\\\dk{---''}\\1")
+  (beginning-of-buffer) ; fix the hyphen before emph end
+  (replace-regexp "\\([^-]\\)-}" "\\1---}")
+  (beginning-of-buffer)
+  (query-replace-regexp "- " "---")
+  (beginning-of-buffer)
+  (replace-regexp "!!+" "!")
+  (beginning-of-buffer)
+  (replace-regexp "\\?\\?+" "?")
+  (beginning-of-buffer)
+  (replace-regexp "\\([^-]\\)-
+" "\\1---
+")
+  (beginning-of-buffer)
+  (replace-regexp "``A\\([^}]\\)" "\\\\dk{``A}\\1")
+)
+
+
+(defun fix-quotes () ; and some less trivial quotation stuff
+  (interactive)
+  ;; replace 'em with $$EM$$, it's too common to skip all the time,
+  ;; then we replace it back
+  (beginning-of-buffer)
+  (replace-string "'em" "$$EM$$")
+  (beginning-of-buffer)
+  (query-replace-regexp "[[:space:]]'\\([[:word:]]\\)" " `\\1")
+  (beginning-of-buffer)
+  (query-replace-regexp "``'\\([[:word:]]\\)" "```\\1")
+  (beginning-of-buffer)
+  (query-replace-regexp "^'" "`")
+  (beginning-of-buffer)
+  (replace-regexp ":[ ]``" ", ``")
+  (beginning-of-buffer)
+  (query-replace-regexp "\\([[:word:]]\\)-[ ]" "\\1\\\\dots ")
+  (beginning-of-buffer)
+  (replace-string "$$EM$$" "'em")
+  (beginning-of-buffer)
+  (query-replace-regexp "}\\." ".}")
+  (beginning-of-buffer)
+  (query-replace-regexp "}," ",}")
+  (beginning-of-buffer)
+  (query-replace-regexp "}!" "!}")
+  (beginning-of-buffer)
+  (query-replace-regexp "}\\?" "?}")
+  (beginning-of-buffer)
+  (query-replace-regexp "!," "!")
+  (beginning-of-buffer)
+  (query-replace-regexp "\\?," "?")
+  (beginning-of-buffer)
+  (query-replace-regexp "\\.," ",")
+)
+
+(defun fix-quotes-italian ()
+  (interactive)
+  (beginning-of-buffer)
+  (replace-regexp "``" "\"<")
+  (beginning-of-buffer)
+  (replace-regexp "''" "\">")
+  (beginning-of-buffer)
+  (replace-regexp "“" "\"<")
+  (beginning-of-buffer)
+  (replace-regexp "”" "\">")
+)
+
+;; (beginning-of-buffer)
+;; (replace-regexp "\\*\\*\\* \\*\\*\\* \\*\\*\\*" "\\\\Scene")
+
+(defun fix-html (italic-class)
+  (interactive "sClass name: ")
+  (beginning-of-buffer)
+  (replace-regexp "<p.*?>" "")
+  (beginning-of-buffer)
+  (replace-regexp "</p>" "
+
+")
+  (beginning-of-buffer)
+  (replace-regexp
+   (concat "<span class=\"" italic-class "\">\\(.*?\\)</span>")
+   "\\\\emph{\\1}")
+  (beginning-of-buffer)
+  (replace-regexp " " " ")
+  (beginning-of-buffer)
+  (replace-regexp "<span.*?>" "")
+  (beginning-of-buffer)
+  (replace-regexp "</span>" "")
+  (beginning-of-buffer)
+  (replace-regexp "&ndash;" "–")
+  (beginning-of-buffer)
+  (replace-regexp "&bdquo;" "„")
+  (beginning-of-buffer)
+  (replace-regexp "&ldquo;" "“")
+  (beginning-of-buffer)
+  (replace-regexp "&rdquo;" "”")
+  (beginning-of-buffer)
+  (replace-regexp "&#39;" "'")
+  (beginning-of-buffer)
+  (replace-regexp "&nbsp;" " ")
+  (beginning-of-buffer)
+  (replace-regexp "&hellip;" "…")
+  (beginning-of-buffer)
+  (replace-regexp "<.*?>" "")
+)
+
+(defun fix-html-fimfic ()
+  (interactive)
+  (beginning-of-buffer)
+  (replace-regexp "</i><i>" "")
+  (beginning-of-buffer)
+  (replace-regexp "<i>\\(.*?\\)</i>" "\\\\emph{\\1}")
+  (beginning-of-buffer)
+  (replace-regexp "<br />" "
+")
+  (beginning-of-buffer)
+  (replace-regexp "<hr />" "\\\\Scene")
+  (beginning-of-buffer)
+  (replace-regexp " " " ")
+  (beginning-of-buffer)
+  (replace-regexp "\\\\emph{ }" " ")
+  (beginning-of-buffer)
+  (replace-regexp "\\\\emph{}" "")
+)
