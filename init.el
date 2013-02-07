@@ -1,10 +1,13 @@
 (server-start)
 
+(defconst emacs-start-time (current-time))
+
 ;; Emacs gurus don't need no stinking scroll bars & widgets
 (scroll-bar-mode -1)
 (menu-bar-mode -1)
 (tool-bar-mode -1)
 (tooltip-mode -1)
+
 ;; maximize window at startup
 (defun maximize-frame ()
   "Maximizes the active frame in Windows"
@@ -90,3 +93,17 @@
 
 ;; autoopen files
 (find-file "~/.emacs.d/init.el")
+
+;;; post init.
+(when window-system
+  (let ((elapsed (float-time (time-subtract (current-time)
+                                            emacs-start-time))))
+    (message "Loading %s...done (%.3fs)" load-file-name elapsed))
+
+  (add-hook 'after-init-hook
+            `(lambda ()
+               (let ((elapsed (float-time (time-subtract (current-time)
+                                                         emacs-start-time))))
+                 (message "Loading %s...done (%.3fs) [after-init]"
+                          ,load-file-name elapsed)))
+            t))
