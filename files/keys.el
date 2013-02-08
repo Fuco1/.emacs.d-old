@@ -209,9 +209,6 @@
 (bind-key "C-h e l" 'find-library)
 (bind-key "C-h e v" 'find-variable)
 
-;; you can select the key you prefer to (hyperfind!)
-(bind-key "H-f" 'ace-jump-mode)
-
 ;; zapping
 (bind-key "M-z" 'zap-up-to-char)
 (bind-key "M-Z" 'zap-to-char)

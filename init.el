@@ -66,7 +66,6 @@
 (vendor 'yasnippet)
 (vendor 'typopunct 'typopunct-change-language 'typopunct-mode)
 (vendor 'wc-mode)
-(vendor 'ace-jump-mode 'ace-jump-mode)
 (vendor 'revbufs 'revbufs)
 (vendor 'shell-pop 'shell-pop)
 (vendor 'golden-ratio)
