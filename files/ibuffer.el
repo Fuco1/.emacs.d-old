@@ -27,7 +27,9 @@
                     (mode . php-mode)
                     (mode . js-mode)))
                ("Sunrise"
-                (or (mode . sr-mode)))
+                (mode . sr-mode))
+               ("Dired"
+                (mode . dired-mode))
                ("Tramp"
                 (or (name . "tramp")))
                ("Programming" ;; prog stuff not already in MyProjectX
