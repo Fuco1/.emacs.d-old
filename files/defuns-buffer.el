@@ -10,8 +10,7 @@
              (setq n (1+ n))
              (get-buffer bufname)))
     (switch-to-buffer (get-buffer-create bufname))
-    (emacs-lisp-mode)
-    ))
+    (emacs-lisp-mode)))
 
 (defun untabify-buffer ()
   (interactive)
@@ -20,6 +19,14 @@
 (defun indent-buffer ()
   (interactive)
   (indent-region (point-min) (point-max)))
+
+(defun indent-defun ()
+  "Indent the current defun."
+  (interactive)
+  (save-restriction
+    (widen)
+    (narrow-to-defun)
+    (indent-buffer)))
 
 (defun cleanup-buffer-safe ()
   "Perform a bunch of safe operations on the whitespace content of a buffer.
@@ -52,3 +59,7 @@ Including indent-buffer, which should not be called automatically on save."
        (window-list)
        buffers
        start-positions)))
+
+;; TODO: add function to hide function bodies and leave just name and
+;; docstring, useful for quick overview of the package. See
+;; `hs-make-overlay'

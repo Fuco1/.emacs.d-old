@@ -40,6 +40,7 @@
 ;; Indenting and alignment
 (bind-key "<f8>" 'align-regexp)
 (bind-key "C-<f8>" 'indent-buffer)
+(bind-key "C-<tab>" 'indent-defun)
 
 ;; shell pop
 (bind-key "<f9>" 'shell-pop)
@@ -54,6 +55,7 @@
 ;; ibuffer > list-buffers
 (bind-key "C-x C-b" 'ibuffer)
 (bind-key "C-<m-key>" 'ido-switch-buffer)
+(bind-key "C-x C-k" 'kill-buffer-and-window)
 
 ;; buffer cleanup
 (bind-key "C-c u" 'cleanup-buffer)
