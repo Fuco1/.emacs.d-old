@@ -114,9 +114,6 @@
 ;; list
 (bind-key "C-M-n" 'forward-list)
 (bind-key "C-M-p" 'backward-list)
-;; semantic unit
-(bind-key "M-\\" 'smart-forward)
-(bind-key "M-'" 'smart-backward)
 
 ;; # move to (beg/end)
 ;; line

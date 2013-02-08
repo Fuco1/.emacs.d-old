@@ -72,7 +72,6 @@
 (vendor 'golden-ratio)
 (vendor 'iy-go-to-char 'iy-go-to-char 'iy-go-to-char-backward)
 (vendor 'sunrise-commander)
-(vendor 'smart-forward 'smart-forward 'smart-backward 'smart-up 'smart-down)
 (vendor 'smartparens)
 (vendor 'letcheck 'letcheck-mode)
 
