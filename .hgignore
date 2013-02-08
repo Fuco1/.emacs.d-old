@@ -33,3 +33,5 @@ vendor/smartparens/*
 .ispell
 vendor/markdown-mode/*
 vendor/letcheck/*
+vendor/use-package/.git/*
+vendor/use-package/README.md
