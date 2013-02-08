@@ -11,26 +11,33 @@
       (skip-syntax-backward " "))
     (delete-region old-point (point))))
 
-;; TODO: if inside a comment, on enter should continue with comment
-;; (call indent-new-comment-line was M-j)... or is this really useful?
-(defun open-next-line ()
-  "Instead of going to the beginning of line, autoindent according
-to the active mode"
-  (interactive)
-  (newline)
+(defun my-newline (&optional arg)
+  "Call `newline' and autoindent according to the active mode."
+  (interactive "p")
+  (newline arg)
   (indent-according-to-mode))
 
-(defun vi-open-next-line (arg)
-  "Move to the next line (like vi) and then opens a line."
+(defun my-open-line (arg)
+  "If point is before the beginning of \"code\", open new line,
+keep the cursor at the current line and autoindent.
+
+If point is in the middle of the line, create a blank line under
+current line, move cursor to this new line and autoindent."
   (interactive "p")
-  (if (looking-at "^")
-      (open-line arg)
+  (if (<= (point) (save-excursion
+                    (my-back-to-indentation)
+                    (point)))
+      (progn
+        (save-excursion
+          (open-next-line arg))
+        (indent-according-to-mode))
     (end-of-line)
     (open-line arg)
     (next-line 1)
     (indent-according-to-mode)))
 
 (defun forward-line-and-indent (arg)
+  "Move point ARG lines forward and autoindent."
   (interactive "p")
   (forward-line arg)
   (indent-according-to-mode))
@@ -122,24 +129,24 @@ move the current line down and yank"
     (or (eq 'font-lock-comment-face face)
         (eq 'font-lock-comment-delimiter-face face))))
 
+(defun my-back-to-indentation ()
+  (if (visual-line-mode)
+      (flet ((beginning-of-line (arg) (beginning-of-visual-line arg)))
+        (back-to-indentation))
+    (back-to-indentation)))
+
 (defun my-back-to-indentation-or-beginning ()
   "Jump back to indentation of the current line.  If already
 there, jump to the beginning of current line.  If visual mode is
 enabled, move according to the visual lines."
   (interactive)
-  (flet ((my-back-to-indentation
-          ()
-          (if (visual-line-mode)
-              (flet ((beginning-of-line (arg) (beginning-of-visual-line arg)))
-                (back-to-indentation))
-            (back-to-indentation))))
-    (if (= (point) (save-excursion
-                     (my-back-to-indentation)
-                     (point)))
-        (if (visual-line-mode)
-            (beginning-of-visual-line)
-          (move-beginning-of-line))
-      (my-back-to-indentation))))
+  (if (= (point) (save-excursion
+                   (my-back-to-indentation)
+                   (point)))
+      (if (visual-line-mode)
+          (beginning-of-visual-line)
+        (move-beginning-of-line))
+    (my-back-to-indentation)))
 
 (defun my-end-of-code-or-line ()
   "Move to the end of code.  If already there, move to the end of line,

@@ -53,6 +53,7 @@
 
 ;; ibuffer > list-buffers
 (bind-key "C-x C-b" 'ibuffer)
+(bind-key "C-<m-key>" 'ido-switch-buffer)
 
 ;; buffer cleanup
 (bind-key "C-c u" 'cleanup-buffer)
@@ -144,10 +145,10 @@
 (bind-key "M-<up>" 'move-line-up)
 (bind-key "M-<down>" 'move-line-down)
 
-;; opening new lines. C-o can be called from any point on the line
+;; opening new lines. C-o can be called from any point on the line,
 ;; ret from the end only
-(bind-key "RET" 'open-next-line)
-(bind-key "C-o" 'vi-open-next-line)
+(bind-key "RET" 'my-newline)
+(bind-key "C-o" 'my-open-line)
 (bind-key "C-S-o" 'forward-line-and-indent)
 (bind-key "M-j"
           (lambda ()
