@@ -39,9 +39,6 @@
 ;; Make backups of files, even when they're in version control
 (setq vc-make-backup-files t)
 
-;; Autoload modes
-(add-to-list 'auto-mode-alist '("\\.md$" . gfm-mode))
-
 ;; Don't truncate lines
 (setq truncate-lines t)
 (setq truncate-partial-width-windows nil)
