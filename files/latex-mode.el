@@ -14,7 +14,7 @@ starting with \\ and followed by a block of text enclosed in {}."
      (ok
       (progn
         (save-excursion
-          (goto-char (car ok))
+          (goto-char (sp-get ok :beg))
           (zap-to-char -1 ?\\ ))
         (sp-splice-sexp)))
      ;; test if we are in looking at the command fromt he front
