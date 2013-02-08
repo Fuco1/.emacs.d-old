@@ -17,6 +17,7 @@
     parenface
     php-mode
     rainbow-mode
+    smex
     undo-tree
     w32-browser)
   "A list of packages to ensure are installed at launch.")

@@ -60,9 +60,9 @@
 (load "files/multi-web-mode")
 (load "files/latex-mode")
 (load "files/mode-line")
+(load "files/smex")
 
 ;; vendor
-(vendor 'smex)
 (vendor 'yasnippet)
 (vendor 'typopunct 'typopunct-change-language 'typopunct-mode)
 (vendor 'wc-mode)
