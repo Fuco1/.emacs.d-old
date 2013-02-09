@@ -211,6 +211,13 @@
 (bind-key "C-h e k" 'find-function-on-key)
 (bind-key "C-h e l" 'find-library)
 (bind-key "C-h e v" 'find-variable)
+(bind-key "C-h D" 'describe-personal-keybindings)
+
+(defvar c-dot-prefix-map)
+(define-prefix-command 'c-dot-prefix-map)
+(bind-key "C-. p f" 'elp-instrument-function)
+(bind-key "C-. p r" 'elp-results)
+(bind-key "C-. p R" 'elp-restore-all)
 
 ;; zapping
 (bind-key "M-z" 'zap-up-to-char)
