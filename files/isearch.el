@@ -51,6 +51,7 @@ This is useful when followed by an immediate kill."
 (bind-key "C-v" 'my-isearch-forward-to-beginning isearch-mode-map)
 (bind-key "C-2" 'my-isearch-kill-match           isearch-mode-map)
 (bind-key "C-3" 'my-isearch-exit-other-end       isearch-mode-map)
-(bind-key "C-M-w" 'my-isearch-yank-symbol        isearch-mode-map)
+(bind-key "C-w" 'my-isearch-yank-symbol          isearch-mode-map)
+(bind-key "C-M-w" 'isearch-yank-word-or-char     isearch-mode-map)
 (bind-key "M-z" 'my-isearch-zap-to-match         isearch-mode-map)
 (bind-key "<f2>" 'isearch-occur                  isearch-mode-map)
