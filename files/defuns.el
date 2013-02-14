@@ -100,18 +100,16 @@ This is the same as using \\[set-mark-command] with the prefix argument."
   (exchange-point-and-mark)
   (deactivate-mark nil))
 
-;; usefull mini calculator
 (defun my-mini-calc (expr &optional arg)
-  "Calculate expression
+  "Calculate expression.
 
 If ARG is given, then insert the result to current-buffer"
   (interactive
    (list (read-from-minibuffer "Enter expression: ")
-     current-prefix-arg))
-
+         current-prefix-arg))
   (let ((result (calc-eval expr)))
     (if arg
-    (insert result)
+        (insert result)
       (message (format "Result: [%s] = %s" expr result)))))
 
 (defsubst buffer-narrowed-p ()
@@ -138,3 +136,18 @@ If ARG is given, then insert the result to current-buffer"
   "Scroll up ARG lines.  If ARG is nil, scroll 4 lines."
   (interactive "P")
   (my-scroll-down (or arg 4)))
+
+;;; function overloads
+
+(eval-after-load "hi-lock"
+  (progn
+    (defun hi-lock-read-face-name ()
+      "Read face name from minibuffer with completion and history."
+      (intern (completing-read
+               "Highlight using face: "
+               (mapcar 'symbol-name (face-list))
+               nil
+               nil
+               "hi-"
+               'face-name-history
+               (car hi-lock-face-defaults))))))
