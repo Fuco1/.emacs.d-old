@@ -2,8 +2,8 @@
 
 (defun my-kill-whitespace (&optional forward)
   "Kill all the whitespace characters backwards until hitting
-  non-whitespace character.  With prefix argument, kill in the
-  forward direction."
+non-whitespace character.  With prefix argument, kill in the
+forward direction."
   (interactive "P")
   (let ((old-point (point)))
     (if forward
@@ -17,22 +17,26 @@
   (newline arg)
   (indent-according-to-mode))
 
-(defun my-open-line (arg)
+(defun my-open-line (&optional arg)
   "If point is before the beginning of \"code\", open new line,
 keep the cursor at the current line and autoindent.
 
 If point is in the middle of the line, create a blank line under
-current line, move cursor to this new line and autoindent."
-  (interactive "p")
-  (if (<= (point) (save-excursion
-                    (my-back-to-indentation)
-                    (point)))
+current line, move cursor to this new line and autoindent.
+
+With raw prefix \\[universal-argument] insert newline at point
+and indent next line according to mode."
+  (interactive "P")
+  (if (or (<= (point) (save-excursion
+                        (my-back-to-indentation)
+                        (point)))
+          (equal arg '(4)))
       (progn
         (save-excursion
-          (open-next-line arg))
+          (my-newline (if (equal arg '(4)) 1 arg)))
         (indent-according-to-mode))
     (end-of-line)
-    (open-line arg)
+    (open-line (prefix-numeric-value arg))
     (next-line 1)
     (indent-according-to-mode)))
 
