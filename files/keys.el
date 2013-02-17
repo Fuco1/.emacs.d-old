@@ -213,11 +213,18 @@
 (bind-key "C-h e v" 'find-variable)
 (bind-key "C-h D" 'describe-personal-keybindings)
 
-(defvar c-dot-prefix-map)
-(define-prefix-command 'c-dot-prefix-map)
+(defvar ctl-dot-prefix-map)
+(define-prefix-command 'ctl-dot-prefix-map)
+(bind-key "C-." 'ctl-dot-prefix-map)
 (bind-key "C-. p f" 'elp-instrument-function)
 (bind-key "C-. p r" 'elp-results)
 (bind-key "C-. p R" 'elp-restore-all)
+
+(defvar ctl-c-r-map)
+(define-prefix-command 'ctl-c-r-map)
+(bind-key "C-c r" 'ctl-c-r-map)
+(bind-key "C-c r f" 'recentf-open-files)
+(bind-key "C-c r c" 'recentf-cleanup)
 
 ;; zapping
 (bind-key "M-z" 'zap-up-to-char)

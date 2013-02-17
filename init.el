@@ -29,7 +29,10 @@
 (package-initialize)
 (require 'autoinstall)
 (require 'parenface)
+
+(load "files/defuns") ;; for vendor
 (vendor 'use-package)
+(recentf-mode t)
 
 ;; autoloads
 (autoload 'calc-same-interface "calc" nil t)
@@ -42,7 +45,6 @@
 (load "files/global")
 (load "files/defuns-edit")
 (load "files/defuns-buffer")
-(load "files/defuns")
 (load "files/advices")
 (load "files/macros")
 (load "files/keys")
