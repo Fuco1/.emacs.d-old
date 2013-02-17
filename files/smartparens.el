@@ -1,5 +1,6 @@
 ;;;;;;;;;
 ;; global
+(require 'smartparens-config)
 (smartparens-global-mode t)
 
 ;; highlights matching pairs
@@ -13,6 +14,8 @@
 
 (define-key sp-keymap (kbd "C-M-d") 'sp-down-sexp)
 (define-key sp-keymap (kbd "C-M-a") 'sp-backward-down-sexp)
+(define-key sp-keymap (kbd "C-S-a") 'sp-beginning-of-sexp)
+(define-key sp-keymap (kbd "C-S-d") 'sp-end-of-sexp)
 
 (define-key sp-keymap (kbd "C-M-e") 'sp-up-sexp)
 (define-key sp-keymap (kbd "C-M-u") 'sp-backward-up-sexp)
@@ -70,3 +73,12 @@
   (sp-select-next-thing-exchange arg)
   (execute-kbd-macro (kbd "(")))
 (define-key sp-keymap (kbd "C-(") 'my-wrap-with-paren)
+
+;; fix this, then it should be added to core.
+(defun my-copy-expression (&optional arg)
+  "Copy the next expression(s) using `sp-kill-sexp' then reinsert
+it immediately afterward."
+  (interactive "P")
+  (save-excursion
+    (sp-kill-sexp arg)
+    (insert (car kill-ring))))
