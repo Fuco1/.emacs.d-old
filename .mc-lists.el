@@ -3,23 +3,42 @@
 
 (setq mc/cmds-to-run-for-all
       '(
+        cua-cut-region
         cua-delete-region
+        cua-paste
         end-of-region
+        eval-defun
+        eval-expression
+        keyboard-escape-quit
+        kill-visual-line
+        my-back-to-indentation-or-beginning
         my-emacs-lisp-open-line
+        my-end-of-code-or-line
+        my-newline
         smart-tab
+        sp--cua-replace-region
+        sp--self-insert-command
+        sp-backward-sexp
+        sp-backward-unwrap-sexp
+        sp-backward-up-sexp
         sp-cua-replace-region
-        sp-wrap-cancel
-        sp-wrap-tag-done
-        tm/pair-backspace
-        tm/pair-insert
-        typopunct-insert-ellipsis-or-middot
-        typopunct-insert-typographical-dashes
+        sp-forward-sexp
+        sp-kill-sexp
+        sp-remove-active-pair-overlay
+        sp-select-next-thing
+        sp-select-next-thing-exchange
+        sp-self-insert-command
+        zap-up-to-char
         ))
 
 (setq mc/cmds-to-run-once
       '(
+        beautify-smex
+        beginning-of-buffer
         eval-and-replace
         handle-switch-frame
+        kill-this-buffer
         mc/mark-all-like-this-dwim
         typopunct-insert-mp
+        winner-undo
         ))
