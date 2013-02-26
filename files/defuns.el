@@ -25,18 +25,6 @@
         (when (file-exists-p (concat personal ".el"))
           (load personal))))))
 
-(defmacro save-kill-ring (&rest body)
-  "Save the kill ring and execute the BODY.  After BODY is
-executed, the kill-ring value is restored to the state before
-BODY was executed"
-  (declare (indent 0))
-  ;; initialize new binding for the ,@body.  It starts with the global
-  ;; original value.  After ,@body is executed, the new binding is
-  ;; thrown away!
-  `(let ((kill-ring kill-ring))
-     ,@body))
-(font-lock-add-keywords 'emacs-lisp-mode '(("\\<save-kill-ring\\>" . font-lock-keyword-face)) 'append)
-
 ;; Quickly jump back and forth between matching parens/brackets
 (defun match-paren (arg)
   "Go to the matching parenthesis if on parenthesis."
@@ -47,38 +35,6 @@ BODY was executed"
 (defun lorem ()
   (interactive)
   (insert "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Praesent libero orci, auctor sed, faucibus vestibulum, gravida vitae, arcu. Nunc posuere. Suspendisse potenti. Praesent in arcu ac nisl ultricies ultricies. Fusce eros. Sed pulvinar vehicula ante. Maecenas urna dolor, egestas vel, tristique et, porta eu, leo. Curabitur vitae sem eget arcu laoreet vulputate. Cras orci neque, faucibus et, rhoncus ac, venenatis ac, magna. Aenean eu lacus. Aliquam luctus facilisis augue. Nullam fringilla consectetuer sapien. Aenean neque augue, bibendum a, feugiat id, lobortis vel, nunc. Suspendisse in nibh quis erat condimentum pretium. Vestibulum tempor odio et leo. Sed sodales vestibulum justo. Cras convallis pellentesque augue. In eu magna. In pede turpis, feugiat pulvinar, sodales eget, bibendum consectetuer, magna. Pellentesque vitae augue."))
-
-;; ;; Use the text around point as a cue what it is that we want from the
-;; ;; editor. Allowance has to be made for the case that point is at the
-;; ;; edge of a buffer.
-;; (defun indent-or-expand (arg)
-;;   "Either indent according to mode, or expand the word preceding
-;; point."
-;;   (interactive "*P")
-;;   (if (and
-;;        (or (bobp) (= ?w (char-syntax (char-before))))
-;;        (or (eobp) (not (= ?w (char-syntax (char-after))))))
-;;       (dabbrev-expand arg)
-;;     (indent-according-to-mode)))
-
-;; This override for transpose-words fixes what I consider to be a flaw with the
-;; default implementation in simple.el. To traspose chars or lines, you always
-;; put the point on the second char or line to transpose with the previous char
-;; or line.  The default transpose-words implementation does the opposite by
-;; flipping the current word with the next word instead of the previous word.
-;; The new implementation below instead makes transpose-words more consistent
-;; with how transpose-chars and trasponse-lines behave.
-(defun transpose-words (arg)
-  "[Override for default transpose-words in simple.el]
-Interchange words around point, leaving point at end of
-them. With prefix arg ARG, effect is to take word before or
-around point and drag it backward past ARG other words (forward
-if ARG negative).  If ARG is zero, the words around or after
-point and around or after mark are interchanged."
-  (interactive "*p")
-  (if (eolp) (forward-char -1))
-  (transpose-subr 'backward-word arg)
-  (forward-word (+ arg 1)))
 
 ;; some functions to ease the work with mark and mark-ring
 (defun push-mark-no-activate ()
@@ -151,3 +107,11 @@ If ARG is given, then insert the result to current-buffer"
                "hi-"
                'face-name-history
                (car hi-lock-face-defaults))))))
+
+;; By Stefan Monnier <foo at acm.org>.
+(defun unfill-paragraph ()
+  "Take a multi-line paragrap and make it into a single line of text.
+This is the opposite of fill-paragraph."
+  (interactive)
+  (let ((fill-column (point-max)))
+    (fill-paragraph nil)))
