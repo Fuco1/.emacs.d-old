@@ -29,6 +29,7 @@
 (package-initialize)
 (require 'autoinstall)
 (require 'parenface)
+(projectile-global-mode t)
 
 (load "files/defuns") ;; for vendor
 (vendor 'use-package)
@@ -76,14 +77,12 @@
 (vendor 'smartparens)
 (vendor 'letcheck 'letcheck-mode)
 
+(use-package "world-time-mode"
+  :load-path "vendor/world-time-mode/"
+  :bind ("C-. t" . world-time-list))
+
 ;; Diminish modeline clutter
 (load "files/diminish")
-
-;restore the s-c tabs
-(load "files/desktop")
-
-;; TEX
-(require 'tildify)
 
 ;; Customize
 (setq custom-file "~/.emacs.d/files/emacs-custom.el")
@@ -91,6 +90,9 @@
 
 ;; Reload theme -- hackish
 (load "~/.emacs.d/themes/my-tango-dark-theme")
+
+;restore the s-c tabs
+(load "files/desktop")
 
 ;; autoopen files
 (find-file "~/.emacs.d/init.el")
