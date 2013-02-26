@@ -99,6 +99,3 @@
   (setq cursor-type 'bar)
   (setq indent-tabs-mode t)
   (turn-on-visual-line-mode))
-
-;; ... but not in Org tables
-(set-face-attribute 'org-table nil :inherit 'fixed-pitch)
