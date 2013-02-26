@@ -17,7 +17,7 @@
   "Opens a new line if the point is at the closing parens of
 function on `my-emacs-lisp-open-line-list'."
   (interactive)
-  (open-next-line)
+  (my-newline)
   (when (and (save-excursion
                (forward-char)
                (backward-sexp)
