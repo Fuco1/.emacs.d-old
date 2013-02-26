@@ -50,15 +50,12 @@
               (concat
                (substring dired-actual-switches 0 (match-beginning 0))
                " -X"))
-
              ((string-match " -X\\'" dired-actual-switches)
               (concat
                (substring dired-actual-switches 0 (match-beginning 0))
                " -S"))
-
              ((string-match " -S\\'" dired-actual-switches)
-              (substring dired-actual-switches 0 (match-beginning 0)) )
-
+              (substring dired-actual-switches 0 (match-beginning 0)))
              (t
               (concat dired-actual-switches " -t"))))
            (t
@@ -70,7 +67,6 @@
                         (substring dired-actual-switches (match-beginning 0)
                                    (match-end 0))
                       ""))
-
                    (new-sorting-switch
                     (cond
                      ((string= old-sorting-switch "t")
