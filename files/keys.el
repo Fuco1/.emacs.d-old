@@ -220,6 +220,9 @@
 (bind-key "C-. p r" 'elp-results)
 (bind-key "C-. p R" 'elp-restore-all)
 
+(bind-key "C-. u" 'unfill-paragraph)
+(bind-key "C-. c" 'create-scratch-buffer)
+
 (defvar ctl-c-r-map)
 (define-prefix-command 'ctl-c-r-map)
 (bind-key "C-c r" 'ctl-c-r-map)
