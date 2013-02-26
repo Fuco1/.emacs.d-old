@@ -3,7 +3,7 @@
 (require 'desktop)
 (defun my-desktop-filter (buffer)
   (let ((mode (with-current-buffer buffer major-mode)))
-    (if (eq mode 'sr-mode) t nil)))
+    (eq mode 'sr-mode)))
 
 (setq desktop-dirname "~/.emacs.d/desktop/")
 (setq desktop-path (list desktop-dirname))
