@@ -81,6 +81,9 @@
         ("~/.emacs.d/elpa/" . ":ELPA:")
         ("~/.emacs.d/" . ":ED:")))
 
+(setq cycbuf-file-name-replacements
+      (mapcar (lambda (pair) (list (car pair) (cdr pair))) my-abbrev-file-name-alist))
+
 (defun my-abbreviate-file-name (filename)
   "Shorten the FILENAME or directory according to
 `my-abbrev-file-name-alist'. "
