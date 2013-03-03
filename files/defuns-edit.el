@@ -101,6 +101,16 @@ and indent next line according to mode."
     (error (message "Invalid expression")
            (insert (current-kill 0)))))
 
+(defun expand-macro-and-replace ()
+  "Replace the preceding sexp with its macroexpand."
+  (interactive)
+  (backward-kill-sexp)
+  (condition-case nil
+      (prin1 (macroexpand (read (current-kill 0)))
+             (current-buffer))
+    (error (message "Invalid expression")
+           (insert (current-kill 0)))))
+
 (defun copy-line-with-offset (offset)
   "Save the line specified by offset (+1 = next, -1 = prev) to the kill ring,
 move the current line down and yank"
