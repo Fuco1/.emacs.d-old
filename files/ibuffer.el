@@ -26,10 +26,12 @@
                     (mode . css-mode)
                     (mode . php-mode)
                     (mode . js-mode)))
-               ("Sunrise"
-                (mode . sr-mode))
                ("Dired"
                 (mode . dired-mode))
+               ("Images"
+                (or (mode . image-dired-display-image-mode)
+                    (mode . image-dired-thumbnail-mode)
+                    (mode . image-mode)))
                ("Tramp"
                 (or (name . "tramp")))
                ("Programming" ;; prog stuff not already in MyProjectX
@@ -40,6 +42,12 @@
                  (mode . cc-mode)
                  ;; etc
                  ))))))
+
+;; (define-ibuffer-filter in-directory
+;;   "Toggle current view to buffers whose default-directory is in QUALIFIER."
+;;   (:description "in-directory"
+;;    :reader (read-directory-name "Directory: "))
+;;   (with-current-buffer buf (file-in-directory-p default-directory qualifier)))
 
 ;; column settings
 (defun my-transform-buffer-name (name)
