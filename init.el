@@ -35,6 +35,8 @@
 (vendor 'use-package)
 (recentf-mode t)
 
+(vendor 'keyadvice)
+
 ;; autoloads
 (autoload 'calc-same-interface "calc" nil t)
 (autoload 'dired-w32-browser "w32-browser" nil t)
@@ -64,16 +66,15 @@
 (load "files/latex-mode")
 (load "files/mode-line")
 (load "files/smex")
+(load "files/ack")
 
 ;; vendor
 (vendor 'yasnippet)
 (vendor 'typopunct 'typopunct-change-language 'typopunct-mode)
 (vendor 'wc-mode)
 (vendor 'revbufs 'revbufs)
-(vendor 'shell-pop 'shell-pop)
 (vendor 'golden-ratio)
 (vendor 'iy-go-to-char 'iy-go-to-char 'iy-go-to-char-backward)
-(vendor 'sunrise-commander)
 (vendor 'smartparens)
 (vendor 'letcheck 'letcheck-mode)
 
@@ -91,9 +92,6 @@
 ;; Reload theme -- hackish
 (load "~/.emacs.d/themes/my-tango-dark-theme")
 
-;restore the s-c tabs
-(load "files/desktop")
-
 ;; autoopen files
 (find-file "~/.emacs.d/init.el")
 
@@ -110,3 +108,7 @@
                  (message "Loading %s...done (%.3fs) [after-init]"
                           ,load-file-name elapsed)))
             t))
+
+;; removed packages:
+;; sunrise-commander
+;; shell-pop
