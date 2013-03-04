@@ -14,6 +14,38 @@
 (defun ido-disable-line-trucation () (set (make-local-variable 'truncate-lines) nil))
 (add-hook 'ido-minibuffer-setup-hook 'ido-disable-line-trucation)
 
+;; see: http://emacswiki.org/emacs/InteractivelyDoThings#toc25
+(defun ido-smart-select-text ()
+  "Select the current completed item.  Do NOT descend into directories."
+  (interactive)
+  (when (and (or (not ido-require-match)
+                 (if (memq ido-require-match
+                           '(confirm confirm-after-completion))
+                     (if (or (eq ido-cur-item 'dir)
+                             (eq last-command this-command))
+                         t
+                       (setq ido-show-confirm-message t)
+                       nil))
+                 (ido-existing-item-p))
+             (not ido-incomplete-regexp))
+    (when ido-current-directory
+      (setq ido-exit 'takeprompt)
+      (unless (and ido-text (= 0 (length ido-text)))
+        (let ((match (ido-name (car ido-matches))))
+          (throw 'ido
+                 (setq ido-selected
+                       (if match
+                           (replace-regexp-in-string "/\\'" "" match)
+                         ido-text)
+                       ido-text ido-selected
+                       ido-final-text ido-text)))))
+    (exit-minibuffer)))
+
+(defun my-ido-keys ()
+  (bind-key "C-<tab>" 'ido-smart-select-text ido-file-dir-completion-map))
+
+(add-hook 'ido-setup-hook 'my-ido-keys)
+
 ;; ido and imenu integration
 (defun ido-goto-symbol (&optional symbol-list)
   "Refresh imenu and jump to a place in the buffer using Ido."
