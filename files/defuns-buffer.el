@@ -44,6 +44,13 @@ Including indent-buffer, which should not be called automatically on save."
   (cleanup-buffer-safe)
   (indent-buffer))
 
+(defun my-create-directory-on-save ()
+  (when buffer-file-name
+    (let ((dir (file-name-directory buffer-file-name)))
+      (when (and (not (file-exists-p dir))
+                 (y-or-n-p (format "Directory %s does not exist. Create it?" dir)))
+        (make-directory dir t)))))
+
 ;; Borrowed from https://gist.github.com/1415844
 ;; Also see http://emacsworld.blogspot.com/2011/12/moving-buffers-between-windows.html
 (require 'cl)

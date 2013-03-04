@@ -45,6 +45,7 @@
 
 ;; Trailing whitespace is unnecessary
 (add-hook 'before-save-hook 'cleanup-buffer-safe)
+(add-hook 'before-save-hook 'my-create-directory-on-save)
 
 ;; Trash can support
 (setq delete-by-moving-to-trash t)
