@@ -36,6 +36,7 @@
   (bind-key "C-o" 'dired-omit-mode dired-mode-map)
 
   (bind-key "/" 'my-dired-filter-by-regexp dired-mode-map)
+  (bind-key "(" 'dired-details-toggle dired-mode-map)
 
   (dired-omit-mode t))
 (add-hook 'dired-mode-hook 'my-dired-init)
@@ -177,6 +178,7 @@
 (my-diredp-hilight-file my-diredp-packaged-face "#e6a8df" ("deb" "rpm"))
 (my-diredp-hilight-file my-diredp-encrypted-face "#ce5c00" ("gpg" "pgp"))
 (my-diredp-hilight-file my-diredp-image-face "#ff4b4b" ("jpg" "png" "jpeg" "gif"))
+(my-diredp-hilight-file my-diredp-sourcefile-face "#fcaf3e" ("py" "c" "cc" "h" "java" "pl"))
 
 (my-diredp-rainbow my-diredp-broken-link-face (:inherit dired-warning :italic t) "\\(^[!].l.*$\\)")
 
@@ -250,9 +252,11 @@
   (interactive
    (list
     (file-truename (ido-read-directory-name
-                         "Find name (directory): "
-                         default-directory default-directory t nil))
+                    "Find name (directory): "
+                    default-directory default-directory t nil))
     (read-from-minibuffer "Find name (filename wildcard): ")))
+  (when (not (featurep 'find-dired))
+    (require 'find-dired))
   (let ((dired-buffers dired-buffers))
     ;; Expand DIR ("" means default-directory), and make sure it has a
     ;; trailing slash.
