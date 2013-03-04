@@ -247,7 +247,12 @@
 
 ;; see `find-dired' in find-dired.el
 (defun my-find-dired (dir pattern)
-  (interactive "DFind name (directory): \nsFind-name (filename wildcard): ")
+  (interactive
+   (list
+    (file-truename (ido-read-directory-name
+                         "Find name (directory): "
+                         default-directory default-directory t nil))
+    (read-from-minibuffer "Find name (filename wildcard): ")))
   (let ((dired-buffers dired-buffers))
     ;; Expand DIR ("" means default-directory), and make sure it has a
     ;; trailing slash.
