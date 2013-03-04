@@ -30,7 +30,7 @@
 (bind-key "C-c w" 'browse-url)
 
 ;; Find stuff
-(bind-key "M-<f2>" 'find-name-dired)
+(bind-key "M-<f2>" 'my-find-dired)
 (bind-key "<f2>" 'occur)
 
 ;; refresh-like
@@ -43,7 +43,7 @@
 (bind-key "C-<tab>" 'indent-defun)
 
 ;; shell pop
-(bind-key "<f9>" 'shell-pop)
+;; (bind-key "<f9>" 'shell-pop)
 
 (bind-key "M-0" 'delete-window)
 (bind-key "M-o" 'other-window)
@@ -51,6 +51,14 @@
 
 (add-hook 'dired-mode-hook (lambda () (bind-key "M-o" 'other-window dired-mode-map)))
 (add-hook 'ibuffer-mode-hook (lambda () (bind-key "M-o" 'other-window ibuffer-mode-map)))
+
+;; dired
+(bind-key "C-x d" 'my-dired-files)
+
+(defvar f1-prefix-map)
+(define-prefix-command 'f1-prefix-map)
+(bind-key "<f1>" 'f1-prefix-map)
+(bind-key "<f1> <f1>" 'ibuffer)
 
 ;; ibuffer > list-buffers
 (bind-key "C-x C-b" 'ibuffer)
@@ -61,7 +69,9 @@
 (bind-key "C-c u" 'cleanup-buffer)
 
 ;; buffer switching using cycbuf
-;;(bind-key "C-x C-a" 'cycbuf-switch-to-next-buffer)
+(bind-key "<right>" 'cycbuf-switch-to-next-buffer)
+(bind-key "<left>" 'cycbuf-switch-to-previous-buffer)
+(bind-key "<down>" 'cycbuf-discard-status-window)
 
 ;; Window navigation
 (windmove-default-keybindings 'meta)
@@ -180,10 +190,6 @@
 (bind-key "H-SPC" 'set-rectangular-region-anchor)
 
 (add-hook 'html-mode-hook (lambda () (bind-key "C-c <deletechar>" 'sgml-delete-tag html-mode-map)))
-
-;; sunrise
-(bind-key "<f1>" 'sunrise)
-(bind-key "M-<f1>" 'sunrise-cd)
 
 ;; mark commands
 (bind-key "C-`" 'push-mark-no-activate)
