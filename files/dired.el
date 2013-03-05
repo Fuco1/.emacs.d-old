@@ -73,82 +73,94 @@
          (post-fixes (list "k" "M" "G" "T" "P" "E") (cdr post-fixes)))
         ((< file-size 1024) (format " %10.0f%s"  file-size (car post-fixes))))))
 
-;; Redefine the sorting in dired to flip between sorting on name, size,
-;; time, and extension, rather than simply on name and time.
+(defvar dired-sort-modes-list
+  '(("size" "S" "")
+    ("ext" "X" "S")
+    ("cdate" "ct" "X")
+    ("date" "t" "ct")
+    ("name" "" "t"))
+  "List of dired buffer sort modes.")
+
+(defvar dired-sort-current-mode ""
+  "Current mode for sorting dired buffer.")
+
+;; redefining from dired.el. Just cycle the options
 (defun dired-sort-toggle ()
-  ;; Toggle between sort by date/name.  Reverts the buffer.
-  (setq dired-actual-switches
-        (let (case-fold-search)
-          (cond
-           ((string-match " " dired-actual-switches) ;; contains a space
-            ;; New toggle scheme: add/remove a trailing " -t" " -S",
-            ;; or " -U"
-            ;; -t = sort by time (date)
-            ;; -S = sort by size
-            ;; -X = sort by extension
-            (cond
-             ((string-match " -t\\'" dired-actual-switches)
-              (concat
-               (substring dired-actual-switches 0 (match-beginning 0))
-               " -X"))
-             ((string-match " -X\\'" dired-actual-switches)
-              (concat
-               (substring dired-actual-switches 0 (match-beginning 0))
-               " -S"))
-             ((string-match " -S\\'" dired-actual-switches)
-              (substring dired-actual-switches 0 (match-beginning 0)))
-             (t
-              (concat dired-actual-switches " -t"))))
-           (t
-            ;; old toggle scheme: look for a sorting switch, one of [tUXS]
-            ;; and switch between them. Assume there is only ONE present.
-            (let* ((old-sorting-switch
-                    (if (string-match (concat "[t" dired-ls-sorting-switches "]")
-                                      dired-actual-switches)
-                        (substring dired-actual-switches (match-beginning 0)
-                                   (match-end 0))
-                      ""))
-                   (new-sorting-switch
-                    (cond
-                     ((string= old-sorting-switch "t")
-                      "X")
-                     ((string= old-sorting-switch "X")
-                      "S")
-                     ((string= old-sorting-switch "S")
-                      "")
-                     (t
-                      "t"))))
-              (concat
-               "-l"
-               ;; strip -l and any sorting switches
-               (dired-replace-in-string (concat "[-lt" dired-ls-sorting-switches "]")
-                                        "" dired-actual-switches)
-               new-sorting-switch))))))
+  (cond
+   ((equal dired-sort-current-mode "") (setq dired-sort-current-mode "S") (dired-sort-size))
+   ((equal dired-sort-current-mode "S") (setq dired-sort-current-mode "X") (dired-sort-extension))
+   ((equal dired-sort-current-mode "X") (setq dired-sort-current-mode "ct") (dired-sort-ctime))
+   ((equal dired-sort-current-mode "ct") (setq dired-sort-current-mode "t") (dired-sort-utime))
+   ((equal dired-sort-current-mode "t") (setq dired-sort-current-mode "") (dired-sort-name))))
 
-  (dired-sort-set-modeline)
-  (revert-buffer))
+;; redefining from dired.el. With double-prefix show a menu to chose the sorting from
+(defun dired-sort-toggle-or-edit (&optional arg)
+  "Toggle sorting by date, and refresh the Dired buffer.
 
+With a prefix argument \\[universal-argument], edit the current listing switches instead.
 
-;; redefine this fn, to properly provide the modeline in dired mode,
-;; supporting the new search modes I defined above.
+With a prefix argument \\[universal-argument] \\[universal-argument] prompt user with list of choices
+to chose from."
+  (interactive "P")
+  (when dired-sort-inhibit
+    (error "Cannot sort this dired buffer"))
+  (cond
+   ((equal arg '(4))
+    (dired-sort-other
+     (read-string "ls switches (must contain -l): " dired-actual-switches)))
+   ((equal arg '(16))
+    (let* ((sort-mode (completing-read "Sort by: "
+                                       (mapcar 'car dired-sort-modes)-list
+                                       nil
+                                       t))
+           (sort-switch (caddr (assoc sort-mode dired-sort-modes))))-list
+      (setq dired-sort-current-mode sort-switch)
+      (dired-sort-toggle)))
+   (t (dired-sort-toggle))))
+
+(defun dired-sort-size ()
+  "Dired sort by size."
+  (interactive)
+  (dired-sort-other (concat dired-listing-switches "S")))
+
+(defun dired-sort-extension ()
+  "Dired sort by extension."
+  (interactive)
+  (dired-sort-other (concat dired-listing-switches "X")))
+
+(defun dired-sort-ctime ()
+  "Dired sort by create time."
+  (interactive)
+  (dired-sort-other (concat dired-listing-switches "ct")))
+
+(defun dired-sort-time ()
+  "Dired sort by time."
+  (interactive)
+  (dired-sort-other (concat dired-listing-switches "t")))
+
+(defun dired-sort-name ()
+  "Dired sort by name."
+  (interactive)
+  (dired-sort-other (concat dired-listing-switches "")))
+
+;; redefined from dired.el to support new types of sorting
 (defun dired-sort-set-modeline ()
-  ;; Set modeline display according to dired-actual-switches.
-  ;; Modeline display of "by name" or "by date" guarantees the user a
-  ;; match with the corresponding regexps.  Non-matching switches are
-  ;; shown literally.
   (when (eq major-mode 'dired-mode)
     (setq mode-name
           (let (case-fold-search)
-            (cond ((string-match "^-[^t]*t[^t]*$" dired-actual-switches)
-                   "Dired by date")
-                  ((string-match "^-[^X]*X[^X]*$" dired-actual-switches)
-                   "Dired by ext")
-                  ((string-match "^-[^S]*S[^S]*$" dired-actual-switches)
-                   "Dired by sz")
-                  ((string-match "^-[^SXUt]*$" dired-actual-switches)
-                   "Dired by name")
-                  (t
-                   (concat "Dired " dired-actual-switches)))))
+            (cond
+             ((string-match "ct" dired-actual-switches)
+              "Dired by ctime")
+             ((string-match "^-[^t]*t[^t]*$" dired-actual-switches)
+              "Dired by date")
+             ((string-match "^-[^X]*X[^X]*$" dired-actual-switches)
+              "Dired by ext")
+             ((string-match "^-[^S]*S[^S]*$" dired-actual-switches)
+              "Dired by size")
+             ((string-match "^-[^SXUt]*$" dired-actual-switches)
+              "Dired by name")
+             (t
+              (concat "Dired " dired-actual-switches)))))
     (force-mode-line-update)))
 
 (defmacro my-diredp-rainbow (symbol spec regexp &optional group)
