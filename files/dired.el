@@ -1,3 +1,4 @@
+;;;_. Commentary & basic stuff
 ;; diredp modified stuff:
 ;; comment out:
 ;; in `diredp-font-lock-keywords-1'
@@ -11,6 +12,7 @@
 (require 'dired+)
 (setq dired-dwim-target t)
 
+;;;_. Key bindings & hooks
 (defun my-image-dired-thumbnail-mode-init ()
   (bind-key "b" 'image-dired-backward-image image-dired-thumbnail-mode-map)
   (bind-key "f" 'image-dired-forward-image image-dired-thumbnail-mode-map)
@@ -61,6 +63,7 @@
     (with-current-buffer cbuffer
       (dired-unmark-all-marks))))
 
+;;;_. Sorting
 (require 'ls-lisp)
 
 ;; redefine this function, to fix the formatting of file sizes in dired mode
@@ -163,6 +166,7 @@ to chose from."
               (concat "Dired " dired-actual-switches)))))
     (force-mode-line-update)))
 
+;;;_. Pretty colors
 (defmacro my-diredp-rainbow (symbol spec regexp &optional group)
   (setq group (or group 1))
   `(progn
@@ -194,6 +198,8 @@ to chose from."
 
 (my-diredp-rainbow my-diredp-broken-link-face (:inherit dired-warning :italic t) "\\(^[!].l.*$\\)")
 
+
+;;;_. Find dired hacked to work with windows
 ;;; re-eval `find-dired-filter' to replace \\ with /
 (eval-after-load "find-dired"
   '(progn
@@ -347,3 +353,11 @@ to chose from."
       ;; Initialize the process marker; it is used by the filter.
       (move-marker (process-mark proc) 1 (current-buffer)))
     (setq mode-line-process '(":%s"))))
+
+;;;_. Local var settings
+
+;; Local Variables:
+;;   mode: emacs-lisp
+;;   mode: allout
+;;   outline-regexp: "^;;;_\\([,. ]+\\)"
+;; End:
