@@ -67,6 +67,7 @@
 (load "files/mode-line")
 (load "files/smex")
 (load "files/ack")
+(load "files/allout")
 
 ;; vendor
 (vendor 'yasnippet)
