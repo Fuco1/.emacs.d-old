@@ -26,8 +26,8 @@
         (ido-dired))))
   :config
   (progn
+    ;; loads dired, dired-aux, dired-x
     (require 'dired+)
-    (setq dired-dwim-target t)
 
 ;;;_. Key bindings & hooks
     (defun my-image-dired-thumbnail-mode-init ()
@@ -58,6 +58,7 @@
       (bind-key "(" 'dired-details-toggle dired-mode-map)
 
       (bind-key "M-<f5>" 'my-dired-zip-files dired-mode-map)
+      (bind-key "M-<f6>" 'my-dired-unpack-files dired-mode-map)
 
       (dired-omit-mode t))
     (add-hook 'dired-mode-hook 'my-dired-init)
@@ -365,29 +366,54 @@ to chose from."
 
 ;;;_. Zip support
 
+    (add-to-list 'dired-compress-file-suffixes '("\\.zip\\'" ".zip" "unzip"))
+    (add-to-list 'dired-compress-file-suffixes '("\\.gz\\'" "" "zcat"))
+    (add-to-list 'dired-compress-file-suffixes '("\\.bz2\\'" "" "bzcatt"))
+    (add-to-list 'dired-compress-file-suffixes '("\\.tar\\.bz2\\'" "" "untarbz2"))
+    (add-to-list 'dired-compress-file-suffixes '("\\.tar\\.gz\\'" "" "untargz"))
+
     (defun my-dired-zip-files (zip-file)
       "Create an archive containing the marked files."
-      (interactive "sEnter name of zip file: ")
+      (interactive
+       (list (let ((files (dired-get-marked-files)))
+               (read-from-minibuffer
+                "Enter name of zip file: "
+                (if (cadr files)
+                    ;; more than one file selected, use directory name as default
+                    (file-name-nondirectory
+                     (substring default-directory 0 (1- (length default-directory))))
+                  ;; otherwise use the current file name as defalt
+                  (file-name-nondirectory (car files)))))))
       (let ((zip-file (if (string-match ".zip$" zip-file) zip-file (concat zip-file ".zip"))))
         (shell-command
-         (concat "zip "
-                 zip-file
+         (concat "zip -r "
+                 (concat "\"" zip-file "\"")
                  " "
                  (mapconcat (lambda (obj) (format "\"%s\"" obj))
                             (mapcar
                              (lambda (filename)
                                (file-name-nondirectory filename))
-                             (dired-get-marked-files)) " "))))
-      (revert-buffer))
+                             (dired-get-marked-files)) " ")))
+        (dired-unmark-all-marks)
+        (revert-buffer)
+        (goto-char 0)
+        (when (search-forward zip-file nil t)
+          (goto-char (match-beginning 0)))))
 
-    (use-package dired-aux
-      :defer t
-      :config
-      (progn
-        (add-to-list 'dired-compress-file-suffixes
-                     '("\\.zip\\'" ".zip" "unzip"))))
+    (defun my-dired-unpack-files (where)
+      "Unpack this archive into the target directory WHERE."
+      (interactive
+       (list (ido-read-directory-name
+              "Enter target directory (where to unpack): "
+              (dired-dwim-target-directory))))
+      (let ((default-directory default-directory))
+        (unless (file-directory-p where)
+          (when (y-or-n-p (format "Directory %s does not exist. Create?" where))
+            (make-directory where t)))
+        (cd where)
+        (dired-compress-file (car (dired-get-marked-files)))
+        (revert-buffer)))
     ))
-
 
 ;;;_. Local var settings
 
