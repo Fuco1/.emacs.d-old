@@ -49,32 +49,6 @@
 ;;    :reader (read-directory-name "Directory: "))
 ;;   (with-current-buffer buf (file-in-directory-p default-directory qualifier)))
 
-;; column settings
-(defun my-transform-buffer-name (name)
-  "Transform buffer name for display in `ibuffer'."
-  (cond
-   ((string-match " *(Sunrise)" name)
-    (substring name 0 (match-beginning 0)))
-   (t name)))
-
-(define-ibuffer-column name-trans
-  (:inline t
-   :header-mouse-map ibuffer-name-header-map
-   :props
-   ('mouse-face 'highlight 'keymap ibuffer-name-map
-        'ibuffer-name-column t
-        'help-echo '(if tooltip-mode
-                "mouse-1: mark this buffer\nmouse-2: select this buffer\nmouse-3: operate on this buffer"
-                  "mouse-1: mark buffer   mouse-2: select buffer   mouse-3: operate"))
-   :summarizer
-   (lambda (strings)
-     (let ((bufs (length strings)))
-       (cond ((zerop bufs) "No buffers")
-         ((= 1 bufs) "1 buffer")
-         (t (format "%s buffers" bufs))))))
-  (propertize (my-transform-buffer-name (buffer-name))
-              'font-lock-face (ibuffer-buffer-name-face buffer mark)))
-
 (define-ibuffer-column size-h
   (:name "Size"
    :inline t
@@ -99,7 +73,7 @@
 ;; Modify the default ibuffer-formats
 (setq ibuffer-formats
   '((mark modified read-only
-          " " (name-trans 25 25 :left :elide)
+          " " (name 25 25 :left :elide)
           " " (size-h 9 -1 :right)
           " " (mode 16 16 :left :elide)
           " " filename-and-process)
@@ -110,8 +84,9 @@
 (defun customize-ibuffer-mode ()
   "Startup function."
   (ibuffer-switch-to-saved-filter-groups "default")
-  (add-to-list 'ibuffer-hidden-filter-groups "Sunrise")
-  (add-to-list 'ibuffer-hidden-filter-groups "Tramp"))
+  (add-to-list 'ibuffer-hidden-filter-groups "Tramp")
+  (visual-line-mode -1)
+  (toggle-truncate-lines 1))
 (add-hook 'ibuffer-mode-hook 'customize-ibuffer-mode)
 
 ;; Switching to ibuffer puts the cursor on the most recent buffer
