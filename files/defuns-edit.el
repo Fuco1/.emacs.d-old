@@ -144,25 +144,29 @@ move the current line down and yank"
         (eq 'font-lock-comment-delimiter-face face))))
 
 (defun my-back-to-indentation ()
-  (if (visual-line-mode)
+  (if visual-line-mode
       (flet ((beginning-of-line (arg) (beginning-of-visual-line arg)))
         (back-to-indentation))
     (back-to-indentation)))
 
-(defun my-back-to-indentation-or-beginning ()
+(defun my-back-to-indentation-or-beginning (&optional arg)
   "Jump back to indentation of the current line.  If already
 there, jump to the beginning of current line.  If visual mode is
 enabled, move according to the visual lines."
-  (interactive)
-  (if (= (point) (save-excursion
-                   (my-back-to-indentation)
-                   (point)))
-      (if (visual-line-mode)
-          (beginning-of-visual-line)
-        (move-beginning-of-line))
+  (interactive "p")
+  (if (or (/= arg 1)
+          (= (point) (save-excursion
+                       (my-back-to-indentation)
+                       (point))))
+      (progn
+        (if visual-line-mode
+            (beginning-of-visual-line arg)
+          (move-beginning-of-line arg))
+        (when (/= arg 1)
+          (my-back-to-indentation)))
     (my-back-to-indentation)))
 
-(defun my-end-of-code-or-line ()
+(defun my-end-of-code-or-line (&optional arg)
   "Move to the end of code.  If already there, move to the end of line,
 that is after the possible comment.  If at the end of line, move
 to the end of code.
@@ -177,13 +181,13 @@ repeated invocation. On subsequent calls the point jumps between
 
 Comments are recognized in any mode that sets syntax-ppss
 properly."
-  (interactive)
-  (flet ((end-of-line-lov () (if (visual-line-mode)
-                                 (end-of-visual-line)
-                               (move-end-of-line)))
-         (beg-of-line-lov () (if (visual-line-mode)
-                                 (beginning-of-visual-line)
-                               (move-beginning-of-line))))
+  (interactive "p")
+  (flet ((end-of-line-lov () (if visual-line-mode
+                                 (end-of-visual-line arg)
+                               (move-end-of-line arg)))
+         (beg-of-line-lov () (if visual-line-mode
+                                 (beginning-of-visual-line arg)
+                               (move-beginning-of-line arg))))
     (let ((eoc (save-excursion
                  (end-of-line-lov)
                  (while (and (point-in-comment)
