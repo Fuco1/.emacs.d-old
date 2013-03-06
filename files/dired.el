@@ -60,7 +60,9 @@
       (bind-key "M-<f5>" 'my-dired-zip-files dired-mode-map)
       (bind-key "M-<f6>" 'my-dired-unpack-files dired-mode-map)
 
-      (dired-omit-mode t))
+      (dired-omit-mode t)
+      (visual-line-mode -1)
+      (toggle-truncate-lines 1))
     (add-hook 'dired-mode-hook 'my-dired-init)
 
     (defun my-dired-filter-by-regexp (regexp)
@@ -240,6 +242,11 @@ to chose from."
                         (while (search-forward "\\\\" nil t)
                           (delete-region (point) (- (point) 2))
                           (insert "/"))
+                        (while (search-forward "\\" nil t)
+                          (delete-region (point) (- (point) 1))
+                          (insert "/"))
+                        (while (search-forward "\\.\\" nil t)
+                          (delete-region (point) (- (point) 2)))
                         ;; Convert ` ./FILE' to ` FILE'
                         ;; This would lose if the current chunk of output
                         ;; starts or ends within the ` ./', so back up a bit:
@@ -326,7 +333,9 @@ to chose from."
                     (mapconcat (lambda (ex)
                                  (concat "-iname \\\"*." ex "\\\""))
                                my-find-dired-ignore-extensions " -o ")
-                    " \\) \\) -ls\" &")))
+                    " \\) \\) "
+                    (car find-ls-option)
+                    " \" &")))
           (shell-command cmd (current-buffer)))
 
         (dired-mode dir (cdr find-ls-option))
