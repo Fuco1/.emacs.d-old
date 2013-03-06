@@ -42,9 +42,6 @@
 (bind-key "C-<f8>" 'indent-buffer)
 (bind-key "C-<tab>" 'indent-defun)
 
-;; shell pop
-;; (bind-key "<f9>" 'shell-pop)
-
 (bind-key "M-0" 'delete-window)
 (bind-key "M-o" 'other-window)
 (bind-key "M-O" 'rotate-windows)
@@ -52,13 +49,11 @@
 (add-hook 'dired-mode-hook (lambda () (bind-key "M-o" 'other-window dired-mode-map)))
 (add-hook 'ibuffer-mode-hook (lambda () (bind-key "M-o" 'other-window ibuffer-mode-map)))
 
-;; dired
-(bind-key "C-x d" 'my-dired-files)
-
 (defvar f1-prefix-map)
 (define-prefix-command 'f1-prefix-map)
 (bind-key "<f1>" 'f1-prefix-map)
 (bind-key "<f1> <f1>" 'ibuffer)
+(bind-key "<f1> <f2>" (lambda () (interactive) (bookmark-jump "init.el")))
 
 ;; ibuffer > list-buffers
 (bind-key "C-x C-b" 'ibuffer)
