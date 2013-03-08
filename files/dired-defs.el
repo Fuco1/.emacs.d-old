@@ -1,5 +1,7 @@
 ;; loads dired, dired-aux, dired-x
 (require 'dired+)
+(use-package dired-details
+  :commands dired-details-toggle)
 
 ;;;_. Key bindings & hooks
 (defun my-image-dired-thumbnail-mode-init ()
@@ -97,21 +99,31 @@ on and associated dired buffer."
       (funcall operation file dired-buf)
       (set-buffer old-buf))))
 
+(defun my-image-dired--skip-non-image (arg)
+  "Skip non-image files in direction ARG"
+  (while (and (or (file-directory-p (car (dired-get-marked-files)))
+                  (not (eq (get-char-property (point) 'face) 'my-diredp-image-face)))
+              (not (eobp))
+              (not (bobp)))
+    (dired-next-line arg)
+    (set-window-point (get-buffer-window dired-buf) (point))))
+
 (defun my-image-dired-display-next (arg)
   (interactive "p")
   (my-image-dired--with-image-in-dired
    (lambda (file dired-buf)
      (dired-goto-file file)
      (dired-next-line arg)
+     (ignore-errors (my-image-dired--skip-non-image arg))
      (let ((next-img (ignore-errors (dired-get-marked-files))))
        (unless next-img
          (if (> arg 0)
              (progn
                (goto-char (point-min))
-               (dired-next-line (if dired-omit-mode 2 4))
-               (while (file-directory-p (car (dired-get-marked-files))) (dired-next-line 1)))
+               (dired-next-line (if dired-omit-mode 2 4)))
            (goto-char (point-max))
-           (dired-previous-line 1)))
+           (dired-previous-line 1))
+         (my-image-dired--skip-non-image arg))
        (image-dired-dired-display-image)
        (set-window-point (get-buffer-window dired-buf) (point))))))
 
@@ -140,33 +152,6 @@ on and associated dired buffer."
    (lambda (file dired-buf)
      (dired-goto-file file)
      (dired-unmark 1))))
-
-;; TODO: generalizovat na mark/unmark/operate on dired file...
-(defun my-image-dired-next-image-in-dired (arg)
-  (let* ((old-buf (current-buffer))
-         (str (image-dired-original-file-name))
-         (dired-name (progn
-                       (string-match ".*/\\(.*\\)/.*" str)
-                       (match-string 1 str)))
-         (dired-buf (get-buffer dired-name)))
-    (when dired-buf
-      (set-buffer dired-buf)
-      (dired-goto-file str)
-      (dired-next-line arg)
-      (let ((next-img (ignore-errors
-                        (dired-get-marked-files))))
-        (unless next-img
-          (if (> arg 0)
-              (progn
-                (goto-char (point-min))
-                (dired-next-line (if dired-omit-mode 2 4))
-                (while (file-directory-p (car (dired-get-marked-files))) (dired-next-line 1)))
-            (goto-char (point-max))
-            (dired-previous-line 1)))
-        (image-dired-dired-display-image)
-        (set-window-point
-         (get-buffer-window dired-buf) (point)))
-      (set-buffer old-buf))))
 
 (defun my-image-dired-display-open ()
   (interactive)
@@ -304,9 +289,9 @@ to chose from."
 
 (defmacro my-diredp-hilight-file (face-name color extensions)
   (let ((regexp (concat
-                 "^[^!].[^d].*[0-9][ ]\\(?:.*[\\/]\\(.*\\."
+                 "^[^!].[^d].*[0-9][ ]\\(.*\\."
                  (regexp-opt extensions)
-                 "\\)\\)$")))
+                 "\\)$")))
     `(progn
        (defface ,face-name '((t (:foreground ,color))) "My diredp rainbow face" :group 'Dired-Plus)
        ,@(mapcar (lambda (m)
