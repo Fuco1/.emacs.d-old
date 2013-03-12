@@ -38,7 +38,8 @@
 
 (defadvice kill-this-buffer (around warn-if-scratch activate)
   "Warn me if I want to kill a scratch buffer"
-  (if (string-match-p "\\\\*scratch" (buffer-name (current-buffer)))
-    (when (y-or-n-p "Do you want to kill this scratch buffer?")
+  (if (or (string-match-p "\\*scratch" (buffer-name (current-buffer)))
+          (string-match-p "\\*Messages\\*" (buffer-name (current-buffer))))
+      (when (y-or-n-p "Do you want really to kill this buffer?")
         ad-do-it)
     ad-do-it))
