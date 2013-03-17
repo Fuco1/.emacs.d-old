@@ -48,6 +48,7 @@
 (load "files/global")
 (load "files/defuns-edit")
 (load "files/defuns-buffer")
+(load "files/defuns-macros")
 (load "files/advices")
 (load "files/macros")
 (load "files/keys")
@@ -78,6 +79,7 @@
 (vendor 'iy-go-to-char 'iy-go-to-char 'iy-go-to-char-backward)
 (vendor 'smartparens)
 (vendor 'letcheck 'letcheck-mode)
+(vendor 'chop 'chop-move-up 'chop-move-down)
 
 (use-package "world-time-mode"
   :load-path "vendor/world-time-mode/"

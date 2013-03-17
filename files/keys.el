@@ -54,6 +54,8 @@
 (bind-key "<f1>" 'f1-prefix-map)
 (bind-key "<f1> <f1>" 'ibuffer)
 (bind-key "<f1> <f2>" (lambda () (interactive) (bookmark-jump "init.el")))
+(bind-key "<f1> <f3>" (lambda () (interactive) (bookmark-jump "*Messages*")))
+(bind-key "<f1> b" 'bs-show)
 
 ;; ibuffer > list-buffers
 (bind-key "C-x C-b" 'ibuffer)
@@ -86,8 +88,6 @@
 ;; minibuffer history
 (bind-key "C-p" 'previous-history-element minibuffer-local-map)
 (bind-key "C-n" 'next-history-element minibuffer-local-map)
-
-(bind-key "M-y" 'helm-show-kill-ring)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; navigation
@@ -122,6 +122,9 @@
 ;; list
 (bind-key "C-M-n" 'forward-list)
 (bind-key "C-M-p" 'backward-list)
+;; binary search
+(bind-key "H-b" 'chop-move-up)
+(bind-key "H-f" 'chop-move-down)
 
 ;; # move to (beg/end)
 ;; line
@@ -223,6 +226,10 @@
 
 (bind-key "C-. u" 'unfill-paragraph)
 (bind-key "C-. c" 'create-scratch-buffer)
+(bind-key "C-. k" 'browse-kill-ring)
+
+(bind-key "C-. m s" 'kmacro-set-counter)
+(bind-key "C-. m a" 'kmacro-add-counter)
 
 (defvar ctl-c-r-map)
 (define-prefix-command 'ctl-c-r-map)
@@ -313,3 +320,9 @@
   (vc-dir-next-line 1))
 (my-special-buffer-jump-to-bottom vc-dir
   (vc-dir-previous-line 1))
+
+(my-special-buffer-back-to-top bs
+  (bs-down 2))
+(my-special-buffer-jump-to-bottom bs
+  (bs-up 1)
+  (bs-down 1))
