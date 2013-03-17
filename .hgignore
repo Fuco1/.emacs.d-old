@@ -38,3 +38,8 @@ vendor/use-package/README.md
 vendor/indicators.el/*
 .projectile
 projectile.cache
+tmp/*
+todo.txt
+image-dired/*
+vendor/keyadvice.el/*
+dev/*

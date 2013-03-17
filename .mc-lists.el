@@ -10,6 +10,7 @@
         eval-defun
         eval-expression
         keyboard-escape-quit
+        kill-region
         kill-visual-line
         my-back-to-indentation-or-beginning
         my-emacs-lisp-open-line
@@ -28,6 +29,7 @@
         sp-select-next-thing
         sp-select-next-thing-exchange
         sp-self-insert-command
+        transpose-sexps
         zap-up-to-char
         ))
 
