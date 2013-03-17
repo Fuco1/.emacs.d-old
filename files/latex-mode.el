@@ -44,8 +44,15 @@ starting with \\ and followed by a block of text enclosed in {}."
         (defun my-LaTeX-mode-init ()
           (setq TeX-auto-save t)
           (setq TeX-parse-self t)
+          (TeX-PDF-mode t)
+          (setq reftex-plug-into-AUCTeX t)
+          (setq TeX-source-correlate-mode t)
+          (setq TeX-source-correlate-method 'synctex)
           (reftex-mode t)
-          (TeX-fold-mode t))
+          (TeX-fold-mode t)
+
+          (keyadvice-mode t)
+          (message "LaTeX mode init complete."))
         ;; ACUTeX replaces latex-mode-hook with LaTeX-mode-hook
         (add-hook 'LaTeX-mode-hook 'my-LaTeX-mode-init)
 
