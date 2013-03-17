@@ -96,17 +96,17 @@ If ARG is given, then insert the result to current-buffer"
 ;;; function overloads
 
 (eval-after-load "hi-lock"
-  (progn
-    (defun hi-lock-read-face-name ()
-      "Read face name from minibuffer with completion and history."
-      (intern (completing-read
-               "Highlight using face: "
-               (mapcar 'symbol-name (face-list))
-               nil
-               nil
-               "hi-"
-               'face-name-history
-               (car hi-lock-face-defaults))))))
+  '(progn
+     (defun hi-lock-read-face-name ()
+       "Read face name from minibuffer with completion and history."
+       (intern (completing-read
+                "Highlight using face: "
+                (mapcar 'symbol-name (face-list))
+                nil
+                nil
+                "hi-"
+                'face-name-history
+                (car hi-lock-face-defaults))))))
 
 ;; By Stefan Monnier <foo at acm.org>.
 (defun unfill-paragraph ()
