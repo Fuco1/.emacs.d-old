@@ -100,3 +100,16 @@
   (setq cursor-type 'bar)
   (setq indent-tabs-mode t)
   (turn-on-visual-line-mode))
+
+;; move this somewhere appropriate
+(defvar bs-mode-font-lock-keywords
+  (list ;; header in font-lock-type-face
+   (list (bs--make-header-match-string)
+     '(1 font-lock-type-face append) '(1 'bold append))
+   ;; Buffername embedded by *
+   (list "^.*\\(\\*.*\\*\\).*$" 1 'font-lock-comment-face)
+   ;; Dired-Buffers
+   '("^....\\(.*\\) [0-9].*Dired[ /].*$" 1 font-lock-function-name-face)
+   ;; the star for modified buffers
+   '("^.\\(\\*\\) +[^\\*]"     1 font-lock-warning-face))
+  "Default font lock expressions for Buffer Selection Menu.")
