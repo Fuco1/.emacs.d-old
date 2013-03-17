@@ -16,6 +16,8 @@
    ("<f9> <f7>" . ack-find-file-same))
   :config
   (progn
+    (bind-key "n" 'compilation-next-error ack-and-a-half-mode-map)
+    (bind-key "p" 'compilation-previous-error ack-and-a-half-mode-map)
     ;; redefine: fix ack on windows
     (defun ack-and-a-half-run (directory regexp pattern &rest arguments)
       "Run ack in DIRECTORY with ARGUMENTS."
@@ -37,7 +39,8 @@
                              'ack-and-a-half-mode))))
 
     ;; redefine: add current command to the prompt
-    (defsubst ack-and-a-half-read (regexp)
+    ;; this was originally defsubst ... I've chanegd it in the elpa source too!
+    (defun ack-and-a-half-read (regexp)
       (let* ((default (ack-and-a-half-default-for-read))
              (type (if regexp "pattern" "literal search"))
              (history-var )
