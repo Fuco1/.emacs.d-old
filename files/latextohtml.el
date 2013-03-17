@@ -330,7 +330,7 @@
 
 ")
     (replace-regexp
-     (concat "<span class=\"" italic-class "\">\\(.*?\\)</span>")
+     (concat "<span class=\"\\(?:c[0-9]+ \\)*?" italic-class "\\(?: c[0-9]+\\)*?\">\\(.*?\\)</span>")
      "\\\\emph{\\1}")
     (replace-regexp " " " ")
     (replace-regexp "<span.*?>" "")
