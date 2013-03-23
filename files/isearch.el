@@ -1,7 +1,22 @@
+(defun my-isearch-forward (&optional regexp-p no-recursive-edit)
+  (interactive)
+  (when (not isearch-forward)
+    (isearch-repeat 'forward))
+  (isearch-repeat 'forward))
+
+(defun my-isearch-backward (&optional regexp-p no-recursive-edit)
+  (interactive)
+  (when (and isearch-forward
+             (/= (point) isearch-other-end))
+    (isearch-repeat 'backward))
+  (isearch-repeat 'backward))
+
 (defun my-isearch-forward-to-beginning ()
   "Repeat the forward search and place the point before the
 matched text."
   (interactive)
+  (when (not isearch-forward)
+    (isearch-repeat 'forward))
   (isearch-repeat 'forward)
   (goto-char isearch-other-end))
 
@@ -63,6 +78,8 @@ directory, go right back into search."
 (bind-key "<f6>" 'replace-regexp)
 
 (bind-key "C-v" 'my-isearch-forward-to-beginning isearch-mode-map)
+(bind-key "C-r" 'my-isearch-backward             isearch-mode-map)
+(bind-key "C-s" 'my-isearch-forward              isearch-mode-map)
 (bind-key "C-2" 'my-isearch-kill-match           isearch-mode-map)
 (bind-key "C-3" 'my-isearch-exit-other-end       isearch-mode-map)
 (bind-key "C-w" 'my-isearch-yank-symbol          isearch-mode-map)
