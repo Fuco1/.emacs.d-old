@@ -38,12 +38,28 @@ isearch mode."
 This is useful when followed by an immediate kill."
   (interactive)
   (isearch-exit)
-  (goto-char isearch-other-end))
+  (if (eq major-mode 'dired-mode)
+      (dired-find-file)
+    (goto-char isearch-other-end)))
 
 (defun my-isearch-yank-symbol ()
   "Pull next symbol from buffer into search string."
   (interactive)
   (isearch-yank-internal (lambda () (sp-forward-symbol) (point))))
+
+(defun my-isearch-exit ()
+  "Exit search normally.
+
+If in dired buffer, find file under cursor.  If it is a
+directory, go right back into search."
+  (interactive)
+  (if (not (eq major-mode 'dired-mode))
+      (isearch-exit)
+    ;; we're assuming no files are marked
+    (let ((d (car (dired-get-marked-files))))
+      (dired-find-file)
+      (when (file-directory-p d)
+        (dired-isearch-filenames)))))
 
 ;; keybindings
 (bind-key "<f6>" 'replace-regexp)
@@ -55,3 +71,4 @@ This is useful when followed by an immediate kill."
 (bind-key "C-M-w" 'isearch-yank-word-or-char     isearch-mode-map)
 (bind-key "M-z" 'my-isearch-zap-to-match         isearch-mode-map)
 (bind-key "<f2>" 'isearch-occur                  isearch-mode-map)
+(bind-key "\r" 'my-isearch-exit                  isearch-mode-map)
