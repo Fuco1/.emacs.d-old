@@ -3,23 +3,31 @@
 
 (defvar prelude-packages
   '(
+    ack-and-a-half
+    bookmark+
+    browse-kill-ring
     dash
     diminish
     dired+
+    dired-details
     expand-region
     haskell-mode
-    helm
     ido-ubiquitous
+    keyfreq
+    magit
     markdown-mode
     markdown-mode+
     multi-web-mode
     multiple-cursors
     parenface
     php-mode
+    projectile
     rainbow-mode
+    s
     smex
     undo-tree
-    w32-browser)
+    w32-browser
+    )
   "A list of packages to ensure are installed at launch.")
 
 (defun prelude-packages-installed-p ()
