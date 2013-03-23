@@ -13,11 +13,20 @@
   (("<f9> <f9>" . ack)
    ("<f9> <f10>" . ack-same)
    ("<f9> <f8>" . ack-find-file)
-   ("<f9> <f7>" . ack-find-file-same))
+   ("<f9> <f7>" . ack-find-file-same)
+   ("<f9> <f11>" . ack-in-directory))
   :config
   (progn
     (bind-key "n" 'compilation-next-error ack-and-a-half-mode-map)
     (bind-key "p" 'compilation-previous-error ack-and-a-half-mode-map)
+
+    (defun ack-in-directory (pattern directory)
+      (interactive (list (ack-and-a-half-read ack-and-a-half-regexp-search)
+                         (ido-read-directory-name
+                          (format "[%s] directory: " this-command)
+                          default-directory)))
+      (ack-and-a-half-run directory ack-and-a-half-regexp-search pattern))
+
     ;; redefine: fix ack on windows
     (defun ack-and-a-half-run (directory regexp pattern &rest arguments)
       "Run ack in DIRECTORY with ARGUMENTS."
