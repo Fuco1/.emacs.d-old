@@ -18,12 +18,14 @@
 (define-key sp-keymap (kbd "C-S-d") 'sp-end-of-sexp)
 
 (define-key sp-keymap (kbd "C-M-e") 'sp-up-sexp)
+(define-key emacs-lisp-mode-map (kbd ")") 'sp-up-sexp)
 (define-key sp-keymap (kbd "C-M-u") 'sp-backward-up-sexp)
 
 (define-key sp-keymap (kbd "C-M-n") 'sp-next-sexp)
 (define-key sp-keymap (kbd "C-M-p") 'sp-previous-sexp)
 
 (define-key sp-keymap (kbd "C-M-k") 'sp-kill-sexp)
+(define-key sp-keymap (kbd "C-M-w") 'sp-copy-sexp)
 
 (define-key sp-keymap (kbd "M-<delete>") 'sp-unwrap-sexp)
 (define-key sp-keymap (kbd "M-<backspace>") 'sp-backward-unwrap-sexp)
@@ -52,7 +54,7 @@
 
 ;;; markdown-mode
 (sp-with-modes '(markdown-mode gfm-mode rst-mode)
-  (sp-local-pair "*" "*")
+  (sp-local-pair "*" "*" :bind "C-*")
   (sp-local-tag "2" "**" "**")
   (sp-local-tag "s" "```scheme" "```")
   (sp-local-tag "<"  "<_>" "</_>" :transform 'sp-match-sgml-tags))
@@ -65,20 +67,6 @@
 (sp-with-modes '(html-mode sgml-mode)
   (sp-local-pair "<" ">"))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Custom defuns and macros
-(defun my-wrap-with-paren (&optional arg)
-  "Select ARG next things and wrap them with a () pair."
-  (interactive "p")
-  (sp-select-next-thing-exchange arg)
-  (execute-kbd-macro (kbd "(")))
-(define-key sp-keymap (kbd "C-(") 'my-wrap-with-paren)
-
-;; fix this, then it should be added to core.
-(defun my-copy-expression (&optional arg)
-  "Copy the next expression(s) using `sp-kill-sexp' then reinsert
-it immediately afterward."
-  (interactive "P")
-  (save-excursion
-    (sp-kill-sexp arg)
-    (insert (car kill-ring))))
+;;; lisp modes
+(sp-with-modes sp--lisp-modes
+  (sp-local-pair "(" nil :bind "C-("))
