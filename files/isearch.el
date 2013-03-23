@@ -38,9 +38,7 @@ isearch mode."
 This is useful when followed by an immediate kill."
   (interactive)
   (isearch-exit)
-  (if (eq major-mode 'dired-mode)
-      (dired-find-file)
-    (goto-char isearch-other-end)))
+  (goto-char isearch-other-end))
 
 (defun my-isearch-yank-symbol ()
   "Pull next symbol from buffer into search string."
