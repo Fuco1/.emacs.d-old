@@ -2,6 +2,10 @@
   :commands allout-mode
   :config
   (progn
+    (defun my-allout-init ()
+      (unbind-key "M-k" allout-mode-map))
+
+    (add-hook 'allout-mode-hook 'my-allout-init)
     ;; redefine this to make it work with smartparens
     (defun allout-pre-command-business ()
       "Outline `pre-command-hook' function for outline buffers.
