@@ -1,5 +1,4 @@
 (server-start)
-
 (defconst emacs-start-time (current-time))
 
 ;; Emacs gurus don't need no stinking scroll bars & widgets
@@ -39,7 +38,6 @@
 
 ;; autoloads
 (autoload 'calc-same-interface "calc" nil t)
-(autoload 'dired-w32-browser "w32-browser" nil t)
 (autoload 'zap-up-to-char "misc"
   "Kill up to, but not including ARGth occurrence of CHAR." t)
 
@@ -80,6 +78,11 @@
 (vendor 'smartparens)
 (vendor 'letcheck 'letcheck-mode)
 (vendor 'chop 'chop-move-up 'chop-move-down)
+(vendor 'clippy)
+
+(require 'keyfreq)
+(keyfreq-mode 1)
+(keyfreq-autosave-mode 1)
 
 (use-package "world-time-mode"
   :load-path "vendor/world-time-mode/"
