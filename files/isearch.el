@@ -53,8 +53,8 @@ This is useful when followed by an immediate kill."
 If in dired buffer, find file under cursor.  If it is a
 directory, go right back into search."
   (interactive)
-  (if (not (eq major-mode 'dired-mode))
-      (isearch-exit)
+  (isearch-exit)
+  (if (eq major-mode 'dired-mode)
     ;; we're assuming no files are marked
     (let ((d (car (dired-get-marked-files))))
       (dired-find-file)
