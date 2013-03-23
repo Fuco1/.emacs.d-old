@@ -32,6 +32,8 @@
 ;; Find stuff
 (bind-key "M-<f2>" 'my-find-dired)
 (bind-key "<f2>" 'occur)
+(bind-key "n" 'occur-next occur-mode-map)
+(bind-key "p" 'occur-prev occur-mode-map)
 
 ;; refresh-like
 (bind-key "C-<f5>" 'revbufs)
@@ -240,6 +242,15 @@
 ;; zapping
 (bind-key "M-z" 'zap-up-to-char)
 (bind-key "M-Z" 'zap-to-char)
+
+(defun my-quoted-insert-and-backward (arg)
+  "Just like `quoted-insert' but moves the point before the
+inserted character."
+  (interactive "*p")
+  (save-excursion
+    (call-interactively 'quoted-insert)))
+
+(bind-key "C-z" 'my-quoted-insert-and-backward)
 
 ;; input methods
 ;;(bind-key "C-\\" 'toggle-input-method)
