@@ -1,7 +1,24 @@
+;;;_. Commentary & basic stuff
+;; diredp modified stuff:
+;; comment out:
+;; in `diredp-font-lock-keywords-1'
+;;   line about compressed files
+;;   line about ignored files "\\|\\.\\(g?z\\|Z\\)[*]?\\)\\)$") ; Compressed.
+;;                            "\\)\\)$")
+;;      '("[^ .]\\.\\([^. /]+\\)$" 1 diredp-file-suffix) ; Suffix
+;; to:  '("[^ .\\/]\\.\\([^. /]+\\)$" 1 diredp-file-suffix) ; Suffix
+
+;; external dependencies: bash in git d:/progs/git/bin/bash
+;; we call find from bash to fix stupid windows * expansion
+
 ;; loads dired, dired-aux, dired-x
+(require 'image-dired)
+(require 'dired-aux)
 (require 'dired+)
 (use-package dired-details
   :commands dired-details-toggle)
+(use-package w32-browser
+  :commands dired-w32-browser)
 
 ;;;_. Key bindings & hooks
 (defun my-image-dired-thumbnail-mode-init ()
@@ -161,11 +178,11 @@ on and associated dired buffer."
   (interactive)
   (w32-browser (image-dired-original-file-name)))
 
-(defadvice select-window (after image-dired-resize-image)
+(defadvice select-window (after image-dired-resize-image activate)
   (when (eq major-mode 'image-dired-display-image-mode)
     (image-dired-display-current-image-sized)))
 
-(defadvice other-window (around image-dired-resize-image)
+(defadvice other-window (around image-dired-resize-image activate)
   (let ((buffer (current-buffer)))
     ad-do-it
     (with-current-buffer buffer
@@ -277,6 +294,14 @@ to chose from."
              (t
               (concat "Dired " dired-actual-switches)))))
     (force-mode-line-update)))
+
+;; redefined from dired-aux.el to not make isearch in dired go into
+;; recursive edit.
+(defun dired-isearch-filenames ()
+  "Search for a string using Isearch only in file names in the Dired buffer."
+  (interactive)
+  (let ((dired-isearch-filenames t))
+    (isearch-forward nil t)))
 
 ;;;_. Pretty colors
 (defmacro my-diredp-rainbow (symbol spec regexp &optional group)

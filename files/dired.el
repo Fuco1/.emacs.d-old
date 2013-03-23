@@ -1,16 +1,4 @@
-;;;_. Commentary & basic stuff
-;; diredp modified stuff:
-;; comment out:
-;; in `diredp-font-lock-keywords-1'
-;;   line about compressed files
-;;   line about ignored files "\\|\\.\\(g?z\\|Z\\)[*]?\\)\\)$") ; Compressed.
-;;                            "\\)\\)$")
-;;      '("[^ .]\\.\\([^. /]+\\)$" 1 diredp-file-suffix) ; Suffix
-;; to:  '("[^ .\\/]\\.\\([^. /]+\\)$" 1 diredp-file-suffix) ; Suffix
-
-;; external dependencies: bash in git d:/progs/git/bin/bash
-;; we call find from bash to fix stupid windows * expansion
-
+;; see commentary in dired-defs.el
 (use-package dired
   :bind ("C-x d" . my-dired-files)
   :init
@@ -29,11 +17,3 @@
   :config
   (progn
     (load "files/dired-defs")))
-
-;;;_. Local var settings
-
-;; Local Variables:
-;;   mode: emacs-lisp
-;;   mode: allout
-;;   outline-regexp: "^;;;_\\([,. ]+\\)"
-;; End:
