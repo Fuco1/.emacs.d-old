@@ -239,6 +239,13 @@
 (bind-key "C-c r f" 'recentf-open-files)
 (bind-key "C-c r c" 'recentf-cleanup)
 
+(defvar ctl-c-s-map)
+(define-prefix-command 'ctl-c-s-map)
+(bind-key "C-c s" 'ctl-c-s-map)
+(bind-key "C-c s c" 'sp-convolute-sexp)
+(bind-key "C-c s a" 'sp-absorb-sexp)
+(bind-key "C-c s e" 'sp-emit-sexp)
+
 ;; zapping
 (bind-key "M-z" 'zap-up-to-char)
 (bind-key "M-Z" 'zap-to-char)
