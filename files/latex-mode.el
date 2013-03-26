@@ -8,6 +8,7 @@
       :defer t
       :config
       (progn
+        (require 'smartparens-latex)
         (use-package preview)
         (use-package font-latex)
         (fset 'tex-font-lock-suscript 'ignore)
