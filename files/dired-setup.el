@@ -16,4 +16,6 @@
         (ido-dired))))
   :config
   (progn
-    (load "files/dired-defs")))
+    (load "files/dired-defs")
+
+    ))

@@ -54,7 +54,7 @@
 (load "files/tabs")
 (load "files/ido")
 (load "files/ispell")
-(load "files/dired")
+(load "files/dired-setup")
 (load "files/markdown")
 (load "files/tramp")
 (load "files/ibuffer")
@@ -78,7 +78,7 @@
 (vendor 'smartparens)
 (vendor 'letcheck 'letcheck-mode)
 (vendor 'chop 'chop-move-up 'chop-move-down)
-(vendor 'clippy)
+(vendor 'clippy 'clippy-describe-function)
 
 (require 'keyfreq)
 (keyfreq-mode 1)
