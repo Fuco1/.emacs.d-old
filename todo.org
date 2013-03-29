@@ -1,0 +1,135 @@
+* TODO pridat :bind do sp-pair a sp-local-pair ktore automaticky nabinduje klavesu na "wrap thing" pre dany par... t.j. funkciu
+** FIX: nefunguje ak major-mode nie je nacitany (keymapa neexistuje), treba pouzit hook
+
+* TODO transpose sexp
+* DONE pridat C-0 do add-to-sexp
+some words in latex I want to add to \emph{here}
+- ako zarucit aby sa potiahlo cele \emph{ ?
+--> spravit z toho prefix! Proste pridame option na detekciu prefixu/postfixu (najlepsie regexp)
+potom ked sa najde sexp xyz{...} tak sa otestuje "looking-back" z otvaracej zatvorky, a prefix sa ulozi.
+
+napr v latex moze byt prefix
+
+(sp-local-pair 'latex-mode "{" nil :prefix "\\\\\\(\\sw\\|\\s_\\)*")
+
+GENIUS!
+
+* TODO
+some words in latex I want to add to \{this\}
+1. spocitat C-M-f az po prvy sexp
+2. slurp-back tolko tokenov
+
+* NEXT HTML support
+- tagy by maly byt spracovane pred normalnymi sexp (tie su v html modoch nepodstatne)
+-- v enclosing expression to vyzaduje specialny pristup. Zatial asi nechame tak, malo by sa ale zgeneralizovat aby to fungovalo nejak obecne.
+- zgeneralizovat "parser" aby vedel hladat s hocicim, hlavne sp-local-tags
+
+** TODO ignoruje normalne expressions. To je asi ziadane chovanie
+ale treba pridat prepinac ktory prepne ignorovanie tagou (nejaky prefixovy "sp-prefix" argument)
+
+** TODO niektore zarovnavacie pravidla su sux pre html (asi najlepsie bude neaplikovat ziadne) [33%]
+- [ ] slurp
+- [ ] barf
+- [X] convolute
+
+  <p>
+    <head>
+\|    asfowrf
+      asd
+      asd
+    </head>
+  </p>
+
+convolute -> sux vysledok
+
+\|<head>
+      <p>
+      asfowrf
+      asd
+      asd
+
+  </p></head>
+
+- expand/absorb funguje OK
+
+* BARF
+** TODO ERROR barf z konca vyrazu dava error (a b c |) -> a b c |() error
+** TODO ERROR barf vyskoci zo zoznamu:
+(asd |asd asd) -> asd |(asd asd)
+
+* DONE ERROR sp-select-next-thing-exchange nefunguje na snapshote
+  CLOSED: [2013-03-28 Thu 02:05]
+  - State "DONE"       from "TODO"       [2013-03-28 Thu 02:05]
+miesto aby oznacil | >(foo bar)<
+oznaci | (>foo< bar)
+
+* TODO slurp vypisuje error ak je "thing" nil
+* TODO pridat moznost na tag-wrap ze za tag naskoci automaticky newline (uzitocne pre \begin{} \end{})
+* TODO add paredit-semicolon
+
+* TODO pridat funkcio "down to" ktora skoci do specifickeho typu bloku, ignorujuc ostatne.
+uzitocne v
+int| foo (parametre) {<jump here>
+  <or better, here>telo
+}
+
+see: https://github.com/zk-phi/cedit
+
+* DONE "asd osgh|" "adwge rgfdg" -> slurp spoji retazce miesto preskakovania
+  CLOSED: [2013-03-28 Thu 02:06]
+  - State "DONE"       from "TODO"       [2013-03-28 Thu 02:06]
+
+
+* TODO
+"asdasd \" sdfsdf
+- fixnut v modoch kde niesu povolene multi-line retazce -> RET na \" to zmeni na "
+
+* TODO pridat moznost do `sp-autoinsert-if-followed-by-same' kde sa nasledujuci vyraz obali.
+
+* DONE join sexp
+  CLOSED: [2013-03-28 Thu 02:06]
+  - State "DONE"       from "TODO"       [2013-03-28 Thu 02:06]
+
+
+* TODO rectangle wrap
+aaa
+bbb
+ccc
+
+=> select as rectangle
+
+[aaa]
+[bbb]
+[ccc]
+
+aaaa
+bb
+ccccc
+
+[aaaa]
+[bb]
+[ccccc]
+
+OR
+
+[aaaa ]
+[bb   ]
+[ccccc]
+
+----------- multiple cursors...
+The order in which the commands are executed is *very* important if they modify the buffer. If some "cursor local" variables (`mc/cursor-specific-vars`) are set these will be invalid if they pertained to buffer positions, such as saving `(point)` or anything of that sort. This happens because if the cursors go from top to bottom, all the subsequent positions are shifted by the amount of text that was inserted/removed.
+
+To fix this problem, cursors should always execute from top to bottom but also including the *real* cursor in this sequence.
+
+I don't know if there is any issue with executing the preceeding cursors in `pre-command-hook`, but that is probably the simplest solution.
+
+- get all the cursors before real cursor, execute them in pre-command hook
+- execute real cursor ("automatic")
+- get all the cursors after real cursor, execute them in post-command hook
+
+(defmacro >>= (&rest forms)
+  (if (and forms (cdr forms))
+      `(if ,(car forms)
+           (>>= ,@(cdr forms))
+         nil)
+    `(,@(car forms))))
