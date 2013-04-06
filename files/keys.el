@@ -239,12 +239,34 @@
 (bind-key "C-c r f" 'recentf-open-files)
 (bind-key "C-c r c" 'recentf-cleanup)
 
+(bind-key "C-x C-r" 'recentf-open-files)
+
+(bind-key "H-u" 'universal-argument)
+(dotimes (i 10)
+  (bind-key (format "H-%d" i) 'digit-argument))
+(bind-key "H--" 'negative-argument)
+(bind-key "H-t" 'sp-prefix-tag-object)
+(bind-key "H-p" 'sp-prefix-pair-object)
+(bind-key "H-y" 'sp-prefix-symbol-object)
+(bind-key "H-s c" 'sp-convolute-sexp)
+(bind-key "H-s a" 'sp-absorb-sexp)
+(bind-key "H-s e" 'sp-emit-sexp)
+(bind-key "H-s p" 'sp-add-to-previous-sexp)
+(bind-key "H-s n" 'sp-add-to-next-sexp)
+(bind-key "H-s j" 'sp-join-sexp)
+(bind-key "H-s s" 'sp-split-sexp)
+
 (defvar ctl-c-s-map)
 (define-prefix-command 'ctl-c-s-map)
 (bind-key "C-c s" 'ctl-c-s-map)
-(bind-key "C-c s c" 'sp-convolute-sexp)
-(bind-key "C-c s a" 'sp-absorb-sexp)
-(bind-key "C-c s e" 'sp-emit-sexp)
+
+(defvar ctl-c-m-map)
+(define-prefix-command 'ctl-c-m-map)
+(bind-key "C-c m" 'ctl-c-m-map)
+(bind-key "C-c m s" 'magit-status)
+(bind-key "C-c m l" 'magit-log)
+(bind-key "C-c m b" 'magit-branch-manager)
+(bind-key "C-c m c" 'magit-checkout)
 
 ;; zapping
 (bind-key "M-z" 'zap-up-to-char)
@@ -344,3 +366,8 @@ inserted character."
 (my-special-buffer-jump-to-bottom bs
   (bs-up 1)
   (bs-down 1))
+
+(my-special-buffer-back-to-top recentf-dialog
+  (my-recentf-next-file 3))
+(my-special-buffer-jump-to-bottom recentf-dialog
+  (my-recentf-previous-file 2))
