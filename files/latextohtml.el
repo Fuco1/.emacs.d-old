@@ -112,6 +112,8 @@
   (beginning-of-buffer)
   (replace-regexp "\\\\dk{``A}" "&ldquo;A")
   (beginning-of-buffer)
+  (replace-regexp "\\\\dk{\"<A}" "&ldquo;A")
+  (beginning-of-buffer)
   (replace-regexp "``" "&ldquo;")
   (beginning-of-buffer)
   (replace-regexp "''" "&rdquo;")
@@ -309,6 +311,14 @@
     (replace-regexp "”" "\">")
     ))
 
+(defun fix-italian ()
+  (interactive)
+  (fix-reset-after-each
+    (replace-string "E'" "È")
+    (replace-string "un pò" "un po'")
+    (replace-string "perchè" "perché"))
+  )
+
 (defun fix-quot-to-quotes (beg end)
   (interactive "r")
   (goto-char beg)
@@ -357,3 +367,32 @@
     (replace-regexp "\\\\emph{ }" " ")
     (replace-regexp "\\\\emph{}" "")
     ))
+
+
+(defun fix-prepare-diff ()
+  (interactive)
+  (fix-reset-after-each
+    (replace-regexp "“" "\"")
+    (replace-regexp "„" "\"")
+    (replace-regexp "”" "\"")
+    (replace-regexp "‘" "'")
+    (replace-regexp "‚" "'")
+    (replace-regexp "’" "'")
+    (replace-regexp "«" "\"")
+    (replace-regexp "»" "\"")
+    (replace-regexp "…" "...")
+    (replace-regexp "—" "--")
+    (replace-string "* * *" "")
+    (replace-string "*** *** ***" "")
+    (replace-regexp "  +" " ")
+    (replace-regexp " +$" "")
+    (replace-string "... " "...")
+    (replace-regexp "^ +$" "")
+    (replace-regexp "
+
+
++" "
+
+")
+    )
+  )
