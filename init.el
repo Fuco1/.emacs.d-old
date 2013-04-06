@@ -79,6 +79,7 @@
 (vendor 'letcheck 'letcheck-mode)
 (vendor 'chop 'chop-move-up 'chop-move-down)
 (vendor 'clippy 'clippy-describe-function)
+(vendor 'google-maps 'google-maps)
 
 (require 'keyfreq)
 (keyfreq-mode 1)
