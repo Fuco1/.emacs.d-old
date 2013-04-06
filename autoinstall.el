@@ -12,6 +12,7 @@
     dired-details
     expand-region
     haskell-mode
+    ibuffer-vc
     ido-ubiquitous
     keyfreq
     magit

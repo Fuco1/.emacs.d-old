@@ -72,13 +72,14 @@
 
 ;; Modify the default ibuffer-formats
 (setq ibuffer-formats
-  '((mark modified read-only
-          " " (name 25 25 :left :elide)
-          " " (size-h 9 -1 :right)
-          " " (mode 16 16 :left :elide)
-          " " filename-and-process)
-    (mark " " (name 16 -1)
-          " " filename)))
+      '((mark modified vc-status-mini read-only
+              " " (name 25 25 :left :elide)
+              " " (size-h 9 -1 :right)
+              " " (mode 16 16 :left :elide)
+
+              " " filename-and-process)
+        (mark " " (name 16 -1)
+              " " filename)))
 
 ;; startup function
 (defun customize-ibuffer-mode ()
