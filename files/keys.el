@@ -44,12 +44,14 @@
 (bind-key "C-<f8>" 'indent-buffer)
 (bind-key "C-<tab>" 'indent-defun)
 
-(bind-key "M-0" 'delete-window)
-(bind-key "M-o" 'other-window)
-(bind-key "M-O" 'rotate-windows)
+(bind-key "M-o" 'elwm-activate-window)
+(bind-key "M-O" 'elwm-transpose-window)
+(bind-key "C-M-o" 'elwm-rotate-window)
+(bind-key "C-x C-2" 'elwm-split-window)
+(unbind-key "C-x o")
 
-(add-hook 'dired-mode-hook (lambda () (bind-key "M-o" 'other-window dired-mode-map)))
-(add-hook 'ibuffer-mode-hook (lambda () (bind-key "M-o" 'other-window ibuffer-mode-map)))
+(add-hook 'dired-mode-hook (lambda () (bind-key "M-o" 'elwm-activate-window dired-mode-map)))
+(add-hook 'ibuffer-mode-hook (lambda () (bind-key "M-o" 'elwm-activate-window ibuffer-mode-map)))
 
 (defvar f1-prefix-map)
 (define-prefix-command 'f1-prefix-map)

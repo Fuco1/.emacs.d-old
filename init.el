@@ -80,6 +80,7 @@
 (vendor 'chop 'chop-move-up 'chop-move-down)
 (vendor 'clippy 'clippy-describe-function)
 (vendor 'google-maps 'google-maps)
+(vendor 'elwm)
 
 (require 'keyfreq)
 (keyfreq-mode 1)
