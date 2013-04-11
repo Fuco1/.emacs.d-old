@@ -11,6 +11,10 @@ forward direction."
       (skip-syntax-backward " "))
     (delete-region old-point (point))))
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; opening new lines in various ways
+
 (defun my-newline (&optional arg)
   "Call `newline' and autoindent according to the active mode."
   (interactive "p")
@@ -46,6 +50,10 @@ and indent next line according to mode."
   (forward-line arg)
   (indent-according-to-mode))
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; navigation functions by "units"
+
 (defun forward-paragraph-select ()
   "Set the active region from point to end of current paragraph"
   (interactive)
@@ -67,6 +75,10 @@ and indent next line according to mode."
   "Move cursor to the end of active region"
   (interactive)
   (goto-char (region-end)))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; moving entire lines up and down
 
 ;; from https://github.com/skeeto/.emacs.d/blob/master/my-funcs.el
 (defun move-line (n)
@@ -91,6 +103,10 @@ and indent next line according to mode."
   (interactive "p")
   (move-line (if (null n) 1 n)))
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; evaluate sexps/macros
+
 (defun eval-and-replace ()
   "Replace the preceding sexp with its value."
   (interactive)
@@ -110,6 +126,10 @@ and indent next line according to mode."
              (current-buffer))
     (error (message "Invalid expression")
            (insert (current-kill 0)))))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; TODO: rework this
 
 (defun copy-line-with-offset (offset)
   "Save the line specified by offset (+1 = next, -1 = prev) to the kill ring,
@@ -136,12 +156,18 @@ move the current line down and yank"
   (interactive)
   (copy-line-with-offset 1))
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; navigate to beg/end of current line, considering indent and
+;; comments
+
 (defun point-in-comment ()
   "Determine if the point is inside a comment"
   (interactive)
   (let ((face (plist-get (text-properties-at (point)) 'face)))
-    (or (eq 'font-lock-comment-face face)
-        (eq 'font-lock-comment-delimiter-face face))))
+    (when (not (listp face)) (setq face (list face)))
+    (or (memq 'font-lock-comment-face face)
+        (memq 'font-lock-comment-delimiter-face face))))
 
 (defun my-back-to-indentation ()
   (if visual-line-mode
@@ -206,3 +232,103 @@ properly."
       (if (= (point) eoc)
           (end-of-line-lov)
         (goto-char eoc)))))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; stuff to do with upcasing and downcasing
+;; used sparingly but when you need it it rocks!
+
+(defun my-upcase-letter (&optional arg)
+  (interactive "p")
+  (upcase-region (point) (+ arg (point))))
+
+(defun my-downcase-letter (&optional arg)
+  (interactive "p")
+  (downcase-region (point) (+ arg (point))))
+
+(defun my-smart-downcase-word (&optional arg)
+  (interactive "P")
+  (cond
+   ((equal arg '(4))
+    (downcase-word 1))
+   (t
+    (setq arg (or (prefix-numeric-value arg) 1))
+    (cond
+     ((region-active-p)
+      (downcase-region (region-beginning) (region-end)))
+     ;; handle camel-case
+     ((save-excursion
+        (when (looking-at "[ \t\n]")
+          (forward-whitespace 1))
+        (let* ((w (thing-at-point 'word))
+               (case-fold-search nil)
+               (st (string-match-p "\\([A-Z]+[a-z]+\\)+" w)))
+          (= (if st st -1) 0)))
+      (my-downcase-letter 1)
+      (forward-word))
+     (t
+      (downcase-word arg))))))
+
+(defun my-smart-upcase-word (&optional arg)
+  (interactive "P")
+  (cond
+   ((equal arg '(4))
+    (upcase-word 1))
+   (t
+    (setq arg (or (prefix-numeric-value arg) 1))
+    (cond
+     ((region-active-p)
+      (upcase-region (region-beginning) (region-end)))
+     ;; handle camel-case
+     ((save-excursion
+        (when (looking-at "[ \t\n]")
+          (forward-whitespace 1))
+        (let* ((w (thing-at-point 'word))
+               (case-fold-search nil)
+               (st (string-match-p "[a-z]+\\([A-Z]+[a-z]+\\)+" w)))
+          (= (if st st -1) 0)))
+      (my-upcase-letter 1)
+      (forward-word))
+     (t
+      (upcase-word arg))))))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; insert the text normally but keep the point fixed
+;; useful to prepend text in e.g. `haskell-mode'
+
+(defvar my-insert-no-move-overlay nil)
+(make-variable-buffer-local 'my-insert-no-move-overlay)
+
+(defvar my-insert-no-move-keymap (make-sparse-keymap))
+(define-key my-insert-no-move-keymap (kbd "<backspace>") 'my-insert-no-move-delete-backward)
+(define-key my-insert-no-move-keymap [remap self-insert-command] 'my-insert-no-move-self-insert-command)
+(define-key my-insert-no-move-keymap (kbd "C-g") 'my-insert-no-move-cancel)
+
+(defun my-insert-no-move ()
+  (interactive)
+  (when my-insert-no-move-overlay
+    (my-insert-no-move-cancel))
+  (setq my-insert-no-move-overlay (make-overlay (point) (point) nil nil t))
+  (overlay-put my-insert-no-move-overlay 'keymap my-insert-no-move-keymap))
+
+(defun my-insert-no-move-delete-backward (&optional arg)
+  (interactive "p")
+  (let ((s (overlay-start my-insert-no-move-overlay))
+        (e (overlay-end my-insert-no-move-overlay)))
+    (if (/= (point) s)
+        (backward-delete-char arg)
+      (goto-char e)
+      (backward-delete-char arg)
+      (goto-char s))))
+
+(defun my-insert-no-move-self-insert-command (&optional arg)
+  (interactive "p")
+  (goto-char (overlay-end my-insert-no-move-overlay))
+  (self-insert-command arg)
+  (goto-char (overlay-start my-insert-no-move-overlay)))
+
+(defun my-insert-no-move-cancel (&optional arg)
+  (interactive "p")
+  (delete-overlay my-insert-no-move-overlay)
+  (setq my-insert-no-move-overlay nil))
