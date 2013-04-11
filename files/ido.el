@@ -111,6 +111,7 @@
                  (sixth (file-attributes (concat ido-current-directory b)))
                  (sixth (file-attributes (concat ido-current-directory a)))))))
   (ido-to-end  ;; move . files to end (again)
-   (delq nil (mapcar
-              (lambda (x) (and (char-equal (string-to-char x) ?.) x))
-              ido-temp-list))))
+   (--select (char-equal (string-to-char it) ?.) ido-temp-list))
+  (when ido-show-dot-for-dired
+    (setq ido-temp-list
+          (cons "." (--remove (equal it ".") ido-temp-list)))))
