@@ -81,6 +81,8 @@
 (vendor 'clippy 'clippy-describe-function)
 (vendor 'google-maps 'google-maps)
 (vendor 'elwm)
+(vendor 'flex-isearch)
+(global-flex-isearch-mode t)
 
 (require 'keyfreq)
 (keyfreq-mode 1)

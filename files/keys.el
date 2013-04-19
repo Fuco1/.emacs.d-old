@@ -35,6 +35,9 @@
 (bind-key "n" 'occur-next occur-mode-map)
 (bind-key "p" 'occur-prev occur-mode-map)
 
+;; is this safe binding?
+(bind-key "C-'" 'repeat)
+
 ;; refresh-like
 (bind-key "C-<f5>" 'revbufs)
 (bind-key "<f5>" '(lambda () (interactive) (load-file (buffer-file-name))))
@@ -183,6 +186,10 @@
 (bind-key "C-<i-key>" 'backward-kill-word)
 (bind-key "C-<backspace>" 'my-kill-whitespace)
 
+;; up/downcase
+(bind-key "M-l" 'my-smart-downcase-word)
+(bind-key "M-u" 'my-smart-upcase-word)
+
 ;;;;; multiple cursors
 (bind-key "C-c C-S-c" 'mc/edit-lines)
 (bind-key "s-." 'mc/mark-next-like-this)
@@ -235,6 +242,8 @@
 (bind-key "C-. m s" 'kmacro-set-counter)
 (bind-key "C-. m a" 'kmacro-add-counter)
 
+(bind-key "C-. z" 'my-insert-no-move)
+
 (defvar ctl-c-r-map)
 (define-prefix-command 'ctl-c-r-map)
 (bind-key "C-c r" 'ctl-c-r-map)
@@ -244,12 +253,15 @@
 (bind-key "C-x C-r" 'recentf-open-files)
 
 (bind-key "H-u" 'universal-argument)
+(bind-key "H-u" 'universal-argument-more universal-argument-map)
 (dotimes (i 10)
   (bind-key (format "H-%d" i) 'digit-argument))
 (bind-key "H--" 'negative-argument)
 (bind-key "H-t" 'sp-prefix-tag-object)
 (bind-key "H-p" 'sp-prefix-pair-object)
 (bind-key "H-y" 'sp-prefix-symbol-object)
+(bind-key "H-h" 'sp-highlight-current-sexp)
+(bind-key "H-e" 'sp-prefix-save-excursion)
 (bind-key "H-s c" 'sp-convolute-sexp)
 (bind-key "H-s a" 'sp-absorb-sexp)
 (bind-key "H-s e" 'sp-emit-sexp)
@@ -257,6 +269,12 @@
 (bind-key "H-s n" 'sp-add-to-next-sexp)
 (bind-key "H-s j" 'sp-join-sexp)
 (bind-key "H-s s" 'sp-split-sexp)
+(defvar hyp-s-x-map)
+(define-prefix-command 'hyp-s-x-map)
+(bind-key "H-s x" hyp-s-x-map)
+(bind-key "H-s x x" 'sp-extract-before-sexp)
+(bind-key "H-s x a" 'sp-extract-after-sexp)
+
 
 (defvar ctl-c-s-map)
 (define-prefix-command 'ctl-c-s-map)
