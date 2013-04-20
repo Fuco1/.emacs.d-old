@@ -172,12 +172,6 @@
             (interactive)
             (join-line -1)))
 
-;; go to char, also mapped to a keychord df
-(bind-key "C-c f" 'iy-go-to-char)
-(bind-key "C-c F" 'iy-go-to-char-backward)
-(bind-key "C-c ;" 'iy-go-to-char-continue)
-(bind-key "C-c ," 'iy-go-to-char-continue-backward)
-
 ;;; scrollers
 (bind-key "C-c n" 'my-scroll-up)
 (bind-key "C-c p" 'my-scroll-down)

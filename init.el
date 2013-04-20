@@ -67,6 +67,7 @@
 (load "files/smex")
 (load "files/ack")
 (load "files/allout")
+(load "files/navigation")
 
 ;; vendor
 (vendor 'yasnippet)
@@ -81,6 +82,8 @@
 (vendor 'clippy 'clippy-describe-function)
 (vendor 'google-maps 'google-maps)
 (vendor 'elwm)
+(vendoe 'skeleton-complete)
+(skeleton-complete-global-mode t)
 (vendor 'flex-isearch)
 (global-flex-isearch-mode t)
 
