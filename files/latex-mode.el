@@ -9,9 +9,42 @@
       :config
       (progn
         (require 'smartparens-latex)
+        (sp-local-pair 'latex-mode "\\begin{" "\\end{")
+        (sp-local-pair 'latex-mode "\\langle" "\\rangle")
         (use-package preview)
         (use-package font-latex)
         (fset 'tex-font-lock-suscript 'ignore)
+
+        (sp-with-modes '(tex-mode plain-tex-mode latex-mode)
+          (sp-local-pair "\\[" nil :post-handlers '(my-latex-math-block-indent)))
+
+        (defun my-latex-math-block-indent (a action c)
+          (when (eq action 'insert)
+            (newline-and-indent)
+            (save-excursion (newline))))
+
+        (defun my-latex-compile ()
+          (interactive)
+          (save-buffer)
+          (TeX-command "LaTeX" 'TeX-master-file nil))
+        (bind-key "C-M-x" 'my-latex-compile LaTeX-mode-map)
+
+        (defvar my-latex-wrap-choices '("emph"))
+        (defvar my-latex-wrap-history nil)
+
+        (defun my-latex-wrap (macro-name)
+          (interactive (list (ido-completing-read
+                              "Macro> "
+                              my-latex-wrap-choices
+                              nil 'confirm nil my-latex-wrap-history)))
+          (when (use-region-p)
+            (let ((b (region-beginning))
+                  (e (region-end)))
+              (goto-char e)
+              (insert "}")
+              (goto-char b)
+              (insert "\\" macro-name "{"))))
+        (bind-key "C-c w" 'my-latex-wrap LaTeX-mode-map)
 
         ;; fix italian quote highlight
         (push '("\"<" "\">") font-latex-quote-list)
@@ -53,6 +86,11 @@ starting with \\ and followed by a block of text enclosed in {}."
           (TeX-fold-mode t)
 
           (keyadvice-mode t)
+
+          (LaTeX-add-environments
+           '("derivation" LaTeX-env-label))
+          (TeX-add-symbols '("emph" 1))
+
           (message "LaTeX mode init complete."))
         ;; ACUTeX replaces latex-mode-hook with LaTeX-mode-hook
         (add-hook 'LaTeX-mode-hook 'my-LaTeX-mode-init)
