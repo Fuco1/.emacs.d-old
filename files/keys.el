@@ -81,7 +81,7 @@
 (windmove-default-keybindings 'meta)
 
 ;; Easier buffer killing
-(bind-key "M-k" 'kill-this-buffer)
+(bind-key "M-k" 'my-kill-this-buffer)
 (bind-key "M-K" (lambda () (interactive) (kill-buffer (window-buffer (next-window)))))
 
 ;; imenu
@@ -132,6 +132,8 @@
 ;; binary search
 (bind-key "H-b" 'chop-move-up)
 (bind-key "H-f" 'chop-move-down)
+(bind-key "H-a" 'chop-move-up)
+(bind-key "H-d" 'chop-move-down)
 
 ;; # move to (beg/end)
 ;; line
@@ -236,7 +238,23 @@
 (bind-key "C-. m s" 'kmacro-set-counter)
 (bind-key "C-. m a" 'kmacro-add-counter)
 
+(bind-key "C-. e" 'eval-region emacs-lisp-mode-map)
+
 (bind-key "C-. z" 'my-insert-no-move)
+
+(bind-key "C-. =" 'macrostep-expand)
+
+(defvar ctl-dot-i-prefix-map)
+(define-prefix-command 'ctl-dot-i-prefix-map)
+(bind-key "C-. i" 'ctl-dot-i-prefix-map)
+(bind-key "C-. i m" 'set-input-method)
+(bind-key "C-. i e" 'toggle-input-method)
+(bind-key "C-. i s" (lambda () (interactive) (set-input-method "slovak")))
+(bind-key "C-. i c" (lambda () (interactive) (set-input-method "czech")))
+(bind-key "C-. i r" (lambda () (interactive) (set-input-method "russian-computer")))
+(bind-key "C-. i i" (lambda () (interactive) (set-input-method "italian-keyboard")))
+(bind-key "C-. i g" (lambda () (interactive) (set-input-method "german")))
+
 
 (defvar ctl-c-r-map)
 (define-prefix-command 'ctl-c-r-map)
@@ -263,12 +281,13 @@
 (bind-key "H-s n" 'sp-add-to-next-sexp)
 (bind-key "H-s j" 'sp-join-sexp)
 (bind-key "H-s s" 'sp-split-sexp)
+(bind-key "H-s r" 'sp-rewrap-sexp)
 (defvar hyp-s-x-map)
 (define-prefix-command 'hyp-s-x-map)
 (bind-key "H-s x" hyp-s-x-map)
 (bind-key "H-s x x" 'sp-extract-before-sexp)
 (bind-key "H-s x a" 'sp-extract-after-sexp)
-
+(bind-key "H-s x s" 'sp-swap-enclosing-sexp)
 
 (defvar ctl-c-s-map)
 (define-prefix-command 'ctl-c-s-map)
@@ -294,6 +313,9 @@ inserted character."
     (call-interactively 'quoted-insert)))
 
 (bind-key "C-z" 'my-quoted-insert-and-backward)
+
+(bind-key "M-s RET" 'skeleton-easy-regexp-display-abbrev)
+(bind-key "M-g RET" 'skeleton-display-abbrev)
 
 ;; input methods
 ;;(bind-key "C-\\" 'toggle-input-method)
