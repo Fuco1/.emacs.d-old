@@ -48,6 +48,31 @@
 (define-key sp-keymap (kbd "M-F") 'sp-forward-symbol)
 (define-key sp-keymap (kbd "M-B") 'sp-backward-symbol)
 
+(define-key sp-keymap [remap delete-char] 'sp-delete-char)
+(define-key sp-keymap [remap backward-delete-char-untabify] 'sp-backward-delete-char)
+(define-key sp-keymap [remap kill-word] 'sp-kill-word)
+(define-key sp-keymap [remap backward-kill-word] 'sp-backward-kill-word)
+
+(bind-key "H-t" 'sp-prefix-tag-object sp-keymap)
+(bind-key "H-p" 'sp-prefix-pair-object sp-keymap)
+(bind-key "H-y" 'sp-prefix-symbol-object sp-keymap)
+(bind-key "H-h" 'sp-highlight-current-sexp sp-keymap)
+(bind-key "H-e" 'sp-prefix-save-excursion sp-keymap)
+(bind-key "H-s c" 'sp-convolute-sexp sp-keymap)
+(bind-key "H-s a" 'sp-absorb-sexp sp-keymap)
+(bind-key "H-s e" 'sp-emit-sexp sp-keymap)
+(bind-key "H-s p" 'sp-add-to-previous-sexp sp-keymap)
+(bind-key "H-s n" 'sp-add-to-next-sexp sp-keymap)
+(bind-key "H-s j" 'sp-join-sexp sp-keymap)
+(bind-key "H-s s" 'sp-split-sexp sp-keymap)
+(bind-key "H-s r" 'sp-rewrap-sexp sp-keymap)
+(defvar hyp-s-x-map)
+(define-prefix-command 'hyp-s-x-map)
+(bind-key "H-s x" hyp-s-x-map sp-keymap)
+(bind-key "H-s x x" 'sp-extract-before-sexp sp-keymap)
+(bind-key "H-s x a" 'sp-extract-after-sexp sp-keymap)
+(bind-key "H-s x s" 'sp-swap-enclosing-sexp sp-keymap)
+
 ;;;;;;;;;;;;;;;;;;
 ;; pair management
 
@@ -56,6 +81,7 @@
 ;;; markdown-mode
 (sp-with-modes '(markdown-mode gfm-mode rst-mode)
   (sp-local-pair "*" "*" :bind "C-*")
+  (sp-local-pair "_" "_" :bind "C-_")
   (sp-local-tag "2" "**" "**")
   (sp-local-tag "s" "```scheme" "```")
   (sp-local-tag "<"  "<_>" "</_>" :transform 'sp-match-sgml-tags))
@@ -64,10 +90,25 @@
 (sp-with-modes '(tex-mode plain-tex-mode latex-mode)
   (sp-local-tag "i" "\"<" "\">"))
 
-;;; html-mode
-(sp-with-modes '(html-mode sgml-mode)
-  (sp-local-pair "<" ">"))
-
 ;;; lisp modes
 (sp-with-modes sp--lisp-modes
   (sp-local-pair "(" nil :bind "C-("))
+
+;;; haskell mode
+(sp-local-pair 'haskell-mode "'" nil :unless '(my-after-symbol-p))
+
+(defun my-after-symbol-p (_id action _context)
+  (when (eq action 'insert)
+    (save-excursion
+      (backward-char 1)
+      (looking-back "\\sw\\|\\s_\\|\\s'"))))
+
+(sp-local-pair 'emacs-lisp-mode "(" nil :post-handlers '(my-add-space-after-sexp-insertion))
+
+(defun my-add-space-after-sexp-insertion (id action _context)
+  (when (eq action 'insert)
+    (save-excursion
+      (forward-char (length (plist-get (sp-get-pair id) :close)))
+      (when (or (eq (char-syntax (following-char)) ?w)
+                (looking-at (sp--get-opening-regexp)))
+        (insert " ")))))
