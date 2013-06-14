@@ -50,6 +50,8 @@
 
 (define-key sp-keymap [remap delete-char] 'sp-delete-char)
 (define-key sp-keymap [remap backward-delete-char-untabify] 'sp-backward-delete-char)
+(define-key sp-keymap [remap backward-delete-char] 'sp-backward-delete-char)
+(define-key sp-keymap [remap delete-backward-char] 'sp-backward-delete-char)
 (define-key sp-keymap [remap kill-word] 'sp-kill-word)
 (define-key sp-keymap [remap backward-kill-word] 'sp-backward-kill-word)
 
@@ -77,6 +79,7 @@
 ;; pair management
 
 (sp-local-pair 'minibuffer-inactive-mode "'" nil :actions nil)
+(bind-key "C-(" 'sp---wrap-with-40 minibuffer-local-map)
 
 ;;; markdown-mode
 (sp-with-modes '(markdown-mode gfm-mode rst-mode)
@@ -91,7 +94,7 @@
   (sp-local-tag "i" "\"<" "\">"))
 
 ;;; lisp modes
-(sp-with-modes sp--lisp-modes
+(sp-with-modes (append '(inferior-emacs-lisp-mode) sp--lisp-modes)
   (sp-local-pair "(" nil :bind "C-("))
 
 ;;; haskell mode
