@@ -1,3 +1,4 @@
+
 ;;; Tab management
 
 ;; If there is a tab, make it the size of 8 spaces
@@ -46,13 +47,17 @@
                                   (unless (or (consp prefix)
                                               mark-active)
                                     (looking-at "\\_>"))))
-    (cond ((minibufferp)
-           (minibuffer-complete))
-          ((smart-tab-must-expand prefix)
-           (if smart-tab-using-hippie-expand
-               (hippie-expand prefix)
-             (dabbrev-expand prefix)))
-          ((smart-indent)))))
+    (cond
+     ((and (eq major-mode 'org-mode)
+           (org-cycle)))
+     ((cond
+       ((minibufferp)
+        (minibuffer-complete))
+       ((smart-tab-must-expand prefix)
+        (if smart-tab-using-hippie-expand
+            (hippie-expand prefix)
+          (dabbrev-expand prefix)))
+       ((smart-indent)))))))
 
 (defun smart-indent ()
   "Indents region if mark is active, or current line otherwise."
@@ -64,3 +69,4 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (bind-key "TAB" 'smart-tab)
+(bind-key "TAB" 'smart-tab org-mode-map)
