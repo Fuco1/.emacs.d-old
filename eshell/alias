@@ -1,1 +1,5 @@
+alias gc git checkout $*
+alias gcb git checkout -b $*
+alias gbva git branch -va
 alias ff find-file $1
+alias asd ad $*

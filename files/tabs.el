@@ -69,4 +69,3 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (bind-key "TAB" 'smart-tab)
-(bind-key "TAB" 'smart-tab org-mode-map)

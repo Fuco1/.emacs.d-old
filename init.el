@@ -68,6 +68,8 @@
 (load "files/ack")
 (load "files/allout")
 (load "files/navigation")
+(load "files/haskell")
+(load "c:/Users/Matus/AppData/Roaming/.emacs.d/dev/shell-pop-el/shell-pop")
 
 ;; vendor
 (vendor 'yasnippet)
@@ -75,17 +77,25 @@
 (vendor 'wc-mode)
 (vendor 'revbufs 'revbufs)
 (vendor 'golden-ratio)
-(vendor 'iy-go-to-char 'iy-go-to-char 'iy-go-to-char-backward)
+;;(vendor 'iy-go-to-char 'iy-go-to-char 'iy-go-to-char-backward)
 (vendor 'smartparens)
 (vendor 'letcheck 'letcheck-mode)
 (vendor 'chop 'chop-move-up 'chop-move-down)
 (vendor 'clippy 'clippy-describe-function)
 (vendor 'google-maps 'google-maps)
 (vendor 'elwm)
-(vendoe 'skeleton-complete)
+(vendor 'skeleton-complete)
 (skeleton-complete-global-mode t)
+(define-key skeleton-complete-mode-map (kbd "M-g RET") 'skeleton--expand-symbols)
+(define-key skeleton-complete-mode-map (kbd "M-s RET") 'skeleton--expand-partial-lines)
 (vendor 'flex-isearch)
 (global-flex-isearch-mode t)
+
+(require 'uniquify)
+(setq uniquify-buffer-name-style 'forward)
+
+(require 'saveplace)
+(setq-default save-place t)
 
 (require 'keyfreq)
 (keyfreq-mode 1)
@@ -124,4 +134,3 @@
 
 ;; removed packages:
 ;; sunrise-commander
-;; shell-pop

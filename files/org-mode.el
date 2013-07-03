@@ -3,11 +3,12 @@
   ;; The following lines are always needed.  Choose your own keys.
   :bind  (("C-c l" . org-store-link)
           ("<f12>" . org-agenda)
-          ("C-c b" . org-iswitchb)
-          ("<f11>" . org-clock-goto))
+          ("C-c b" . org-iswitchb))
   :config
   (progn
     (setq org-modules (quote (org-habit)))
+
+    (bind-key "TAB" 'smart-tab org-mode-map)
 
     (load "files/org-clock")
     (load "files/org-project")

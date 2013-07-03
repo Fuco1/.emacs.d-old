@@ -28,6 +28,16 @@
     (narrow-to-defun)
     (indent-buffer)))
 
+(defun my-kill-this-buffer ()
+  "Kill the current buffer.
+Warn me if I want to kill a scratch buffer."
+  (interactive)
+  (if (or (string-match-p "\\*scratch" (buffer-name (current-buffer)))
+          (string-match-p "\\*Messages\\*" (buffer-name (current-buffer))))
+      (when (y-or-n-p "Do you want really to kill this buffer?")
+        (kill-buffer (current-buffer)))
+    (kill-buffer (current-buffer))))
+
 (defun cleanup-buffer-safe ()
   "Perform a bunch of safe operations on the whitespace content of a buffer.
 Does not indent buffer, because it is used for a before-save-hook, and that

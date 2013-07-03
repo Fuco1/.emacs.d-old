@@ -83,11 +83,16 @@
 
 ;;; markdown-mode
 (sp-with-modes '(markdown-mode gfm-mode rst-mode)
-  (sp-local-pair "*" "*" :bind "C-*")
+  (sp-local-pair "*" "*" :bind "C-*" :skip-match 'sp--gfm-skip-asterisk)
   (sp-local-pair "_" "_" :bind "C-_")
   (sp-local-tag "2" "**" "**")
   (sp-local-tag "s" "```scheme" "```")
   (sp-local-tag "<"  "<_>" "</_>" :transform 'sp-match-sgml-tags))
+
+(defun sp--gfm-skip-asterisk (ms mb me)
+  (save-excursion
+    (goto-char mb)
+    (save-match-data (looking-at "^* "))))
 
 ;;; tex-mode latex-mode
 (sp-with-modes '(tex-mode plain-tex-mode latex-mode)
@@ -96,6 +101,14 @@
 ;;; lisp modes
 (sp-with-modes (append '(inferior-emacs-lisp-mode) sp--lisp-modes)
   (sp-local-pair "(" nil :bind "C-("))
+
+(sp-local-pair 'c++-mode "{" nil :post-handlers '((my-create-newline-and-enter-sexp "RET")))
+(defun my-create-newline-and-enter-sexp (&rest _ignored)
+  "Open a new brace or bracket expression, with relevant newlines and indent. "
+  (newline)
+  (indent-according-to-mode)
+  (forward-line -1)
+  (indent-according-to-mode))
 
 ;;; haskell mode
 (sp-local-pair 'haskell-mode "'" nil :unless '(my-after-symbol-p))

@@ -14,23 +14,27 @@
    ;; show only if the buffer is read-only or modified.
    (:eval
     (cond (buffer-read-only
-           (propertize "RO " 'face 'font-lock-keyword-face))
+           (propertize "RO" 'face 'font-lock-keyword-face))
           ((buffer-modified-p)
-           (propertize "** " 'face 'mode-line-modified-status))
-          (t "   ")))
+           (propertize "**" 'face 'mode-line-modified-status))
+          (t "  ")))
 
+   ;; evil support
+   (:eval (when evil-mode
+            (evil-generate-mode-line-tag evil-state)))
+   " "
    ;; cursor position & narrow info
    (:eval (when (buffer-narrowed-p)
             "Narrow "))
    (-3 "%p")
    " "
-   (11 "(%l,%c)")
+   (17 ("(%l,%c," (:eval (format "%s" (point))) ")"))
 
    ;; Path to the file in buffer. If it doesn't have associated file,
    ;; display nothing.
    (:propertize (:eval
                  (when buffer-file-name
-                   (my-abbreviate-file-name default-directory)))
+                   (my-abbreviate-file-name default-directory (buffer-name))))
                 face mode-line-secondary)
 
    ;; buffer name
@@ -63,6 +67,7 @@
        ))
 
    " (" mode-line-mule-info ")"
+   " " global-mode-string
    ))
 
 (defface mode-line-secondary
@@ -84,10 +89,30 @@
 (setq cycbuf-file-name-replacements
       (mapcar (lambda (pair) (list (car pair) (cdr pair))) my-abbrev-file-name-alist))
 
-(defun my-abbreviate-file-name (filename)
+(defun my-abbreviate-file-name (filename &optional buffer-name)
   "Shorten the FILENAME or directory according to
 `my-abbrev-file-name-alist'. "
   (dolist (p my-abbrev-file-name-alist)
     (when (string-match (car p) filename)
       (setq filename (replace-match (cdr p) nil nil filename))))
-  filename)
+  (s-chop-suffixes
+   (reverse (mapcar
+             (lambda (x) (concat x "/")) (s-split "/" buffer-name)))
+   filename))
+
+(defvar minimal-mode-line-background "darkred"
+  "Background colour for active mode line face when minimal minor
+  mode is active")
+
+(defvar minimal-mode-line-inactive-background "dim grey"
+  "Background colour for inactive mode line face when minimal
+  minor mode is active")
+
+(defvar minimal-mode-line-height 0.1
+  "Height of mode line when minimal minor mode is active")
+
+(unless (facep 'minimal-mode-line)
+  (copy-face 'mode-line 'minimal-mode-line))
+(set-face-attribute 'minimal-mode-line nil
+                    :background "darkred"
+                    :height 0.1)

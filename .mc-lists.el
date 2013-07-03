@@ -16,14 +16,22 @@
         my-emacs-lisp-open-line
         my-end-of-code-or-line
         my-newline
+        my-smart-downcase-word
+        org-beginning-of-line
+        org-end-of-line
         smart-tab
         sp--cua-replace-region
         sp--self-insert-command
+        sp-backward-delete-char
+        sp-backward-kill-word
         sp-backward-sexp
         sp-backward-unwrap-sexp
         sp-backward-up-sexp
         sp-cua-replace-region
+        sp-emit-sexp
+        sp-forward-barf-sexp
         sp-forward-sexp
+        sp-join-sexp
         sp-kill-sexp
         sp-remove-active-pair-overlay
         sp-select-next-thing
@@ -39,6 +47,7 @@
         beginning-of-buffer
         eval-and-replace
         handle-switch-frame
+        haskell-indentation-delete-backward-char
         kill-this-buffer
         mc/mark-all-like-this-dwim
         typopunct-insert-mp

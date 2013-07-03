@@ -43,3 +43,15 @@ todo.txt
 image-dired/*
 vendor/keyadvice.el/*
 dev/*
+vendor/clippy.el/*
+vendor/wrap-region/*
+vendor/typoel/*
+vendor/interval-tree/*
+vendor/google-maps/.git/*
+vendor/elxiki/*
+vendor/litable/*
+vendor/elwm/*
+vendor/skeleton-complete/*
+vendor/multifiles.el/*
+elnode/*
+eshell/*

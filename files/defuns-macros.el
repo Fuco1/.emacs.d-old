@@ -22,20 +22,27 @@ might often be impossible."
                (kill-buffer buffer)))
            (buffer-list))))
 
+;; this is still broken :/
 (defmacro with-files-in-dir (directory &rest forms)
   (declare (indent 1))
   `(save-buffer-list
      (save-excursion
        (mapc (lambda (file)
-               (find-file (concat (,directory "/" file)))
+               (find-file (concat ,directory "/" file))
                ,@forms)
              (directory-files ,directory)))))
+
+(defmacro with-map-bind-keys (map &rest forms)
+  (declare (indent 1))
+  `(progn
+     ,@(mapcar (lambda (form) (append '(bind-key) form `(,map))) forms)))
 
 (defvar my-macro-names
   '(
     "save-buffer-list"
     "save-kill-ring"
     "with-files-in-dir"
+    "with-map-bind-keys"
     ))
 
 (font-lock-add-keywords 'emacs-lisp-mode `((,(concat "\\<"

@@ -36,10 +36,5 @@
                  (just-one-space 0)
                  (backward-char 1)))))
 
-(defadvice kill-this-buffer (around warn-if-scratch activate)
-  "Warn me if I want to kill a scratch buffer"
-  (if (or (string-match-p "\\*scratch" (buffer-name (current-buffer)))
-          (string-match-p "\\*Messages\\*" (buffer-name (current-buffer))))
-      (when (y-or-n-p "Do you want really to kill this buffer?")
-        ad-do-it)
-    ad-do-it))
+(defadvice beginning-of-defun (before fix-org-navig activate)
+  (when (eq major-mode 'org-mode) (previous-line)))

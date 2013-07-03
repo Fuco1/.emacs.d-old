@@ -156,6 +156,31 @@ move the current line down and yank"
   (interactive)
   (copy-line-with-offset 1))
 
+(defun kill-line-yank-newline ()
+  (interactive)
+  (let ((beg (line-beginning-position))
+        (end (line-end-position))
+        (name (buffer-name))
+        (col (current-column)))
+    (end-of-line)
+    (newline)
+    (beginning-of-line)
+    (insert-buffer-substring name beg end)
+    (move-to-column col t)
+    (unless (eolp) (kill-sexp))))
+
+(defun my-kill-line-yank-newline ()
+  (interactive)
+  (let ((beg (line-beginning-position))
+        (end (line-end-position))
+        (name (buffer-name))
+        (col (current-column)))
+    (end-of-line)
+    (newline)
+    (beginning-of-line)
+    (insert-buffer-substring name beg end)
+    (move-to-column col t)))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; navigate to beg/end of current line, considering indent and

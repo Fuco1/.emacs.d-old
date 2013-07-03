@@ -47,28 +47,26 @@
 
 (defun my-dired-init ()
   "Bunch of stuff to run for dired, either immediately or when it's loaded."
-  (bind-key "<insert>" 'dired-mark dired-mode-map)
-  (bind-key "SPC" 'dired-mark dired-mode-map)
-  (bind-key "<delete>" 'dired-unmark-backward dired-mode-map)
-  (bind-key "<backspace>" 'dired-up-directory dired-mode-map)
-
-  (bind-key "C-s" 'dired-isearch-filenames dired-mode-map)
-  (bind-key "ESC C-s" 'dired-isearch-filenames-regexp dired-mode-map)
-
-  (bind-key "C-o" 'dired-omit-mode dired-mode-map)
-
   (defvar slash-dired-prefix-map)
   (define-prefix-command 'slash-dired-prefix-map)
-  (bind-key "/" 'slash-dired-prefix-map dired-mode-map)
-  (bind-key "/ r" 'my-dired-filter-by-regexp dired-mode-map)
-  (bind-key "/ e" 'my-dired-filter-by-ext dired-mode-map)
-  (bind-key "/ /" 'my-dired-filter-by-name dired-mode-map)
 
-  (bind-key "(" 'dired-details-toggle dired-mode-map)
-
-  (bind-key "M-<f5>" 'dired-arc-pack-files dired-mode-map)
-  (bind-key "M-<f6>" 'dired-arc-unpack-file dired-mode-map)
-  (bind-key "l" 'dired-arc-list-archive dired-mode-map)
+  (with-map-bind-keys dired-mode-map
+    ("<insert>" 'dired-mark)
+    ("SPC" 'dired-mark)
+    ("<delete>" 'dired-unmark-backward)
+    ("<backspace>" 'dired-up-directory)
+    ("C-s" 'dired-isearch-filenames)
+    ("ESC C-s" 'dired-isearch-filenames-regexp)
+    ("C-o" 'dired-omit-mode)
+    ("/" 'slash-dired-prefix-map)
+    ("/ r" 'my-dired-filter-by-regexp)
+    ("/ e" 'my-dired-filter-by-ext)
+    ("/ /" 'my-dired-filter-by-name)
+    ("/ h" 'my-dired-hide-by-ext)
+    ("(" 'dired-details-toggle)
+    ("M-<f5>" 'dired-arc-pack-files)
+    ("M-<f6>" 'dired-arc-unpack-file)
+    ("l" 'dired-arc-list-archive))
 
   (dired-omit-mode t)
   (visual-line-mode -1)
@@ -98,6 +96,17 @@
     (call-interactively 'diredp-marked)
     (with-current-buffer cbuffer
       (dired-unmark-all-marks))))
+
+(defun my-dired-hide-by-ext (ext &optional arg)
+  (interactive "sExtension: \nP")
+  (let ((cbuffer (current-buffer)))
+    (dired-mark-files-regexp (concat "\\." ext "\\'"))
+    (dired-toggle-marks)
+    (setq current-prefix-arg nil)
+    (call-interactively 'diredp-marked)
+    (with-current-buffer cbuffer
+      (dired-unmark-all-marks)
+      (when arg (kill-this-buffer)))))
 
 ;; TODO: pridat C-b z totalcmd
 

@@ -95,3 +95,6 @@ directory, go right back into search."
 (bind-key "M-z" 'my-isearch-zap-to-match         isearch-mode-map)
 (bind-key "<f2>" 'isearch-occur                  isearch-mode-map)
 (bind-key "\r" 'my-isearch-exit                  isearch-mode-map)
+
+(bind-key "C-S-s" 'flex-isearch-forward)
+(bind-key "C-S-r" 'flex-isearch-backward)

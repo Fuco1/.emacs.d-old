@@ -26,22 +26,31 @@
                     (mode . css-mode)
                     (mode . php-mode)
                     (mode . js-mode)))
-               ("Dired"
-                (mode . dired-mode))
-               ("Images"
-                (or (mode . image-dired-display-image-mode)
-                    (mode . image-dired-thumbnail-mode)
-                    (mode . image-mode)))
-               ("Tramp"
-                (or (name . "tramp")))
-               ("Programming" ;; prog stuff not already in MyProjectX
-                (or
-                 (mode . c-mode)
-                 (mode . perl-mode)
-                 (mode . python-mode)
-                 (mode . cc-mode)
-                 ;; etc
-                 ))))))
+               ("Langs"
+                (or (predicate
+                     .
+                     (let ((bfn (buffer-file-name (current-buffer))))
+                       (when bfn
+                         (string-match-p "d:/languages" bfn))))))
+              ("Dired"
+               (mode . dired-mode))
+              ("Images"
+               (or (mode . image-dired-display-image-mode)
+                   (mode . image-dired-thumbnail-mode)
+                   (mode . image-mode)))
+              ("Tramp"
+               (or (name . "tramp")))
+              ("Programming" ;; prog stuff not already in MyProjectX
+               (or
+                (mode . c-mode)
+                (mode . perl-mode)
+                (mode . python-mode)
+                (mode . cc-mode)
+                ;; etc
+                ))
+              ("IRC"
+               (or (mode . erc-mode)))
+              ))))
 
 ;; (define-ibuffer-filter in-directory
 ;;   "Toggle current view to buffers whose default-directory is in QUALIFIER."

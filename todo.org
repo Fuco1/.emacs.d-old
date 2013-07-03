@@ -1,7 +1,49 @@
+BUUUUUUGS
+=============
+<p>asd asd</p> + C-M-e v emacs-lisp-mode zmaze closing zavorku
+\cdot | \cata{\varphi} traspose v latechu prehodi cdot/cata a ne celu zavorku
+
+v H-p nefunguje prehadzovanie parov ak je point v symbole
+
+-- (after?) < v emacs lisp berie ako escape... bad!
+
+sp-down-sexp
+
+#+BEGIN:emacs-lisp-mode
+(sp-local-pair 'ruby-mode "if"< nil :skip-match 'foobar) ;; skoci sem, zle vyhodnocuje ""
+|
+"(:open if :close end :actions (wrap insert) :when nil :unless nil :pre-handlers nil :post-handlers nil :skip-match fooba"
+#+END
+
+
+* _GRAND PLAN_
+** separate into logical entities
+- [ ] UI/defcustoms/pair management
+- [ ] parsing & getting things & support functions
+- [ ] navigation
+- [ ] manipulation
+- [ ] autopairing & autoskipping (needs rewrite)
+- [ ] wrapping (needs rewrite)
+** [ ] various minor modes for editing built on top of the infrastructure
+- [ ] sp-paredit (smartparens-strict-mode)
+
 * TODO pridat :bind do sp-pair a sp-local-pair ktore automaticky nabinduje klavesu na "wrap thing" pre dany par... t.j. funkciu
 ** FIX: nefunguje ak major-mode nie je nacitany (keymapa neexistuje), treba pouzit hook
 
-* TODO transpose sexp
+* DONE transpose sexp
+  CLOSED: [2013-03-29 Fri 03:06]
+  - State "DONE"       from "TODO"       [2013-03-29 Fri 03:06]
+* DONE pridat customize pre sp/paredit binding auto-setup
+  CLOSED: [2013-04-15 Mon 02:26]
+  - State "DONE"       from "TODO"       [2013-04-15 Mon 02:26]
+- 1 customize na vyber "base setu" (paredit/sp)
+- 1 customize na "alist" funkcia - override
+* DONE Pridat selektory na vyber elementou nad ktorymi chceme operovat. (hlavne vyber medzi tag/sexp v html mode -- momentalne funguje najblizsi, co casto nie je ziadane)
+  CLOSED: [2013-04-15 Mon 02:27]
+  - State "DONE"       from "TODO"       [2013-04-15 Mon 02:27]
+* DONE fixnut sp-get-sexp/sp-get-thing aby bral tagy len ak je point pred/za </>
+  CLOSED: [2013-03-29 Fri 14:01]
+  - State "DONE"       from "TODO"       [2013-03-29 Fri 14:01]
 * DONE pridat C-0 do add-to-sexp
 some words in latex I want to add to \emph{here}
 - ako zarucit aby sa potiahlo cele \emph{ ?
@@ -14,8 +56,9 @@ napr v latex moze byt prefix
 
 GENIUS!
 
-* TODO
-some words in latex I want to add to \{this\}
+* TODO pridat aj :suffix nastavovac. Napr v haskellu. Defaultne priliepat symbol-prefix class?
+
+* TODO some words in latex I want to add to \{this\}
 1. spocitat C-M-f az po prvy sexp
 2. slurp-back tolko tokenov
 
@@ -52,9 +95,9 @@ convolute -> sux vysledok
 
 - expand/absorb funguje OK
 
-* BARF
-** TODO ERROR barf z konca vyrazu dava error (a b c |) -> a b c |() error
-** TODO ERROR barf vyskoci zo zoznamu:
+* TODO BARF [0%]
+- [ ] ERROR barf z konca vyrazu dava error (a b c |) -> a b c |() error
+- [ ] ERROR barf vyskoci zo zoznamu:
 (asd |asd asd) -> asd |(asd asd)
 
 * DONE ERROR sp-select-next-thing-exchange nefunguje na snapshote
@@ -63,11 +106,11 @@ convolute -> sux vysledok
 miesto aby oznacil | >(foo bar)<
 oznaci | (>foo< bar)
 
-* TODO slurp vypisuje error ak je "thing" nil
 * TODO pridat moznost na tag-wrap ze za tag naskoci automaticky newline (uzitocne pre \begin{} \end{})
+* TODO pridat moznost menit "_" v matching tagoch. Uzitocne na zmeny environmentu/tagu v html
 * TODO add paredit-semicolon
 
-* TODO pridat funkcio "down to" ktora skoci do specifickeho typu bloku, ignorujuc ostatne.
+* TODO pridat funkciu "down to" ktora skoci do specifickeho typu bloku, ignorujuc ostatne.
 uzitocne v
 int| foo (parametre) {<jump here>
   <or better, here>telo
@@ -133,3 +176,70 @@ I don't know if there is any issue with executing the preceeding cursors in `pre
            (>>= ,@(cdr forms))
          nil)
     `(,@(car forms))))
+* TODO resetovat (setq sp-recent-keys nil) ked sa pohne kurzor niekam mimo, toto napr zamedzi (\(|\)) ked chcem (\(|))
+
+* TODO misc navigacia [50%]
+- (bla |bla) (foo foo) -> (bla bla) (|foo foo), t.j. C-M-e C-M-d ... kde to zapracovat?
+- [X] pridane do sp-beginning-of-sexp / sp-end-of-sexp
+
+- (bla |bla) (foo foo) -> (bla bla) (foo foo)| t.j. C-M-e C-M-f (H-2 H-p C-M-f)
+- [ ]
+
+* TODO make sp-show-pair-match-face inherit from the default show-paren-mode faces.
+* TODO pridat convolute ktory ale ponecha sub-sexpy a len zameni hlavicky
+
+(let ((x t)                 (while something
+      (y nil))                (let ((x t)
+  (while something                  (y nil))
+    (stuff 1)                   (stuff 1)
+    (stuff 1)                   (stuff 1)
+    (stuff 1))                  (stuff 1))
+  (stuff 2))                  (stuff 2))
+
+ako to spravit chytre?
+* DONE pridat swap [foo (bar) baz] -> (foo [baf] baz)
+  CLOSED: [2013-05-25 Sat 23:33]
+  - State "DONE"       from "TODO"       [2013-05-25 Sat 23:33]
+
+* TODO debilne chyby na zaciatku/konci buffera... treba to fixnut nech to neni nahodne rozbite
+* TODO pridat moznost ze delimiter musi byt \_< \_>, napr v ruby begin/end par... ak je vnutri premenna typy "blaendbla" tak sa to pokazi.
+* TODO pridat do sp-up-sexp moznost nastavit v ktorych modoch je always/interactive atd
+* TODO `sp-split-sexp` s C-u by mohol splitnut vsetky veci v zozname (a b |c d) -> (a) (b) (c) (d)
+
+* DONE Pridat funkciu ktora zmeni (adasd | asdad) -> [asdas | asdas] (proste mutate-enclosing-delimiters)
+  CLOSED: [2013-05-10 Fri 18:09]
+  - State "DONE"       from "TODO"       [2013-05-10 Fri 18:09]
+* TODO poriadne refaktorovat skip-to-symbol, skip-to-delim, skip-to-string, integrovat stringy
+* TODO ignorovat chyby "no sexp found" a zobrat dalsiu.
+Napriklad v C++
+
+cout |<< bla << bla
+
+hlasi chybu
+
+* TODO pridat \\{\\} par
+** DONE je tu bug...
+ked sa prida: (sp-local-pair sp--lisp-modes "\\\\{" "\\\\}" :when '(sp-in-string-p))
+
+tak \{\} par nefunguje v buffery ak sa napise \\{
+* TODO pridat automaticky escape \ v stringoch. Takisto \[ by malo vyplut \\[ pokial sme v stringu. Celkovo cely escape by sa zislo prekopat
+* TODO steal rainbow-delimiters
+* TODO pridat navigaciu v pythone
+
+* TODO pridat narrow-to-sexp
+* edwm ========================
+
+
+* TODO Z master arey C-u transpose si vypyta okno v stacku.
+* TODO Urobit "define-layout" makro kde sa definuju vsetky potrebne predikaty/funkcie
+
+* litable
+
+* TODO handle &rest arguments properly
+* TODO handle defun* and &key arguments
+* TODO rainbow coloring podla scope?
+* TODO nakodit nejaky generic walker s tabulkou ktora bude drzat hierarchiu bindingov... proste un-hack :P
+
+* TODO [multifile]
+** pridat "3 way update" twin <-> master <-> all twins
+** automaticky zmazat overlay ak twin neexisuje

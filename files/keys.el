@@ -201,10 +201,6 @@
 (bind-key "M-`" 'jump-to-mark)
 (global-set-key [remap exchange-point-and-mark] 'exchange-point-and-mark-no-activate)
 
-;; calc settings
-(bind-key "<pause>" 'calc-dispatch)
-(bind-key "<home>" 'calc-same-interface)
-
 ;; customize
 (defvar customize-map)
 (define-prefix-command 'customize-map)
@@ -214,6 +210,16 @@
 (bind-key "C-c c g" 'customize-group)
 
 (bind-key "C-c c c" 'my-mini-calc)
+;; calc settings
+(bind-key "<pause>" 'calc-dispatch)
+(bind-key "<home>" 'calc-same-interface)
+(fset 'calc-one-minus [?1 return ?- ?n])
+(fset 'calc-standard-normal [?0 return tab ?1 return tab ?k ?N ?1 return ?- ?n])
+(eval-after-load "calc"
+  '(progn
+     (bind-key "C-. m" 'calc-one-minus calc-mode-map)
+     (bind-key "C-. n" 'calc-standard-normal calc-mode-map)
+     (bind-key "C-<tab>" 'calc-roll-up calc-mode-map)))
 
 (defvar lisp-find-map)
 (define-prefix-command 'lisp-find-map)
@@ -269,25 +275,6 @@
 (dotimes (i 10)
   (bind-key (format "H-%d" i) 'digit-argument))
 (bind-key "H--" 'negative-argument)
-(bind-key "H-t" 'sp-prefix-tag-object sp-keymap)
-(bind-key "H-p" 'sp-prefix-pair-object sp-keymap)
-(bind-key "H-y" 'sp-prefix-symbol-object sp-keymap)
-(bind-key "H-h" 'sp-highlight-current-sexp sp-keymap)
-(bind-key "H-e" 'sp-prefix-save-excursion sp-keymap)
-(bind-key "H-s c" 'sp-convolute-sexp sp-keymap)
-(bind-key "H-s a" 'sp-absorb-sexp sp-keymap)
-(bind-key "H-s e" 'sp-emit-sexp sp-keymap)
-(bind-key "H-s p" 'sp-add-to-previous-sexp sp-keymap)
-(bind-key "H-s n" 'sp-add-to-next-sexp sp-keymap)
-(bind-key "H-s j" 'sp-join-sexp sp-keymap)
-(bind-key "H-s s" 'sp-split-sexp sp-keymap)
-(bind-key "H-s r" 'sp-rewrap-sexp sp-keymap)
-(defvar hyp-s-x-map)
-(define-prefix-command 'hyp-s-x-map)
-(bind-key "H-s x" hyp-s-x-map sp-keymap)
-(bind-key "H-s x x" 'sp-extract-before-sexp sp-keymap)
-(bind-key "H-s x a" 'sp-extract-after-sexp sp-keymap)
-(bind-key "H-s x s" 'sp-swap-enclosing-sexp sp-keymap)
 
 (defvar ctl-c-s-map)
 (define-prefix-command 'ctl-c-s-map)
