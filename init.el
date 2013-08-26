@@ -42,6 +42,7 @@
   "Kill up to, but not including ARGth occurrence of CHAR." t)
 
 ;; load config files
+(load "files/layouts")
 (load "files/org-mode")
 (load "files/global")
 (load "files/defuns-edit")
