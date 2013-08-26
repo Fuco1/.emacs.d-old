@@ -15,6 +15,7 @@
 (require 'image-dired)
 (require 'dired-aux)
 (require 'dired+)
+(require 'cl-lib)
 (use-package dired-details
   :commands dired-details-toggle)
 (use-package w32-browser
@@ -63,6 +64,7 @@
     ("/ e" 'my-dired-filter-by-ext)
     ("/ /" 'my-dired-filter-by-name)
     ("/ h" 'my-dired-hide-by-ext)
+    ("/ i" 'my-dired-list-all-subdirs)
     ("(" 'dired-details-toggle)
     ("M-<f5>" 'dired-arc-pack-files)
     ("M-<f6>" 'dired-arc-unpack-file)
@@ -109,6 +111,13 @@
       (when arg (kill-this-buffer)))))
 
 ;; TODO: pridat C-b z totalcmd
+
+(defun my-dired-list-all-subdirs (arg)
+  (interactive "P")
+  (let ((dir (if arg
+                 (ido-read-directory-name "Directory: " default-directory default-directory)
+               default-directory)))
+    (dired dir "-lR")))
 
 (defun my-image-dired--with-image-in-dired (operation)
   "OPERATION is a function of two arguments, the file we operate
@@ -186,6 +195,26 @@ on and associated dired buffer."
 (defun my-image-dired-display-external ()
   (interactive)
   (w32-browser (image-dired-original-file-name)))
+
+;; FUCO PATCH image-dired
+(defun image-dired-track-original-file ()
+  "Track the original file in the associated dired buffer.
+See documentation for `image-dired-toggle-movement-tracking'.
+Interactive use only useful if `image-dired-track-movement' is nil."
+  (interactive)
+  (let ((old-buf (current-buffer))
+        (dired-buf (image-dired-associated-dired-buffer))
+        (file-name (image-dired-original-file-name)))
+    (when (and (buffer-live-p dired-buf) file-name)
+      (with-current-buffer dired-buf
+        (if (not (dired-goto-file file-name))
+            (message "Could not track file")
+          (let ((p (point)))
+            (mapc
+             (lambda (w) (set-window-point w p))
+             (cl-remove-if-not
+              (lambda (w) (equal (window-buffer w) dired-buf))
+              (cl-mapcan 'window-list (frame-list))))))))))
 
 (defadvice select-window (after image-dired-resize-image activate)
   (when (eq major-mode 'image-dired-display-image-mode)
