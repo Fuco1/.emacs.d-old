@@ -20,7 +20,7 @@
           (t "  ")))
 
    ;; evil support
-   (:eval (when evil-mode
+   (:eval (when (bound-and-true-p evil-mode)
             (evil-generate-mode-line-tag evil-state)))
    " "
    ;; cursor position & narrow info
