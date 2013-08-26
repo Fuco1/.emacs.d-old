@@ -260,6 +260,7 @@
 (bind-key "C-. i r" (lambda () (interactive) (set-input-method "russian-computer")))
 (bind-key "C-. i i" (lambda () (interactive) (set-input-method "italian-keyboard")))
 (bind-key "C-. i g" (lambda () (interactive) (set-input-method "german")))
+(bind-key "C-. i t" (lambda () (interactive) (set-input-method "TeX")))
 
 
 (defvar ctl-c-r-map)
