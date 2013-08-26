@@ -2,6 +2,7 @@
 ;; global
 (require 'smartparens-config)
 (smartparens-global-mode t)
+(smartparens-global-strict-mode t)
 
 ;; highlights matching pairs
 (show-smartparens-global-mode t)
@@ -47,13 +48,6 @@
 
 (define-key sp-keymap (kbd "M-F") 'sp-forward-symbol)
 (define-key sp-keymap (kbd "M-B") 'sp-backward-symbol)
-
-(define-key sp-keymap [remap delete-char] 'sp-delete-char)
-(define-key sp-keymap [remap backward-delete-char-untabify] 'sp-backward-delete-char)
-(define-key sp-keymap [remap backward-delete-char] 'sp-backward-delete-char)
-(define-key sp-keymap [remap delete-backward-char] 'sp-backward-delete-char)
-(define-key sp-keymap [remap kill-word] 'sp-kill-word)
-(define-key sp-keymap [remap backward-kill-word] 'sp-backward-kill-word)
 
 (bind-key "H-t" 'sp-prefix-tag-object sp-keymap)
 (bind-key "H-p" 'sp-prefix-pair-object sp-keymap)
