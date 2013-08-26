@@ -9,6 +9,25 @@
     (setq org-modules (quote (org-habit)))
 
     (bind-key "TAB" 'smart-tab org-mode-map)
+    (bind-key "C-e" 'my-end-of-code-or-line org-mode-map)
+    (bind-key "C-a" 'my-back-to-indentation-or-beginning org-mode-map)
+
+    (defun my-org-select-cell ()
+      "Select the cell in org table the point is in."
+      (interactive)
+      (let ((b (save-excursion
+                 (re-search-forward "|")
+                 (backward-char 1)
+                 (skip-chars-backward " ")
+                 (point)))
+            (e (save-excursion
+                 (re-search-backward "|")
+                 (forward-char 1)
+                 (skip-chars-forward " ")
+                 (point))))
+        (push-mark b t t)
+        (goto-char e)))
+    (bind-key "C-c t" 'my-org-select-cell org-mode-map)
 
     (load "files/org-clock")
     (load "files/org-project")
