@@ -40,10 +40,13 @@ function on `my-emacs-lisp-open-line-list'."
      (function (describe-function function)))))
 
 (defun my-emacs-lisp-init ()
-  (bind-key "RET" 'my-emacs-lisp-open-line emacs-lisp-mode-map)
-  (bind-key "C-M-;" 'clippy-describe-function emacs-lisp-mode-map)
-  (bind-key "C-M-;" 'clippy-describe-function lisp-interaction-mode-map)
-  (bind-key "C-. ." 'my-describe-thing-in-buffer emacs-lisp-mode-map)
+  (with-map-bind-keys emacs-lisp-mode-map
+    ("RET" 'my-emacs-lisp-open-line)
+    ("C-M-;" 'clippy-describe-function)
+    ("C-M-;" 'clippy-describe-function)
+    ("C-. ." 'my-describe-thing-in-buffer))
+
+  (set-input-method "english-prog")
   (eldoc-mode 1)
   (letcheck-mode t))
 
