@@ -9,6 +9,7 @@
         end-of-region
         eval-defun
         eval-expression
+        haskell-indentation-delete-char
         keyboard-escape-quit
         kill-region
         kill-visual-line
