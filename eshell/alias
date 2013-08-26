@@ -1,5 +1,8 @@
+alias du1 du --max-depth=1 -h
+alias lla ls -la
 alias gc git checkout $*
 alias gcb git checkout -b $*
 alias gbva git branch -va
 alias ff find-file $1
 alias asd ad $*
+alias gs git status
