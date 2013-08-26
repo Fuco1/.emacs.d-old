@@ -11,6 +11,10 @@ forward direction."
       (skip-syntax-backward " "))
     (delete-region old-point (point))))
 
+(defun my-kill-entire-line ()
+  (interactive)
+  (kill-region (point-at-bol) (min (point-max) (1+ (point-at-eol)))))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; opening new lines in various ways
@@ -205,22 +209,39 @@ move the current line down and yank"
 there, jump to the beginning of current line.  If visual mode is
 enabled, move according to the visual lines."
   (interactive "p")
-  (if (or (/= arg 1)
-          (= (point) (save-excursion
-                       (my-back-to-indentation)
-                       (point))))
-      (progn
-        (if visual-line-mode
-            (beginning-of-visual-line arg)
-          (move-beginning-of-line arg))
-        (when (/= arg 1)
-          (my-back-to-indentation)))
-    (my-back-to-indentation)))
+  (cond
+   ((and (functionp'org-table-p)
+         (org-table-p))
+    (let ((eob (save-excursion
+                 (re-search-backward "|")
+                 (forward-char 1)
+                 (skip-chars-forward " ")
+                 (point))))
+      (if (= (point) eob)
+          (org-beginning-of-line)
+        (goto-char eob))))
+   ((eq major-mode 'org-mode)
+    (org-beginning-of-line))
+   (t
+    (if (or (/= arg 1)
+            (= (point) (save-excursion
+                         (my-back-to-indentation)
+                         (point))))
+        (progn
+          (if visual-line-mode
+              (beginning-of-visual-line arg)
+            (move-beginning-of-line arg))
+          (when (/= arg 1)
+            (my-back-to-indentation)))
+      (my-back-to-indentation)))))
 
 (defun my-end-of-code-or-line (&optional arg)
   "Move to the end of code.  If already there, move to the end of line,
 that is after the possible comment.  If at the end of line, move
 to the end of code.
+
+If the point is in org table, first go to the last non-whitespace
+of the cell, then to the end of line.
 
 Example:
   (serious |code here)1 ;; useless commend2
@@ -239,24 +260,38 @@ properly."
          (beg-of-line-lov () (if visual-line-mode
                                  (beginning-of-visual-line arg)
                                (move-beginning-of-line arg))))
-    (let ((eoc (save-excursion
-                 (end-of-line-lov)
-                 (while (and (point-in-comment)
-                             (not (bolp)))
-                   (backward-char))
-                 (skip-syntax-backward " ")
-                 ;; if we skipped all the way to the beginning, that
-                 ;; means there's only comment on this line, so this
-                 ;; should just jump to the end.
-                 (if (= (point) (save-excursion
-                                  (beg-of-line-lov)
-                                  (point)))
-                     (progn (end-of-line-lov)
-                            (point))
-                   (point)))))
-      (if (= (point) eoc)
-          (end-of-line-lov)
-        (goto-char eoc)))))
+    (cond
+     ((and (functionp'org-table-p)
+           (org-table-p))
+      (let ((eoc (save-excursion
+                   (re-search-forward "|")
+                   (backward-char 1)
+                   (skip-chars-backward " ")
+                   (point))))
+        (if (= (point) eoc)
+            (end-of-line-lov)
+          (goto-char eoc))))
+     ((eq major-mode 'org-mode)
+      (org-end-of-line))
+     (t
+      (let ((eoc (save-excursion
+                   (end-of-line-lov)
+                   (while (and (point-in-comment)
+                               (not (bolp)))
+                     (backward-char))
+                   (skip-syntax-backward " ")
+                   ;; if we skipped all the way to the beginning, that
+                   ;; means there's only comment on this line, so this
+                   ;; should just jump to the end.
+                   (if (= (point) (save-excursion
+                                    (beg-of-line-lov)
+                                    (point)))
+                       (progn (end-of-line-lov)
+                              (point))
+                     (point)))))
+        (if (= (point) eoc)
+            (end-of-line-lov)
+          (goto-char eoc)))))))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
