@@ -37,12 +37,24 @@ might often be impossible."
   `(progn
      ,@(mapcar (lambda (form) (append '(bind-key) form `(,map))) forms)))
 
+(defmacro with-lines (&rest forms)
+  (declare (indent 0))
+  `(while (not (eobp))
+     (let ((beg (point-at-bol))
+           (end (point-at-eol)))
+       (save-excursion
+         (save-restriction
+           (narrow-to-region beg end)
+           ,@forms)))
+     (forward-line)))
+
 (defvar my-macro-names
   '(
     "save-buffer-list"
     "save-kill-ring"
     "with-files-in-dir"
     "with-map-bind-keys"
+    "with-lines"
     ))
 
 (font-lock-add-keywords 'emacs-lisp-mode `((,(concat "\\<"
