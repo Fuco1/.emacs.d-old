@@ -204,3 +204,29 @@ pool"
                       rcirc-default-user-name
                       rcirc-default-full-name
                       channels))))
+
+;; hack to make nicer format in keyfreq-show
+(eval-after-load 'keyfreq
+  '(progn
+     (defun keyfreq-format-list (list &optional func)
+       "Returns formatted string with command usage statistics.
+
+The LIST is the `keyfreq-table' converted to a list using the `keyfreq-list'.
+
+If FUNC is nil each line contains number of times command was
+called and the command; if it is t percentage usage is added in
+the middle; if it is 'raw each line will contain number an
+command separated by single line (with no formatting) otherwise
+FUNC must be a function returning a string which will be called
+for each entry with three arguments: number of times command was
+called, percentage usage and the command."
+       (let* ((sum (car list)))
+         (mapconcat
+          (cond
+           ((not func) (lambda (e) (format "%7d  %s\n" (cdr e) (car e))))
+           ((equal func t)
+            (lambda (e) (format "%7d  %6.2f%% %10s %s\n"
+                                (cdr e) (/ (* 1e2 (cdr e)) sum) (key-description (where-is-internal (car e) nil t)) (car e))))
+           ((equal func 'raw) (lambda (e) (format "%d %s\n" (cdr e) (car e))))
+           (t (lambda (e) (funcall func (cdr e) (/ (* 1e2 (cdr e)) sum) (car e)))))
+          (cdr list) "")))))
