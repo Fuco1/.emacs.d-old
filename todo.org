@@ -204,7 +204,7 @@ ako to spravit chytre?
 * TODO debilne chyby na zaciatku/konci buffera... treba to fixnut nech to neni nahodne rozbite
 * TODO pridat moznost ze delimiter musi byt \_< \_>, napr v ruby begin/end par... ak je vnutri premenna typy "blaendbla" tak sa to pokazi.
 * TODO pridat do sp-up-sexp moznost nastavit v ktorych modoch je always/interactive atd
-* TODO `sp-split-sexp` s C-u by mohol splitnut vsetky veci v zozname (a b |c d) -> (a) (b) (c) (d)
+* DONE `sp-split-sexp` s C-u by mohol splitnut vsetky veci v zozname (a b |c d) -> (a) (b) (c) (d)
 
 * DONE Pridat funkciu ktora zmeni (adasd | asdad) -> [asdas | asdas] (proste mutate-enclosing-delimiters)
   CLOSED: [2013-05-10 Fri 18:09]
@@ -227,13 +227,17 @@ tak \{\} par nefunguje v buffery ak sa napise \\{
 * TODO pridat navigaciu v pythone
 
 * TODO pridat narrow-to-sexp
+* TODO add option to select entire html tag if point is inside the tag (this should be made general enough to work for all tags)
+staci aby to hladalo "is-inside-tag-p" na riadku kde je kurzor. Nepredpokladam ze budu multi-line tagy... aj ked html mozno mozu byt. => spravit to konfigurovatelne
+
 * edwm ========================
 
 
 * TODO Z master arey C-u transpose si vypyta okno v stacku.
 * TODO Urobit "define-layout" makro kde sa definuju vsetky potrebne predikaty/funkcie
 
-* litable
+
+* litable ========================
 
 * TODO handle &rest arguments properly
 * TODO handle defun* and &key arguments
