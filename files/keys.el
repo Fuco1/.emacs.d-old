@@ -135,6 +135,9 @@
 (bind-key "H-a" 'chop-move-up)
 (bind-key "H-d" 'chop-move-down)
 
+(bind-key "C-s" 'isearch-forward-regexp)
+(bind-key "C-r" 'isearch-backward-regexp)
+
 ;; # move to (beg/end)
 ;; line
 ;; swap C-a and M-m, back-to-indentation is much more common
@@ -243,6 +246,7 @@
 
 (bind-key "C-. m s" 'kmacro-set-counter)
 (bind-key "C-. m a" 'kmacro-add-counter)
+(bind-key "C-. m f" 'kmacro-set-format)
 
 (bind-key "C-. e" 'eval-region emacs-lisp-mode-map)
 
