@@ -43,7 +43,8 @@ Warn me if I want to kill a scratch buffer."
 Does not indent buffer, because it is used for a before-save-hook, and that
 might be bad."
   (interactive)
-  (untabify-buffer)
+  (unless (memq major-mode '(makefile-gmake-mode))
+    (untabify-buffer))
   (delete-trailing-whitespace)
   (set-buffer-file-coding-system 'utf-8))
 
