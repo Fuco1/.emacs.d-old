@@ -4,6 +4,13 @@
       (quote (("default"
                ("Org" ;; all org-related buffers
                 (mode . org-mode))
+               ("emacs-elpa"
+                (or (predicate
+                     .
+                     (let ((bfn (buffer-file-name (current-buffer))))
+                       (when bfn
+                         (and (string-match-p "\\.emacs\\.d/elpa" bfn)
+                              (eq major-mode 'emacs-lisp-mode)))))))
                ("emacs-config"
                 (or (predicate
                      .
@@ -26,31 +33,31 @@
                     (mode . css-mode)
                     (mode . php-mode)
                     (mode . js-mode)))
+               ("Dired"
+                (mode . dired-mode))
                ("Langs"
                 (or (predicate
                      .
                      (let ((bfn (buffer-file-name (current-buffer))))
                        (when bfn
                          (string-match-p "d:/languages" bfn))))))
-              ("Dired"
-               (mode . dired-mode))
-              ("Images"
-               (or (mode . image-dired-display-image-mode)
-                   (mode . image-dired-thumbnail-mode)
-                   (mode . image-mode)))
-              ("Tramp"
-               (or (name . "tramp")))
-              ("Programming" ;; prog stuff not already in MyProjectX
-               (or
-                (mode . c-mode)
-                (mode . perl-mode)
-                (mode . python-mode)
-                (mode . cc-mode)
-                ;; etc
-                ))
-              ("IRC"
-               (or (mode . erc-mode)))
-              ))))
+               ("Images"
+                (or (mode . image-dired-display-image-mode)
+                    (mode . image-dired-thumbnail-mode)
+                    (mode . image-mode)))
+               ("Tramp"
+                (or (name . "tramp")))
+               ("Programming" ;; prog stuff not already in MyProjectX
+                (or
+                 (mode . c-mode)
+                 (mode . perl-mode)
+                 (mode . python-mode)
+                 (mode . cc-mode)
+                 ;; etc
+                 ))
+               ("IRC"
+                (or (mode . erc-mode)))
+               ))))
 
 ;; (define-ibuffer-filter in-directory
 ;;   "Toggle current view to buffers whose default-directory is in QUALIFIER."
@@ -95,6 +102,7 @@
   "Startup function."
   (ibuffer-switch-to-saved-filter-groups "default")
   (add-to-list 'ibuffer-hidden-filter-groups "Tramp")
+  (add-to-list 'ibuffer-hidden-filter-groups "emacs-elpa")
   (visual-line-mode -1)
   (toggle-truncate-lines 1))
 (add-hook 'ibuffer-mode-hook 'customize-ibuffer-mode)
