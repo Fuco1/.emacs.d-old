@@ -38,3 +38,6 @@
 
 (defadvice beginning-of-defun (before fix-org-navig activate)
   (when (eq major-mode 'org-mode) (previous-line)))
+
+(defadvice 2C-dissociate (after close-window-after-disconnect activate)
+  (delete-window))
