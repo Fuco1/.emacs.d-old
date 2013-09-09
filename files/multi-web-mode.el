@@ -5,3 +5,7 @@
                   (css-mode "<style +type=\"text/css\"[^>]*>" "</style>")))
 (setq mweb-filename-extensions '("php" "htm" "html" "ctp" "phtml" "php4" "php5"))
 (multi-web-global-mode 1)
+
+(defun my-html-mode-setup ()
+  (emmet-mode 1))
+(add-hook 'html-mode-hook 'my-html-mode-setup)

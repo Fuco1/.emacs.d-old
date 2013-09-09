@@ -12,3 +12,5 @@
   '(diminish 'buffer-face-mode))
 (eval-after-load "reftex"
   '(diminish 'reftex-mode))
+(eval-after-load "emmet-mode"
+  '(diminish 'emmet-mode))
