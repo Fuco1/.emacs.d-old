@@ -231,7 +231,7 @@
 (defmacro fix-reset-after-each (&rest forms)
   (declare (indent 0))
   `(progn
-     ,@(apply 'append (mapcar '(lambda (form) (list '(beginning-of-buffer) form)) forms))))
+     ,@(apply 'append (mapcar (lambda (form) (list '(beginning-of-buffer) form)) forms))))
 (font-lock-add-keywords 'emacs-lisp-mode '(("\\<fix-reset-after-each\\>" . font-lock-keyword-face)) 'append)
 
 (defun fix-basic ()
@@ -292,6 +292,7 @@
     (query-replace-regexp "^'" "`")
     (replace-regexp ":[ ]``" ", ``")
     (query-replace-regexp "\\([[:word:]]\\)-[ ]" "\\1\\\\dots ")
+    (replace-regexp "\\([[:word:]]\\)[ ]\\\\dots" "\\1\\\\dots")
     (replace-string "$$EM$$" "'em")
     (query-replace-regexp "}\\." ".}")
     (query-replace-regexp "}," ",}")
@@ -302,13 +303,16 @@
     (query-replace-regexp "\\.," ",")
     ))
 
-(defun fix-quotes-italian ()
-  (interactive)
+(defun fix-quotes-italian (arg)
+  (interactive "P")
   (fix-reset-after-each
-    (replace-regexp "``" "\"<")
-    (replace-regexp "''" "\">")
+    (unless arg
+      (replace-regexp "``" "\"<")
+      (replace-regexp "''" "\">"))
     (replace-regexp "“" "\"<")
     (replace-regexp "”" "\">")
+    (replace-regexp "«" "\"<")
+    (replace-regexp "»" "\">")
     ))
 
 (defun fix-italian ()
@@ -332,8 +336,10 @@
 ;; (beginning-of-buffer)
 ;; (replace-regexp "\\*\\*\\* \\*\\*\\* \\*\\*\\*" "\\\\Scene")
 
-(defun fix-html (italic-class)
-  (interactive "sClass name: ")
+(defun fix-html (italic-class bold-class)
+  (interactive (list (read-from-minibuffer "Italics class name: ")
+                     (when current-prefix-arg
+                       (read-from-minibuffer "Bold class name: "))))
   (fix-reset-after-each
     (replace-regexp "<p.*?>" "")
     (replace-regexp "</p>" "
@@ -342,6 +348,9 @@
     (replace-regexp
      (concat "<span class=\"\\(?:c[0-9]+ \\)*?" italic-class "\\(?: c[0-9]+\\)*?\">\\(.*?\\)</span>")
      "\\\\emph{\\1}")
+    (replace-regexp
+     (concat "<span class=\"\\(?:c[0-9]+ \\)*?" bold-class "\\(?: c[0-9]+\\)*?\">\\(.*?\\)</span>")
+     "\\\\strong{\\1}")
     (replace-regexp " " " ")
     (replace-regexp "<span.*?>" "")
     (replace-regexp "</span>" "")
@@ -349,9 +358,23 @@
     (replace-regexp "&bdquo;" "„")
     (replace-regexp "&ldquo;" "“")
     (replace-regexp "&rdquo;" "”")
+    (replace-regexp "&rsquo;" "’")
+    (replace-regexp "&laquo;" "«")
+    (replace-regexp "&raquo;" "»")
     (replace-regexp "&#39;" "'")
     (replace-regexp "&nbsp;" " ")
     (replace-regexp "&hellip;" "…")
+    (replace-regexp "&egrave;" "è")
+    (replace-regexp "&agrave;" "à")
+    (replace-regexp "&ugrave;" "ù")
+    (replace-regexp "&ograve;" "ò")
+    (replace-regexp "&igrave;" "ì")
+    (replace-regexp "&eacute;" "é")
+    (replace-regexp "&Aacute;" "Á")
+    (replace-regexp "&uuml;" "̇ü")
+    (replace-regexp "&ouml;" "ö")
+    (replace-regexp "&auml;" "ä")
+    (replace-regexp "&deg;" "$^\\circ$")
     (replace-regexp "<.*?>" "")
     ))
 

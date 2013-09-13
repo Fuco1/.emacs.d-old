@@ -1,3 +1,4 @@
+alias ga git add $*
 alias du1 du --max-depth=1 -h
 alias lla ls -la
 alias gc git checkout $*
