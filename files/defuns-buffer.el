@@ -1,6 +1,16 @@
-(defun create-scratch-buffer nil
-  "create a new scratch buffer to work in. (could be *scratch* - *scratchX*)"
-  (interactive)
+(defun create-scratch-buffer (mode)
+  "Create a new scratch buffer to work in. (could be *scratch* - *scratchX*)"
+  (interactive (list (if current-prefix-arg
+                         (intern
+                          (ido-completing-read
+                           "Major mode to set: "
+                           (let (r)
+                             (mapatoms
+                              (lambda (x)
+                                (when (s-suffix? "-mode" (symbol-name x))
+                                  (push x r))))
+                             (mapcar 'symbol-name r))))
+                       'emacs-lisp-mode)))
   (let ((n 0)
         bufname)
     (while (progn
@@ -10,7 +20,7 @@
              (setq n (1+ n))
              (get-buffer bufname)))
     (switch-to-buffer (get-buffer-create bufname))
-    (emacs-lisp-mode)))
+    (call-interactively mode)))
 
 (defun untabify-buffer ()
   (interactive)
