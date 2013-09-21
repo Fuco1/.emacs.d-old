@@ -52,4 +52,77 @@ function on `my-emacs-lisp-open-line-list'."
   (eldoc-mode 1)
   (letcheck-mode t))
 
+(defun my-wrap-region (beg end)
+  (goto-char end)
+  (insert ")")
+  (goto-char beg)
+  (insert "("))
+
+(defun my-goto-dominating-let ()
+  "Find dominating let form"
+  (while (and (> (car (syntax-ppss)) 0)
+              (not (ignore-errors
+                     (backward-up-list)
+                     (save-excursion
+                       (down-list)
+                       (memq (symbol-at-point) '(let let*))))))))
+
+(defun my-extract-to-let (name &optional arg)
+  "Extract the form at point into a variable called NAME placed
+in a let form ARG levels up.
+
+If ARG is \\[universal-argument] place the variable into the most
+inner let form point is inside of."
+  (interactive "sName of variable: \nP")
+  (let ((new-vform (sp-get (sp--next-thing-selection) (delete-and-extract-region :beg-prf :end)))
+        (raw (sp--raw-argument-p arg))
+        (arg (prefix-numeric-value arg)))
+    (save-excursion
+      (cond
+       (raw
+        (my-goto-dominating-let)
+        (progn
+          (down-list)
+          (forward-sexp 2)
+          (backward-down-list)
+          (insert "\n(" name " " new-vform ")")
+          (indent-according-to-mode)))
+       (t
+        (backward-up-list arg)
+        (if (> arg 0)
+            (sp-get (sp--next-thing-selection) (my-wrap-region :beg-prf :end))
+          (insert "()")
+          (backward-char))
+        (insert "let ((" name " " new-vform "))\n")
+        (backward-up-list)
+        (indent-sexp))))
+    (if (> arg 0)
+        (insert name)
+      (forward-sexp)
+      (backward-down-list)
+      (save-excursion
+        (insert "\n")
+        (backward-up-list)
+        (indent-sexp)))))
+
+(defun my-merge-let-forms ()
+  "Merge the most inner let form into the next outer one."
+  (interactive)
+  (save-excursion
+    (my-goto-dominating-let)
+    (down-list)
+    (forward-sexp 2)
+    (backward-sexp)
+    (let ((var-list (sp-get (sp--next-thing-selection) (delete-and-extract-region :beg-prf :end))))
+      (sp-splice-sexp-killing-backward 1)
+      (my-goto-dominating-let)
+      (down-list)
+      (forward-sexp 2)
+      (backward-down-list)
+      (insert "\n" var-list)
+      (backward-down-list)
+      (sp-unwrap-sexp)
+      (backward-up-list 2)
+      (indent-sexp))))
+
 (add-hook 'emacs-lisp-mode-hook 'my-emacs-lisp-init)
