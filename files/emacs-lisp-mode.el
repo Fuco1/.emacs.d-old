@@ -39,10 +39,12 @@ function on `my-emacs-lisp-open-line-list'."
      ((/= variable 0) (describe-variable variable))
      (function (describe-function function)))))
 
+;; global elisp settings
+(eldoc-in-minibuffer-mode 1)
+
 (defun my-emacs-lisp-init ()
   (with-map-bind-keys emacs-lisp-mode-map
     ("RET" 'my-emacs-lisp-open-line)
-    ("C-M-;" 'clippy-describe-function)
     ("C-M-;" 'clippy-describe-function)
     ("C-. ." 'my-describe-thing-in-buffer))
 
