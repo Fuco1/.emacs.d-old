@@ -9,8 +9,7 @@
       :config
       (progn
         (require 'smartparens-latex)
-        (sp-local-pair 'latex-mode "\\begin{" "\\end{")
-        (sp-local-pair 'latex-mode "\\langle" "\\rangle")
+        (sp-local-pair 'latex-mode "\\begin" "\\end")
         (sp-local-tag 'latex-mode "\\ba" "\\begin{align*}" "\\end{align*}")
 
         (use-package preview)
