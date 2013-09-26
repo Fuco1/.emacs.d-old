@@ -1,14 +1,10 @@
-BUUUUUUGS
-=============
-<p>asd asd</p> + C-M-e v emacs-lisp-mode zmaze closing zavorku
-\cdot | \cata{\varphi} traspose v latechu prehodi cdot/cata a ne celu zavorku
+* BUUUUUUGS
 
-v H-p nefunguje prehadzovanie parov ak je point v symbole
-
--- (after?) < v emacs lisp berie ako escape... bad!
-
-sp-down-sexp
-
+** TODO <p>asd asd</p> + C-M-e v emacs-lisp-mode zmaze closing zavorku
+** TODO \cdot | \cata{\varphi} traspose v latechu prehodi cdot/cata a ne celu zavorku
+** TODO v H-p nefunguje prehadzovanie parov ak je point v symbole
+** TODO (after?) < v emacs lisp berie ako escape... bad!
+** TODO org-bloky brat ako komentare
 #+BEGIN:emacs-lisp-mode
 (sp-local-pair 'ruby-mode "if"< nil :skip-match 'foobar) ;; skoci sem, zle vyhodnocuje ""
 |
@@ -25,7 +21,7 @@ sp-down-sexp
 - [ ] autopairing & autoskipping (needs rewrite)
 - [ ] wrapping (needs rewrite)
 ** [ ] various minor modes for editing built on top of the infrastructure
-- [ ] sp-paredit (smartparens-strict-mode)
+- [X] sp-paredit (smartparens-strict-mode)
 
 * TODO pridat :bind do sp-pair a sp-local-pair ktore automaticky nabinduje klavesu na "wrap thing" pre dany par... t.j. funkciu
 ** FIX: nefunguje ak major-mode nie je nacitany (keymapa neexistuje), treba pouzit hook
@@ -122,6 +118,7 @@ see: https://github.com/zk-phi/cedit
   CLOSED: [2013-03-28 Thu 02:06]
   - State "DONE"       from "TODO"       [2013-03-28 Thu 02:06]
 
+* TODO Ked hooky pridavaju charaktery v `sp-insert-pair` tak `sp-undo-pairs-separately` zle edituje undo historiu.
 
 * TODO
 "asdasd \" sdfsdf
@@ -132,7 +129,6 @@ see: https://github.com/zk-phi/cedit
 * DONE join sexp
   CLOSED: [2013-03-28 Thu 02:06]
   - State "DONE"       from "TODO"       [2013-03-28 Thu 02:06]
-
 
 * TODO rectangle wrap
 aaa
@@ -229,6 +225,7 @@ tak \{\} par nefunguje v buffery ak sa napise \\{
 * TODO pridat narrow-to-sexp
 * TODO add option to select entire html tag if point is inside the tag (this should be made general enough to work for all tags)
 staci aby to hladalo "is-inside-tag-p" na riadku kde je kurzor. Nepredpokladam ze budu multi-line tagy... aj ked html mozno mozu byt. => spravit to konfigurovatelne
+
 
 * edwm ========================
 
