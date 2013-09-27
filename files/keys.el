@@ -34,6 +34,7 @@
 (bind-key "<f2>" 'occur)
 (bind-key "n" 'occur-next occur-mode-map)
 (bind-key "p" 'occur-prev occur-mode-map)
+(bind-key "o" 'occur-mode-display-occurrence occur-mode-map)
 
 ;; is this safe binding?
 (bind-key "C-'" 'repeat)
