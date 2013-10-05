@@ -189,6 +189,7 @@
 ;; up/downcase
 (bind-key "M-l" 'my-smart-downcase-word)
 (bind-key "M-u" 'my-smart-upcase-word)
+(bind-key "M-c" 'my-capitalize-word)
 
 ;;;;; multiple cursors
 (bind-key "C-c C-S-c" 'mc/edit-lines)

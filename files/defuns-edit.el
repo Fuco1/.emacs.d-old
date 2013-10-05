@@ -1,4 +1,5 @@
 (require 'thingatpt)
+(require 's)
 
 (defun my-kill-whitespace (&optional forward)
   "Kill all the whitespace characters backwards until hitting
@@ -368,6 +369,23 @@ properly."
       (forward-word))
      (t
       (upcase-word arg))))))
+
+(defun my-capitalize-word (&optional arg)
+  "Capitalize the next ARG words and move over.
+With negative ARG capitalize previous ARG words but not move the point.
+
+Additionally, when looking at [ \\t]*$, capitalize backwards."
+  (interactive "p")
+  (when (and (looking-at-p "[ \t]*$") (> arg 0))
+    (setq arg (- arg)))
+  (let ((to-cap (delete-and-extract-region (progn
+                                             (when (sp-point-in-symbol)
+                                               (backward-word (- (cl-signum arg))))
+                                             (point))
+                                           (progn
+                                             (forward-word arg)
+                                             (point)))))
+    (insert (s-titleize to-cap))))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
