@@ -235,6 +235,12 @@ enabled, move according to the visual lines."
             (my-back-to-indentation)))
       (my-back-to-indentation)))))
 
+(defun my-cua-get-longest-line ()
+  (-max (mapcar 'length
+                (split-string
+                 (buffer-substring-no-properties (cua--rectangle-top) (cua--rectangle-bot))
+                 "\n"))))
+
 (defun my-end-of-code-or-line (&optional arg)
   "Move to the end of code.  If already there, move to the end of line,
 that is after the possible comment.  If at the end of line, move
@@ -242,6 +248,9 @@ to the end of code.
 
 If the point is in org table, first go to the last non-whitespace
 of the cell, then to the end of line.
+
+If CUA rectangle is active, alternate between end of current
+line, end of code, and end of the longest line in rectangle.
 
 Example:
   (serious |code here)1 ;; useless commend2
@@ -288,10 +297,18 @@ properly."
                                     (point)))
                        (progn (end-of-line-lov)
                               (point))
-                     (point)))))
-        (if (= (point) eoc)
-            (end-of-line-lov)
-          (goto-char eoc)))))))
+                     (point))))
+            ;; end of rectangle in cua-rect mode
+            (eor (when cua--rectangle (my-cua-get-longest-line))))
+        (cond
+         ((= (point) eoc)
+          (end-of-line-lov))
+         ((= (point) (progn (end-of-line-lov) (point)))
+          (if (and cua--rectangle
+                   (/= (1+ (aref cua--rectangle 3)) eor))
+              (cua-resize-rectangle-right (- eor (current-column) 1))
+            (goto-char eoc)))
+         (t (goto-char eoc))))))))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
