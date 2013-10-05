@@ -70,6 +70,8 @@
    " " global-mode-string
    ))
 
+(setq-default 2C-mode-line-format mode-line-format)
+
 (defface mode-line-secondary
   '((t (:foreground "#555753")))
   "Face used for displaying secondary content (minor modes, file path etc.)")
