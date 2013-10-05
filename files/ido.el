@@ -1,13 +1,7 @@
 ;;; Interactive do, find-file and iswitchb replacement with fuzzy/flex matching.
 
 (require 'ido)
-(ido-mode t)
-;; fuzzy matching is a must have
-(setq ido-enable-flex-matching t)
-;; forget latest selected directory names
-(setq ido-enable-last-directory-history nil)
-;; Allow the same buffer to be open in different frames
-(setq ido-default-buffer-method 'selected-window)
+(require 'flx-ido)
 
 ;; Display ido results vertically, rather than horizontally
 (setq ido-decorations (quote ("\n-> " "" "\n   " "\n   ..." "[" "]" " [No match]" " [Matched]" " [Not readable]" " [Too big]" " [Confirm]")))
