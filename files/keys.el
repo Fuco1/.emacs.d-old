@@ -130,6 +130,8 @@
 ;; list
 (bind-key "C-M-n" 'forward-list)
 (bind-key "C-M-p" 'backward-list)
+(bind-key "C-c f" (lambda () (interactive) (sp-beginning-of-sexp 2)))
+(bind-key "C-c b" (lambda () (interactive) (sp-beginning-of-sexp -2)))
 ;; binary search
 (bind-key "H-b" 'chop-move-up)
 (bind-key "H-f" 'chop-move-down)
