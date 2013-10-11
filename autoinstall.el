@@ -3,28 +3,44 @@
 
 (defvar prelude-packages
   '(
+    ace-jump-mode
     ack-and-a-half
     bookmark+
     browse-kill-ring
     dash
+    dash-functional
     diminish
     dired+
     dired-details
+    eldoc-eval
+    emmet-mode
     expand-region
+    f
+    flx
+    flx-ido
+    fuzzy-match
+    golden-ratio
     haskell-mode
     ibuffer-vc
+    icicles
     ido-ubiquitous
+    jump-char
     keyfreq
+    macrostep
     magit
+    map-regexp
     markdown-mode
     markdown-mode+
     multi-web-mode
     multiple-cursors
+    noflet
     parenface
     php-mode
+    pos-tip
     projectile
     rainbow-mode
     s
+    shell-pop
     smex
     undo-tree
     w32-browser
