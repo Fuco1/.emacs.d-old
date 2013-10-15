@@ -1,4 +1,3 @@
-
 ;;; Tab management
 
 ;; If there is a tab, make it the size of 8 spaces
