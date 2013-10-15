@@ -293,8 +293,9 @@
 (define-prefix-command 'ctl-c-m-map)
 (bind-key "C-c m" 'ctl-c-m-map)
 (bind-key "C-c m s" 'magit-status)
-(bind-key "C-c m l" 'magit-log)
-(bind-key "C-c m b" 'magit-branch-manager)
+(bind-key "C-c m l" 'magit-key-mode-popup-logging)
+(bind-key "C-c m b" 'magit-key-mode-popup-branching)
+(bind-key "C-c m d" 'magit-key-mode-popup-dispatch)
 (bind-key "C-c m c" 'magit-checkout)
 
 ;; zapping
