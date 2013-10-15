@@ -2,6 +2,10 @@
   :mode ("\\.md$" . gfm-mode)
   :config
   (progn
+    (defun my-markdown-init ()
+      (modify-syntax-entry ?\" "$\""))
+    (add-hook 'gfm-mode-hook 'my-markdown-init)
+
     (defun -repeat (n x)
       "Return a list with X repeated N times.
 Returns nil if N is less than 1."
