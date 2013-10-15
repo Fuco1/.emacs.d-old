@@ -301,9 +301,14 @@ properly."
                      (point))))
             ;; end of rectangle in cua-rect mode
             (eor (when cua--rectangle (my-cua-get-longest-line))))
+        ;; refactor this: make some "move actions" and call them in
+        ;; order until point changes.
         (cond
          ((= (point) eoc)
-          (end-of-line-lov))
+          (if (and cua--rectangle
+                   (/= (1+ (aref cua--rectangle 3)) eor))
+              (cua-resize-rectangle-right (- eor (current-column) 1))
+            (end-of-line-lov)))
          ((= (point) (progn (end-of-line-lov) (point)))
           (if (and cua--rectangle
                    (/= (1+ (aref cua--rectangle 3)) eor))
