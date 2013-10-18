@@ -41,3 +41,19 @@
 
 (defadvice 2C-dissociate (after close-window-after-disconnect activate)
   (delete-window))
+
+(defadvice ispell-word (around fix-golden-ration activate)
+  (golden-ratio-mode -1)
+  ad-do-it
+  (golden-ratio-mode 1))
+
+(defadvice quit-window (around fix-golden-ration activate)
+  ad-do-it
+  (golden-ratio))
+
+(defadvice calendar-exit (around close-window activate)
+  (let* ((wl (window-list))
+         (cb (calendar-buffer-list))
+         (wins-to-kill (mapcar (lambda (w) (cons (member (window-buffer w) cb) w)) wl)))
+    ad-do-it
+    (mapc (lambda (w) (when (car w) (delete-window (cdr w)))) wins-to-kill)))
