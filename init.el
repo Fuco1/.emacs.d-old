@@ -71,14 +71,14 @@
 (load "files/navigation")
 (load "files/haskell")
 (load "c:/Users/Matus/AppData/Roaming/.emacs.d/dev/shell-pop-el/shell-pop")
+(load "files/eshell-mode")
+(load "files/windows")
 
 ;; vendor
 (vendor 'yasnippet)
 (vendor 'typopunct 'typopunct-change-language 'typopunct-mode)
 (vendor 'wc-mode)
 (vendor 'revbufs 'revbufs)
-(vendor 'golden-ratio)
-;;(vendor 'iy-go-to-char 'iy-go-to-char 'iy-go-to-char-backward)
 (vendor 'smartparens)
 (vendor 'letcheck 'letcheck-mode)
 (vendor 'chop 'chop-move-up 'chop-move-down)
