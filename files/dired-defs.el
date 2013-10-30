@@ -488,19 +488,21 @@ to chose from."
     (setq default-directory dir)
 
     (let ((cmd (concat
-                "d:/progs/git/bin/bash -c \"cd "
-                dir "; find . \\( "
+                ;; "d:/progs/git/bin/bash -c \"cd "
+                ;; dir ";"
+                "\"d:/progs/gnuutils/bin/find\" . \\( "
                 (mapconcat (lambda (d)
-                             (concat "-iname \\\"" d "\\\""))
+                             (concat "-iname \"" d "\""))
                            my-find-dired-ignore-dirs " -o ")
-                " \\) -prune -o \\( -type f -iname \\\"*"
-                pattern "*\\\" -a -not \\( "
+                " \\) -prune -o \\( -type f -iname \"*"
+                pattern "*\" -a -not \\( "
                 (mapconcat (lambda (ex)
-                             (concat "-iname \\\"*." ex "\\\""))
+                             (concat "-iname \"*." ex "\""))
                            my-find-dired-ignore-extensions " -o ")
                 " \\) \\) "
                 (car find-ls-option)
-                " \" &")))
+                " &")))
+      (message "%s" cmd)
       (shell-command cmd (current-buffer)))
 
     (dired-mode dir (cdr find-ls-option))
