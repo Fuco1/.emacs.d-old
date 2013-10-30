@@ -197,7 +197,6 @@
 (bind-key "C-c c f" 'customize-face)
 (bind-key "C-c c g" 'customize-group)
 
-(bind-key "C-c c c" 'my-mini-calc)
 ;; calc settings
 (bind-key "<pause>" 'calc-dispatch)
 (bind-key "<home>" 'calc-same-interface)
