@@ -48,6 +48,11 @@ might often be impossible."
            ,@forms)))
      (forward-line)))
 
+(defmacro fix-reset-after-each (&rest forms)
+  (declare (indent 0))
+  `(progn
+     ,@(apply 'append (mapcar (lambda (form) (list '(beginning-of-buffer) form)) forms))))
+
 (defvar my-macro-names
   '(
     "save-buffer-list"
@@ -55,9 +60,10 @@ might often be impossible."
     "with-files-in-dir"
     "with-map-bind-keys"
     "with-lines"
+    "fix-reset-after-each"
     ))
 
-(font-lock-add-keywords 'emacs-lisp-mode `((,(concat "\\<"
+(font-lock-add-keywords 'emacs-lisp-mode `((,(concat "(\\<"
                                                      (regexp-opt my-macro-names 'paren)
                                                      "\\>")
                                             1 font-lock-keyword-face)) 'append)

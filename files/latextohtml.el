@@ -228,12 +228,6 @@
 ; &nbsp; -- " " < space
 ; &hellip; -- …
 
-(defmacro fix-reset-after-each (&rest forms)
-  (declare (indent 0))
-  `(progn
-     ,@(apply 'append (mapcar (lambda (form) (list '(beginning-of-buffer) form)) forms))))
-(font-lock-add-keywords 'emacs-lisp-mode '(("\\<fix-reset-after-each\\>" . font-lock-keyword-face)) 'append)
-
 (defun fix-basic ()
   (interactive)
   (fix-reset-after-each
