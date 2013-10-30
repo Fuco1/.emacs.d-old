@@ -51,7 +51,7 @@ might often be impossible."
 (defmacro fix-reset-after-each (&rest forms)
   (declare (indent 0))
   `(progn
-     ,@(apply 'append (mapcar (lambda (form) (list '(beginning-of-buffer) form)) forms))))
+     ,@(apply 'append (mapcar (lambda (form) (list '(goto-char (point-min)) form)) forms))))
 
 (defvar my-macro-names
   '(

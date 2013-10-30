@@ -1,4 +1,5 @@
 (use-package lisp-mode
+  :defer t
   :init
   (progn
     (defun my-emacs-lisp-init ()
@@ -47,7 +48,8 @@ function on `my-emacs-lisp-open-line-list'."
                    (eq (following-char) ?\)))
           (newline)
           (indent-according-to-mode)
-          (previous-line))))
+          (forward-line -1)
+          (indent-according-to-mode))))
 
     (defun my-describe-thing-in-buffer ()
       "Display the full documentation of FUNCTION (a symbol) in the help buffer."

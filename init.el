@@ -8,34 +8,33 @@
 (tooltip-mode -1)
 
 ;; maximize window at startup
-(defun maximize-frame ()
-  "Maximizes the active frame in Windows"
-  (interactive)
-  ;; Send a `WM_SYSCOMMAND' message to the active frame with the
-  ;; `SC_MAXIMIZE' parameter.
-  (when (eq system-type 'windows-nt)
-    (w32-send-sys-command 61488)))
-(add-hook 'window-setup-hook 'maximize-frame t)
-
-;; add load paths
-(add-to-list 'load-path "~/.emacs.d")
-(add-to-list 'load-path "~/.emacs.d/vendor")
-(add-to-list 'load-path "~/.emacs.d/site-lisp")
-(mapc (apply-partially 'add-to-list 'load-path) (f-directories "~/.emacs.d/vendor"))
+;; (defun maximize-frame ()
+;;   "Maximizes the active frame in Windows"
+;;   (interactive)
+;;   ;; Send a `WM_SYSCOMMAND' message to the active frame with the
+;;   ;; `SC_MAXIMIZE' parameter.
+;;   (when (eq system-type 'windows-nt)
+;;     (w32-send-sys-command 61488)))
+;; (add-hook 'window-setup-hook 'maximize-frame t)
 
 ;; add repos
 (setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
                          ("marmalade" . "http://marmalade-repo.org/packages/")
                          ("melpa" . "http://melpa.milkbox.net/packages/")))
-(require 'autoinstall)
 (package-initialize)
+(load "~/.emacs.d/autoinstall")
 
-(require 'use-package)
 (require 'parenface)
 (require 'uniquify)
 (require 'dash)
 (require 'f)
 (require 's)
+
+;; add load paths
+(add-to-list 'load-path "~/.emacs.d/")
+(mapc (apply-partially 'add-to-list 'load-path) (f-directories "~/.emacs.d/vendor"))
+
+(require 'use-package)
 
 ;; autoloads
 (autoload 'calc-same-interface "calc" nil t)
@@ -43,7 +42,17 @@
   "Kill up to, but not including ARGth occurrence of CHAR." t)
 
 ;; load site lisp
-(mapc 'load (f-files "~/.emacs.d/site-lisp/"))
+(load "site-lisp/advices")
+(load "site-lisp/defuns-buffer")
+(load "site-lisp/defuns-edit")
+(load "site-lisp/defuns-macros")
+(load "site-lisp/defuns")
+(load "site-lisp/emacs-lisp-mode")
+(load "site-lisp/macros")
+(load "site-lisp/vendor")
+
+;; load keys
+(load "files/keys")
 
 ;; load settings
 (load "files/global")
@@ -54,19 +63,19 @@
 
 ;; load config files
 (load "files/ack")
-(load "files/allout")
+(load "files/allout-config")
 (load "files/auto-complete")
 (load "files/dired-setup")
 (load "files/eshell-mode")
 (load "files/haskell")
 (load "files/ibuffer-config")
-(load "files/ido")
-(load "files/isearch")
-(load "files/ispell")
+(load "files/ido-config")
+(load "files/isearch-config")
+(load "files/ispell-config")
 (load "files/latex-mode-config")
-(load "files/markdown")
+(load "files/markdown-config")
 (load "files/multi-web-mode-config")
-(load "files/org-mode")
+(load "files/org-mode-config")
 (load "files/recentf-config")
 (load "files/tramp")
 (load "files/vendor")
@@ -75,15 +84,12 @@
 ;; diminish useless modeline clutter
 (load "files/diminish")
 
-;; load keys
-(load "files/keys")
-
 ;; Customize
 (setq custom-file "~/.emacs.d/files/emacs-custom.el")
 (load custom-file)
 
 ;; Reload theme -- hackish
-(load "~/.emacs.d/themes/my-tango-dark-theme")
+;; (load "~/.emacs.d/themes/my-tango-dark-theme")
 
 ;; autoopen files
 (find-file "~/.emacs.d/init.el")

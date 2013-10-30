@@ -1,9 +1,11 @@
 (use-package ido
+  :defer t
   :bind (("M-." . ido-goto-symbol) ;; was Find tag
          )
   :config
   (progn
-    (require 'flx-ido)
+    (use-package flx-ido
+      :defer t)
 
     ;; Display ido results vertically, rather than horizontally
     (setq ido-decorations (quote ("\n-> " "" "\n   " "\n   ..." "[" "]" " [No match]" " [Matched]" " [Not readable]" " [Too big]" " [Confirm]")))

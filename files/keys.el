@@ -256,8 +256,16 @@
 
 (bind-key "H-u" 'universal-argument)
 (bind-key "H-u" 'universal-argument-more universal-argument-map)
-(dotimes (i 10)
-  (bind-key (format "H-%d" i) 'digit-argument))
+(bind-key "H-0" 'digit-argument)
+(bind-key "H-1" 'digit-argument)
+(bind-key "H-2" 'digit-argument)
+(bind-key "H-3" 'digit-argument)
+(bind-key "H-4" 'digit-argument)
+(bind-key "H-5" 'digit-argument)
+(bind-key "H-6" 'digit-argument)
+(bind-key "H-7" 'digit-argument)
+(bind-key "H-8" 'digit-argument)
+(bind-key "H-9" 'digit-argument)
 (bind-key "H--" 'negative-argument)
 
 (defvar ctl-c-s-map)
@@ -342,7 +350,7 @@ inserted character."
     `(progn
        (defun ,fname ()
          (interactive)
-         (beginning-of-buffer)
+         (goto-char (point-min))
          ,@forms)
        (add-hook ',mode-hook (lambda () (define-key ,mode-map [remap beginning-of-buffer] ',fname))))))
 
@@ -354,7 +362,7 @@ inserted character."
     `(progn
        (defun ,fname ()
          (interactive)
-         (end-of-buffer)
+         (goto-char (point-max))
          ,@forms)
        (add-hook ',mode-hook (lambda () (define-key ,mode-map [remap end-of-buffer] ',fname))))))
 

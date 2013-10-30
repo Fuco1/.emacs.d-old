@@ -4,6 +4,7 @@
   :config
   (progn
     (use-package flex-isearch
+      :defer t
       :load-path "~/.emacs.d/vendor/flex-isearch/"
       :config
       (progn

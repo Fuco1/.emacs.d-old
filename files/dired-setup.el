@@ -1,7 +1,8 @@
 ;; see commentary in dired-defs.el
 (use-package dired
   :bind (("C-x d"  . my-dired-files)
-         ("M-<f2>" . my-find-dired))
+         ("M-<f2>" . my-find-dired)
+         ("C-x C-j" . dired-jump))
   :init
   (progn
     (defun my-dired-files (&optional arg)

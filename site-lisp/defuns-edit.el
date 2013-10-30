@@ -1,5 +1,12 @@
 (require 'thingatpt)
 
+(declare-function org-table-p "org")
+(declare-function org-beginning-of-line "org")
+(declare-function org-end-of-line "org")
+(declare-function cua--rectangle-top "cua-base")
+(declare-function cua--rectangle-bot "cua-base")
+(declare-function cua-resize-rectangle-right "cua-base")
+
 (defun my-kill-whitespace (&optional forward)
   "Kill all the whitespace characters backwards until hitting
 non-whitespace character.  With prefix argument, kill in the
@@ -48,7 +55,7 @@ and indent next line according to mode."
         (indent-according-to-mode))
     (end-of-line)
     (open-line (prefix-numeric-value arg))
-    (next-line 1)
+    (forward-line 1)
     (indent-according-to-mode)))
 
 (defun forward-line-and-indent (arg)
@@ -91,14 +98,14 @@ and indent next line according to mode."
 (defun move-line (n)
   "Move the current line up or down by N lines."
   (interactive "p")
-  (setq col (current-column))
-  (beginning-of-line) (setq start (point))
-  (end-of-line) (forward-char) (setq end (point))
-  (let ((line-text (delete-and-extract-region start end)))
-    (forward-line n)
-    (insert line-text)
-    (forward-line -1)
-    (forward-char col)))
+  (let ((col) (current-column) start end)
+    (beginning-of-line) (setq start (point))
+    (end-of-line) (forward-char) (setq end (point))
+    (let ((line-text (delete-and-extract-region start end)))
+      (forward-line n)
+      (insert line-text)
+      (forward-line -1)
+      (forward-char col))))
 
 (defun move-line-up (n)
   "Move the current line up by N lines."
@@ -203,7 +210,7 @@ move the current line down and yank"
 
 (defun my-back-to-indentation ()
   (if visual-line-mode
-      (flet ((beginning-of-line (arg) (beginning-of-visual-line arg)))
+      (cl-flet ((beginning-of-line (arg) (beginning-of-visual-line arg)))
         (back-to-indentation))
     (back-to-indentation)))
 
@@ -266,12 +273,12 @@ repeated invocation. On subsequent calls the point jumps between
 Comments are recognized in any mode that sets syntax-ppss
 properly."
   (interactive "p")
-  (flet ((end-of-line-lov () (if visual-line-mode
-                                 (end-of-visual-line arg)
-                               (move-end-of-line arg)))
-         (beg-of-line-lov () (if visual-line-mode
-                                 (beginning-of-visual-line arg)
-                               (move-beginning-of-line arg))))
+  (cl-flet ((end-of-line-lov () (if visual-line-mode
+                                    (end-of-visual-line arg)
+                                  (move-end-of-line arg)))
+            (beg-of-line-lov () (if visual-line-mode
+                                    (beginning-of-visual-line arg)
+                                  (move-beginning-of-line arg))))
     (cond
      ((and (functionp'org-table-p)
            (org-table-p))

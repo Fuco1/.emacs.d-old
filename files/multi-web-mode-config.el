@@ -1,4 +1,5 @@
 (use-package multi-web-mode
+  :defer t
   :config
   (progn
     (setq mweb-tags '((php-mode "<\\?php\\|<\\? \\|<\\?=" "\\?>")
@@ -7,6 +8,7 @@
     (setq mweb-filename-extensions '("php" "htm" "html" "ctp" "phtml" "php4" "php5"))))
 
 (use-package sgml-mode
+  :defer t
   :config
   (progn
     (defun my-html-mode-setup ()

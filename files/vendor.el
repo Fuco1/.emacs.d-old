@@ -69,11 +69,13 @@ called, percentage usage and the command."
   :bind ("C-<f5>" . revbufs))
 
 (use-package smartparens
+  :defer t
   :init
   (progn
     (load "~/.emacs.d/files/smartparens")))
 
 (use-package smex
+  :defer t
   :init
   (progn
     (bind-key "M-x" 'beautify-smex)
@@ -112,7 +114,11 @@ called, percentage usage and the command."
 
 (use-package yasnippet
   :diminish yas-minor-mode
-  :commands (yas-minor-mode yas-expand)
+  :commands (yas-minor-mode
+             yas-expand)
+  :init
+  (progn
+    (autoload 'yas/hippie-try-expand "yasnippet"))
   :config
   (progn
     (require 'dropdown-list)
@@ -128,6 +134,5 @@ called, percentage usage and the command."
       (define-key yas-minor-mode-map [(tab)] nil)
       (define-key yas-minor-mode-map (kbd "TAB") nil))
 
-    ;; Replace yasnippets's TAB
-    (add-hook 'yas-minor-mode-hook 'my-yas-startup) ; was yas/expand
-    ))
+    ;; Replace yasnippets's TAB, was yas/expand
+    (add-hook 'yas-minor-mode-hook 'my-yas-startup)))
