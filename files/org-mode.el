@@ -3,14 +3,39 @@
   ;; The following lines are always needed.  Choose your own keys.
   :bind  (("C-c l" . org-store-link)
           ("<f12>" . org-agenda)
-          ("C-c b" . org-iswitchb))
+          ("C-c C-x C-o" . org-clock-out))
   :config
   (progn
-    (setq org-modules (quote (org-habit)))
-
     (bind-key "TAB" 'smart-tab org-mode-map)
     (bind-key "C-e" 'my-end-of-code-or-line org-mode-map)
     (bind-key "C-a" 'my-back-to-indentation-or-beginning org-mode-map)
+    (bind-key "C-c C-x r" 'org-clock-remove-overlays org-mode-map)
+
+    (require 'org-table)
+    ;; org/orgtbl bindings
+    (defvar my-org-table-map)
+    (define-prefix-command 'my-org-table-map)
+    (bind-key "C-c t" 'my-org-table-map org-mode-map)
+    (bind-key "C-c t" 'my-org-table-map orgtbl-mode-map)
+    (defvar my-org-table-insert-map)
+    (define-prefix-command 'my-org-table-insert-map)
+    (bind-key "C-c t i" 'my-org-table-insert-map org-mode-map)
+    (bind-key "C-c t i" 'my-org-table-insert-map orgtbl-mode-map)
+    (bind-key "C-c t i i" 'orgtbl-insert-radio-table orgtbl-mode-map)
+    (defvar my-org-table-delete-map)
+    (define-prefix-command 'my-org-table-delete-map)
+    (bind-key "C-c t d" 'my-org-table-delete-map org-mode-map)
+    (bind-key "C-c t d" 'my-org-table-delete-map orgtbl-mode-map)
+
+    (let ((bindings '(("C-c t i c" org-table-insert-column)
+                      ("C-c t i r" org-table-insert-row)
+                      ("C-c t d c" org-table-delete-column)
+                      ("C-c t d r" org-table-kill-row)))
+          (n 1000))
+      (dolist (b bindings)
+        (define-key org-mode-map (kbd (car b)) (cadr b))
+        (org-defkey orgtbl-mode-map (kbd (car b)) (orgtbl-make-binding (cadr b) n (kbd (car b))))
+        (setq n (1+ n))))
 
     (defun my-org-select-cell ()
       "Select the cell in org table the point is in."
@@ -28,6 +53,19 @@
         (push-mark b t t)
         (goto-char e)))
     (bind-key "C-c t" 'my-org-select-cell org-mode-map)
+
+    (defun my-markdown-to-org-link (b e)
+      (interactive "r")
+      (goto-char b)
+      (sp-down-sexp)
+      (let ((desc (sp-get (sp--next-thing-selection 0)
+                    (buffer-substring-no-properties :beg :end)))
+            (link (progn
+                    (sp-beginning-of-sexp 2)
+                    (sp-get (sp--next-thing-selection 0)
+                      (buffer-substring-no-properties :beg :end)))))
+        (delete-region b e)
+        (insert (format "[[%s][%s]]" link desc))))
 
     (load "files/org-clock")
     (load "files/org-project")
@@ -53,7 +91,7 @@
                               org-wl
                               org-w3m)))
 
-                                        ; position the habit graph on the agenda to the right of the default
+    ;; position the habit graph on the agenda to the right of the default
     (setq org-habit-graph-column 50)
 
 ;;;;;;;;;;;;;;;;;;;;; CAPTURE
@@ -84,27 +122,24 @@
     (add-hook 'org-clock-out-hook 'bh/remove-empty-drawer-on-clock-out 'append)
 
 ;;;;;;;;;;;;;;;;; REFILING
-                                        ; Targets include this file and any file contributing to the agenda - up to 9 levels deep
+    ;; Targets include this file and any file contributing to the agenda - up to 9 levels deep
     (setq org-refile-targets (quote ((nil :maxlevel . 9)
                                      (org-agenda-files :maxlevel . 9))))
 
-                                        ; Use full outline paths for refile targets - we file directly with IDO
+    ;; Use full outline paths for refile targets - we file directly with IDO
     (setq org-refile-use-outline-path t)
 
-                                        ; Targets complete directly with IDO
+    ;; Targets complete directly with IDO
     (setq org-outline-path-complete-in-steps nil)
 
-                                        ; Allow refile to create parent tasks with confirmation
+    ;; Allow refile to create parent tasks with confirmation
     (setq org-refile-allow-creating-parent-nodes (quote confirm))
 
-                                        ; Use IDO for both buffer and file completion and ido-everywhere to t
+    ;; Use IDO for both buffer and file completion and ido-everywhere to t
     (setq org-completion-use-ido t)
-    (setq ido-everywhere t)
-    (setq ido-max-directory-size 100000)
-    (ido-mode (quote both))
 
 ;;;; Refile settings
-                                        ; Exclude DONE state tasks from refile targets
+    ;; Exclude DONE state tasks from refile targets
     (defun bh/verify-refile-target ()
       "Exclude todo keywords with a done state from refile targets"
       (not (member (nth 2 (org-heading-components)) org-done-keywords)))
@@ -160,7 +195,7 @@
                                 ("READING" . ?r)
                                 ("LATIN" . ?l))))
 
-                                        ; Allow setting single tags without the menu
+    ;; Allow setting single tags without the menu
     (setq org-fast-tag-selection-single-key (quote expert))
 
     ;; Archiving settings

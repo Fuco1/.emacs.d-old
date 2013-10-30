@@ -1,15 +1,9 @@
 ;;;;;;;;;
 ;; global
 (require 'smartparens-config)
-(smartparens-global-mode t)
-(smartparens-global-strict-mode t)
-
-;; highlights matching pairs
-(show-smartparens-global-mode t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;
 ;; keybinding management
-
 (define-key sp-keymap (kbd "C-M-f") 'sp-forward-sexp)
 (define-key sp-keymap (kbd "C-M-b") 'sp-backward-sexp)
 
@@ -69,6 +63,11 @@
 (bind-key "H-s x a" 'sp-extract-after-sexp sp-keymap)
 (bind-key "H-s x s" 'sp-swap-enclosing-sexp sp-keymap)
 
+(bind-key "C-x C-t" 'sp-transpose-hybrid-sexp sp-keymap)
+(bind-key "<up>" 'sp-indent-adjust-sexp sp-keymap)
+(bind-key "<down>" 'sp-dedent-adjust-sexp sp-keymap)
+(bind-key "<right>" 'sp-slurp-hybrid-sexp sp-keymap)
+
 ;;;;;;;;;;;;;;;;;;
 ;; pair management
 
@@ -77,8 +76,8 @@
 
 ;;; markdown-mode
 (sp-with-modes '(markdown-mode gfm-mode rst-mode)
-  (sp-local-pair "*" "*" :bind "C-*" :skip-match 'sp--gfm-skip-asterisk)
-  (sp-local-pair "_" "_" :bind "C-_")
+  (sp-local-pair "*" "*" :wrap "C-*" :skip-match 'sp--gfm-skip-asterisk)
+  (sp-local-pair "_" "_" :wrap "C-_")
   (sp-local-tag "2" "**" "**")
   (sp-local-tag "s" "```scheme" "```")
   (sp-local-tag "<"  "<_>" "</_>" :transform 'sp-match-sgml-tags))
@@ -86,7 +85,39 @@
 (defun sp--gfm-skip-asterisk (ms mb me)
   (save-excursion
     (goto-char mb)
-    (save-match-data (looking-at "^* "))))
+    (save-match-data (looking-at "^\\* "))))
+
+;;; org-mode
+(sp-with-modes 'org-mode
+  (sp-local-pair "*" "*" :unless '(sp-point-after-word-p sp-point-at-bol-p) :wrap "C-*" :skip-match 'sp--org-skip-asterisk)
+  (sp-local-pair "_" "_" :unless '(sp-point-after-word-p) :wrap "C-_" :skip-match 'sp--org-skip-markup)
+  (sp-local-pair "/" "/" :unless '(sp-point-after-word-p) :skip-match 'sp--org-skip-markup)
+  (sp-local-pair "=" "=" :unless '(sp-point-after-word-p) :skip-match 'sp--org-skip-code))
+
+(defun sp--org-skip-markup (ms mb me)
+  (save-excursion
+    (and (progn
+           (goto-char mb)
+           (save-match-data (looking-back "\\sw\\|\\s_\\|\\s.")))
+         (progn
+           (goto-char me)
+           (save-match-data (looking-at "\\sw\\|\\s_\\|\\s."))))))
+
+(defun sp--org-skip-asterisk (ms mb me)
+  (or (save-excursion
+        (goto-char (line-beginning-position))
+        (save-match-data (looking-at "^\\*+")))
+      (sp--org-skip-markup ms mb me)))
+
+(defun sp--org-skip-code (ms mb me)
+  (or (sp--org-skip-markup ms mb me)
+      (save-excursion
+        (and (progn
+               (goto-char mb)
+               (save-match-data (looking-back "\\s-")))
+             (progn
+               (goto-char me)
+               (save-match-data (looking-at "\\s-")))))))
 
 ;;; tex-mode latex-mode
 (sp-with-modes '(tex-mode plain-tex-mode latex-mode)
@@ -94,7 +125,7 @@
 
 ;;; lisp modes
 (sp-with-modes (append '(inferior-emacs-lisp-mode) sp--lisp-modes)
-  (sp-local-pair "(" nil :bind "C-("))
+  (sp-local-pair "(" nil :wrap "C-("))
 
 (sp-local-pair 'c++-mode "{" nil :post-handlers '((my-create-newline-and-enter-sexp "RET")))
 (defun my-create-newline-and-enter-sexp (&rest _ignored)
@@ -105,7 +136,9 @@
   (indent-according-to-mode))
 
 ;;; haskell mode
-(sp-local-pair 'haskell-mode "'" nil :unless '(my-after-symbol-p))
+(sp-with-modes '(haskell-mode)
+  (sp-local-pair "'" nil :unless '(my-after-symbol-p))
+  (sp-local-pair "\\\(" nil :actions :rem))
 
 (defun my-after-symbol-p (_id action _context)
   (when (eq action 'insert)
@@ -113,12 +146,22 @@
       (backward-char 1)
       (looking-back "\\sw\\|\\s_\\|\\s'"))))
 
-(sp-local-pair 'emacs-lisp-mode "(" nil :post-handlers '(my-add-space-after-sexp-insertion))
+(sp-local-pair 'emacs-lisp-mode "(" nil
+               :pre-handlers '(my-add-space-before-sexp-insertion)
+               :post-handlers '(my-add-space-after-sexp-insertion))
 
 (defun my-add-space-after-sexp-insertion (id action _context)
   (when (eq action 'insert)
     (save-excursion
-      (forward-char (length (plist-get (sp-get-pair id) :close)))
+      (forward-char (sp-get-pair id :cl-l))
       (when (or (eq (char-syntax (following-char)) ?w)
                 (looking-at (sp--get-opening-regexp)))
+        (insert " ")))))
+
+(defun my-add-space-before-sexp-insertion (id action _context)
+  (when (eq action 'insert)
+    (save-excursion
+      (backward-char (length id))
+      (when (or (eq (char-syntax (preceding-char)) ?w)
+                (looking-at (sp--get-closing-regexp)))
         (insert " ")))))

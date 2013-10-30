@@ -3,12 +3,15 @@
 
 (setq mc/cmds-to-run-for-all
       '(
+        beginning-of-region
+        cua-copy-region
         cua-cut-region
         cua-delete-region
         cua-paste
         end-of-region
         eval-defun
         eval-expression
+        forward-sexp
         haskell-indentation-delete-char
         keyboard-escape-quit
         kill-region
@@ -29,11 +32,15 @@
         sp-backward-unwrap-sexp
         sp-backward-up-sexp
         sp-cua-replace-region
+        sp-delete-char
         sp-emit-sexp
         sp-forward-barf-sexp
         sp-forward-sexp
+        sp-forward-slurp-sexp
         sp-join-sexp
+        sp-kill-hybrid-sexp
         sp-kill-sexp
+        sp-kill-word
         sp-remove-active-pair-overlay
         sp-select-next-thing
         sp-select-next-thing-exchange

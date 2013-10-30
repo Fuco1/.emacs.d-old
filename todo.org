@@ -119,13 +119,11 @@ see: https://github.com/zk-phi/cedit
   - State "DONE"       from "TODO"       [2013-03-28 Thu 02:06]
 
 * TODO Ked hooky pridavaju charaktery v `sp-insert-pair` tak `sp-undo-pairs-separately` zle edituje undo historiu.
-
 * TODO
 "asdasd \" sdfsdf
 - fixnut v modoch kde niesu povolene multi-line retazce -> RET na \" to zmeni na "
 
 * TODO pridat moznost do `sp-autoinsert-if-followed-by-same' kde sa nasledujuci vyraz obali.
-
 * DONE join sexp
   CLOSED: [2013-03-28 Thu 02:06]
   - State "DONE"       from "TODO"       [2013-03-28 Thu 02:06]
@@ -198,7 +196,10 @@ ako to spravit chytre?
   - State "DONE"       from "TODO"       [2013-05-25 Sat 23:33]
 
 * TODO debilne chyby na zaciatku/konci buffera... treba to fixnut nech to neni nahodne rozbite
-* TODO pridat moznost ze delimiter musi byt \_< \_>, napr v ruby begin/end par... ak je vnutri premenna typy "blaendbla" tak sa to pokazi.
+* DONE pridat moznost ze delimiter musi byt \_< \_>, napr v ruby begin/end par... ak je vnutri premenna typy "blaendbla" tak sa to pokazi.
+  CLOSED: [2013-09-26 Thu 14:03]
+  - State "DONE"       from "TODO"       [2013-09-26 Thu 14:03]
+    Jell fixol, `sp--wrap-regexp` & friends.
 * TODO pridat do sp-up-sexp moznost nastavit v ktorych modoch je always/interactive atd
 * DONE `sp-split-sexp` s C-u by mohol splitnut vsetky veci v zozname (a b |c d) -> (a) (b) (c) (d)
 
@@ -222,10 +223,33 @@ tak \{\} par nefunguje v buffery ak sa napise \\{
 * TODO steal rainbow-delimiters
 * TODO pridat navigaciu v pythone
 
-* TODO pridat narrow-to-sexp
+* DONE pridat narrow-to-sexp
+  CLOSED: [2013-09-26 Thu 18:46]
+  - State "DONE"       from "TODO"       [2013-09-26 Thu 18:46]
 * TODO add option to select entire html tag if point is inside the tag (this should be made general enough to work for all tags)
 staci aby to hladalo "is-inside-tag-p" na riadku kde je kurzor. Nepredpokladam ze budu multi-line tagy... aj ked html mozno mozu byt. => spravit to konfigurovatelne
 
+* TODO add :trigger option to pairs... slowly work on unification of tags and pairs.
+* TODO refactor `sp--get-pair-list-wrap` and friends to take some keywords/predicates to select the pairs for the list
+* TODO add `navigate` action keyword
+* TODO add `hilight` action keyword.
+* TODO point po barf moze ostat mimo sexp
+
+<foo>
+  <ul>
+|     foo
+     bar
+  </ul>
+</foo>
+
+po barfe je enclosing exp `foo`
+
+* TODO hybrid sexp na zaciatku alebo nakonci bufferu nefungje
+
+* TODO typing in front of string-like sexp is very slow!
+* TODO |"foo" ked sa napise \" tak to neskipne dovnutra ale vlozi dalsi par (a pritom hodi error)
+
+* TODO Pridate nejake jednoduche UI na vkladanie znakov po vlozeni paru (napr po [] automaticky vlozit " | ")
 
 * edwm ========================
 

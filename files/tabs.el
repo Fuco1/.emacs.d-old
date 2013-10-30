@@ -31,9 +31,6 @@
 ;; http://www.emacswiki.org/emacs/TabCompletion
 ;; TODO: Take a look at https://github.com/genehack/smart-tab
 
-(defvar smart-tab-using-hippie-expand t
-  "turn this on if you want to use hippie-expand completion.")
-
 (defun smart-tab (prefix)
   "Needs `transient-mark-mode' to be on. This smart tab is
   minibuffer compliant: it acts as usual in the minibuffer.
@@ -48,14 +45,13 @@
                                     (looking-at "\\_>"))))
     (cond
      ((and (eq major-mode 'org-mode)
+           (not (smart-tab-must-expand prefix))
            (org-cycle)))
      ((cond
        ((minibufferp)
         (minibuffer-complete))
        ((smart-tab-must-expand prefix)
-        (if smart-tab-using-hippie-expand
-            (hippie-expand prefix)
-          (dabbrev-expand prefix)))
+        (hippie-expand prefix))
        ((smart-indent)))))))
 
 (defun smart-indent ()

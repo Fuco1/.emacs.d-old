@@ -1,8 +1,6 @@
 (require 'diminish)
-(diminish 'yas-minor-mode)
 (diminish 'undo-tree-mode)
 (diminish 'visual-line-mode)
-(diminish 'skeleton-complete-mode "SC")
 (diminish 'smartparens-mode)
 (eval-after-load "eldoc"
   '(diminish 'eldoc-mode " δ"))
@@ -14,3 +12,7 @@
   '(diminish 'reftex-mode))
 (eval-after-load "emmet-mode"
   '(diminish 'emmet-mode))
+(eval-after-load "skeleton-complete"
+  '(diminish 'skeleton-complete-mode))
+(eval-after-load "golden-ratio"
+  '(diminish 'golden-ratio-mode))

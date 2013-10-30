@@ -20,94 +20,63 @@
 ;; add load paths
 (add-to-list 'load-path "~/.emacs.d")
 (add-to-list 'load-path "~/.emacs.d/vendor")
+(add-to-list 'load-path "~/.emacs.d/site-lisp")
+(mapc (apply-partially 'add-to-list 'load-path) (f-directories "~/.emacs.d/vendor"))
 
 ;; add repos
 (setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
                          ("marmalade" . "http://marmalade-repo.org/packages/")
                          ("melpa" . "http://melpa.milkbox.net/packages/")))
-(package-initialize)
 (require 'autoinstall)
+(package-initialize)
+
+(require 'use-package)
 (require 'parenface)
-(projectile-global-mode t)
-
-(load "files/defuns") ;; for vendor
-(vendor 'use-package)
-(recentf-mode t)
-
-(vendor 'keyadvice)
+(require 'uniquify)
+(require 'dash)
+(require 'f)
+(require 's)
 
 ;; autoloads
 (autoload 'calc-same-interface "calc" nil t)
 (autoload 'zap-up-to-char "misc"
   "Kill up to, but not including ARGth occurrence of CHAR." t)
 
-;; load config files
-(load "files/layouts")
-(load "files/org-mode")
+;; load site lisp
+(mapc 'load (f-files "~/.emacs.d/site-lisp/"))
+
+;; load settings
 (load "files/global")
-(load "files/defuns-edit")
-(load "files/defuns-buffer")
-(load "files/defuns-macros")
-(load "files/advices")
-(load "files/macros")
-(load "files/keys")
-(load "files/isearch")
-(load "files/tabs")
-(load "files/ido")
-(load "files/ispell")
-(load "files/dired-setup")
-(load "files/markdown")
-(load "files/tramp")
-(load "files/ibuffer")
-(load "files/undo-tree")
-(load "files/expand-region")
-(load "files/emacs-lisp-mode")
-(load "files/multi-web-mode")
-(load "files/latex-mode")
+(load "files/layouts")
 (load "files/mode-line")
-(load "files/smex")
-(load "files/ack")
-(load "files/allout")
-(load "files/navigation")
-(load "files/haskell")
-(load "c:/Users/Matus/AppData/Roaming/.emacs.d/dev/shell-pop-el/shell-pop")
-(load "files/eshell-mode")
+(load "files/tabs")
 (load "files/windows")
 
-;; vendor
-(vendor 'yasnippet)
-(vendor 'typopunct 'typopunct-change-language 'typopunct-mode)
-(vendor 'wc-mode)
-(vendor 'revbufs 'revbufs)
-(vendor 'smartparens)
-(vendor 'letcheck 'letcheck-mode)
-(vendor 'chop 'chop-move-up 'chop-move-down)
-(vendor 'clippy 'clippy-describe-function)
-(vendor 'google-maps 'google-maps)
-(vendor 'elwm)
-(vendor 'skeleton-complete)
-(skeleton-complete-global-mode t)
-(define-key skeleton-complete-mode-map (kbd "M-g RET") 'skeleton--expand-symbols)
-(define-key skeleton-complete-mode-map (kbd "M-s RET") 'skeleton--expand-partial-lines)
-(vendor 'flex-isearch)
-(global-flex-isearch-mode t)
+;; load config files
+(load "files/ack")
+(load "files/allout")
+(load "files/auto-complete")
+(load "files/dired-setup")
+(load "files/eshell-mode")
+(load "files/haskell")
+(load "files/ibuffer-config")
+(load "files/ido")
+(load "files/isearch")
+(load "files/ispell")
+(load "files/latex-mode-config")
+(load "files/markdown")
+(load "files/multi-web-mode-config")
+(load "files/org-mode")
+(load "files/recentf-config")
+(load "files/tramp")
+(load "files/vendor")
+(load "c:/Users/Matus/AppData/Roaming/.emacs.d/dev/shell-pop-el/shell-pop")
 
-(require 'uniquify)
-(setq uniquify-buffer-name-style 'forward)
-
-(require 'saveplace)
-(setq-default save-place t)
-
-(require 'keyfreq)
-(keyfreq-mode 1)
-(keyfreq-autosave-mode 1)
-
-(use-package "world-time-mode"
-  :load-path "vendor/world-time-mode/"
-  :bind ("C-. t" . world-time-list))
-
-;; Diminish modeline clutter
+;; diminish useless modeline clutter
 (load "files/diminish")
+
+;; load keys
+(load "files/keys")
 
 ;; Customize
 (setq custom-file "~/.emacs.d/files/emacs-custom.el")

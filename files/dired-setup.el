@@ -1,6 +1,7 @@
 ;; see commentary in dired-defs.el
 (use-package dired
-  :bind ("C-x d" . my-dired-files)
+  :bind (("C-x d"  . my-dired-files)
+         ("M-<f2>" . my-find-dired))
   :init
   (progn
     (defun my-dired-files (&optional arg)
@@ -16,6 +17,4 @@
         (ido-dired))))
   :config
   (progn
-    (load "files/dired-defs")
-
-    ))
+    (load "files/dired-defs")))

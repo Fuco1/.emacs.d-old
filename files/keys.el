@@ -30,7 +30,6 @@
 (bind-key "C-c w" 'browse-url)
 
 ;; Find stuff
-(bind-key "M-<f2>" 'my-find-dired)
 (bind-key "<f2>" 'occur)
 (bind-key "n" 'occur-next occur-mode-map)
 (bind-key "p" 'occur-prev occur-mode-map)
@@ -40,7 +39,6 @@
 (bind-key "C-'" 'repeat)
 
 ;; refresh-like
-(bind-key "C-<f5>" 'revbufs)
 (bind-key "<f5>" '(lambda () (interactive) (load-file (buffer-file-name))))
 
 ;; Indenting and alignment
@@ -48,22 +46,11 @@
 (bind-key "C-<f8>" 'indent-buffer)
 (bind-key "C-<tab>" 'indent-defun)
 
-(bind-key "M-o" 'elwm-activate-window)
-(bind-key "M-O" 'elwm-transpose-window)
-(bind-key "C-M-o" 'elwm-rotate-window)
-(bind-key "C-x C-2" 'elwm-split-window)
-(unbind-key "C-x o")
-
-(add-hook 'dired-mode-hook (lambda () (bind-key "M-o" 'elwm-activate-window dired-mode-map)))
-(add-hook 'ibuffer-mode-hook (lambda () (bind-key "M-o" 'elwm-activate-window ibuffer-mode-map)))
-
 (defvar f1-prefix-map)
 (define-prefix-command 'f1-prefix-map)
 (bind-key "<f1>" 'f1-prefix-map)
-(bind-key "<f1> <f1>" 'ibuffer)
-(bind-key "<f1> <f2>" (lambda () (interactive) (bookmark-jump "init.el")))
-(bind-key "<f1> <f3>" (lambda () (interactive) (bookmark-jump "*Messages*")))
-(bind-key "<f1> b" 'bs-show)
+(bind-key "<f1> <f2>" (lambda () (interactive) (find-file "~/.emacs.d/init.el")))
+(bind-key "<f1> <f3>" 'view-echo-area-messages)
 
 ;; ibuffer > list-buffers
 (bind-key "C-x C-b" 'ibuffer)
@@ -86,7 +73,6 @@
 (bind-key "M-K" (lambda () (interactive) (kill-buffer (window-buffer (next-window)))))
 
 ;; imenu
-(bind-key "M-." 'ido-goto-symbol) ;; was Find tag
 (bind-key "M-," 'find-function)
 
 ;; sexp settings
@@ -96,6 +82,9 @@
 ;; minibuffer history
 (bind-key "C-p" 'previous-history-element minibuffer-local-map)
 (bind-key "C-n" 'next-history-element minibuffer-local-map)
+
+(bind-key "C-c V" 'view-clipboard)
+(bind-key "C-c =" 'count-matches)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; navigation
@@ -132,14 +121,9 @@
 (bind-key "C-M-p" 'backward-list)
 (bind-key "C-c f" (lambda () (interactive) (sp-beginning-of-sexp 2)))
 (bind-key "C-c b" (lambda () (interactive) (sp-beginning-of-sexp -2)))
-;; binary search
-(bind-key "H-b" 'chop-move-up)
-(bind-key "H-f" 'chop-move-down)
-(bind-key "H-a" 'chop-move-up)
-(bind-key "H-d" 'chop-move-down)
 
-(bind-key "C-s" 'isearch-forward-regexp)
-(bind-key "C-r" 'isearch-backward-regexp)
+(bind-key "C-c q s" 'query-replace)
+(bind-key "C-c q r" 'query-replace-regexp)
 
 ;; # move to (beg/end)
 ;; line
@@ -159,8 +143,8 @@
 (bind-key "M-p" 'beginning-of-defun)
 (bind-key "M-n" 'end-of-defun)
 ;; active region
-(bind-key "C-c a" 'beginning-of-region)
-(bind-key "C-c e" 'end-of-region)
+(bind-key "M-g a" 'beginning-of-region)
+(bind-key "M-g e" 'end-of-region)
 
 ;; # move into
 (bind-key "C-M-d" 'down-list)
@@ -180,13 +164,10 @@
             (interactive)
             (join-line -1)))
 
-;;; scrollers
-(bind-key "C-c n" 'my-scroll-up)
-(bind-key "C-c p" 'my-scroll-down)
-
 ;; deleting stuff
 (bind-key "C-<i-key>" 'backward-kill-word)
 (bind-key "C-<backspace>" 'my-kill-whitespace)
+(bind-key "C-c d" 'my-kill-entire-line)
 
 ;; up/downcase
 (bind-key "M-l" 'my-smart-downcase-word)
@@ -231,10 +212,14 @@
 (defvar lisp-find-map)
 (define-prefix-command 'lisp-find-map)
 (bind-key "C-h e" 'lisp-find-map)
+(bind-key "C-h e d" 'info-lookup-symbol)
+(bind-key "C-h e f" 'find-function)
 (bind-key "C-h e F" 'find-face-definition)
+(bind-key "C-h e i" 'info-apropos)
 (bind-key "C-h e k" 'find-function-on-key)
 (bind-key "C-h e l" 'find-library)
 (bind-key "C-h e v" 'find-variable)
+(bind-key "C-h e V" 'apropos-value)
 (bind-key "C-h D" 'describe-personal-keybindings)
 
 (defvar ctl-dot-prefix-map)
@@ -270,15 +255,6 @@
 (bind-key "C-. i g" (lambda () (interactive) (set-input-method "german")))
 (bind-key "C-. i t" (lambda () (interactive) (set-input-method "TeX")))
 
-
-(defvar ctl-c-r-map)
-(define-prefix-command 'ctl-c-r-map)
-(bind-key "C-c r" 'ctl-c-r-map)
-(bind-key "C-c r f" 'recentf-open-files)
-(bind-key "C-c r c" 'recentf-cleanup)
-
-(bind-key "C-x C-r" 'recentf-open-files)
-
 (bind-key "H-u" 'universal-argument)
 (bind-key "H-u" 'universal-argument-more universal-argument-map)
 (dotimes (i 10)
@@ -292,11 +268,16 @@
 (defvar ctl-c-m-map)
 (define-prefix-command 'ctl-c-m-map)
 (bind-key "C-c m" 'ctl-c-m-map)
-(bind-key "C-c m s" 'magit-status)
-(bind-key "C-c m l" 'magit-key-mode-popup-logging)
 (bind-key "C-c m b" 'magit-key-mode-popup-branching)
+(bind-key "C-c m c" 'magit-key-mode-popup-committing)
 (bind-key "C-c m d" 'magit-key-mode-popup-dispatch)
-(bind-key "C-c m c" 'magit-checkout)
+(bind-key "C-c m f" 'magit-key-mode-popup-fetching)
+(bind-key "C-c m i" 'magit-key-mode-popup-diff-options)
+(bind-key "C-c m l" 'magit-key-mode-popup-logging)
+(bind-key "C-c m m" 'magit-key-mode-popup-merging)
+(bind-key "C-c m p" 'magit-key-mode-popup-pushing)
+
+(bind-key "C-c m s" 'magit-status)
 
 ;; zapping
 (bind-key "M-z" 'zap-up-to-char)
@@ -311,7 +292,11 @@ inserted character."
 
 (bind-key "C-z" 'my-quoted-insert-and-backward)
 
+;; M-s map
 (bind-key "M-s RET" 'skeleton-easy-regexp-display-abbrev)
+(bind-key "M-s c" 'calendar)
+
+;; M-g map
 (bind-key "M-g RET" 'skeleton-display-abbrev)
 
 ;; input methods
