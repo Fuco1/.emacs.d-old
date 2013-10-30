@@ -65,29 +65,7 @@ If ARG is given, then insert the result to current-buffer"
   "Return non-nil if the current buffer is narrowed."
   (/= (- (point-max) (point-min)) (buffer-size)))
 
-(defun my-scroll-down (arg)
-  "Scroll down ARG lines.  If ARG is nil, scroll 4 lines."
-  (interactive "P")
-  (let ((arg (or arg 4))
-        (cont t)
-        ev)
-    (message "%s" arg)
-    (while cont
-      (setq ev (read-event))
-      (cond
-       ((eq ev ?p)
-        (scroll-down arg))
-       ((eq ev ?n)
-        (scroll-up arg))
-       (t (setq cont nil))))))
-
-(defun my-scroll-up (arg)
-  "Scroll up ARG lines.  If ARG is nil, scroll 4 lines."
-  (interactive "P")
-  (my-scroll-down (or arg 4)))
-
 ;;; function overloads
-
 (eval-after-load "hi-lock"
   '(progn
      (defun hi-lock-read-face-name ()
@@ -147,3 +125,30 @@ This is the opposite of fill-paragraph."
       (delete-region start end)
       (let ((kill-ring (append (list orig) (--filter (s-ends-with? suffix it) expands))))
         (browse-kill-ring)))))
+
+(defun my-assimil--format-line (fill)
+  (let ((fill-column 38)
+        (fill-prefix fill))
+    (fill-region (line-beginning-position) (line-end-position))))
+
+(defun my-assimil-format (arg)
+  (interactive "p")
+  (dotimes (i arg)
+    (my-assimil--format-line "     ")
+    (forward-line -1)))
+
+(defun my-assimil-format-ubung (arg)
+  (interactive "p")
+  (dotimes (i arg)
+    (my-assimil--format-line "   ")
+    (forward-line -1)))
+
+(defun my-assimil-insert-dialog-template (arg)
+  (interactive "p")
+  (dotimes (i arg)
+    (insert (format "%2d - \n" (1+ i)))))
+
+(defun my-assimil-insert-ubung-template (arg)
+  (interactive "p")
+  (dotimes (i arg)
+    (insert (format "%d. \n" (1+ i)))))
