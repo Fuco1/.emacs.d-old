@@ -103,20 +103,6 @@
   (setq indent-tabs-mode t)
   (turn-on-visual-line-mode))
 
-;; move this somewhere appropriate
-(eval-after-load "bs"
-  '(progn
-     (setq bs-mode-font-lock-keywords
-           (list ;; header in font-lock-type-face
-            (list (bs--make-header-match-string)
-                  '(1 font-lock-type-face append) '(1 'bold append))
-            ;; Buffername embedded by *
-            (list "^.*\\(\\*.*\\*\\).*$" 1 'font-lock-comment-face)
-            ;; Dired-Buffers
-            '("^....\\(.*\\) [0-9].*Dired[ /].*$" 1 font-lock-function-name-face)
-            ;; the star for modified buffers
-            '("^.\\(\\*\\) +[^\\*]"     1 font-lock-warning-face)))))
-
 ;; hack to make nicer format in keyfreq-show
 (eval-after-load 'keyfreq
   '(progn
