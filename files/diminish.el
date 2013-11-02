@@ -1,5 +1,5 @@
 (require 'diminish)
-(eval-after-load "undo-tree-mode"
+(eval-after-load "undo-tree"
   '(diminish 'undo-tree-mode))
 (diminish 'visual-line-mode)
 (diminish 'smartparens-mode)
