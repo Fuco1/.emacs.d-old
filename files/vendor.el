@@ -4,8 +4,8 @@
   (progn
     (setq ace-jump-mode-scope 'window)))
 
-(use-package achievements-mode
-  :commands achievements-mode)
+;; (use-package achievements-mode
+;;   :commands achievements-mode)
 
 (use-package clippy
   :commands clippy-describe-function)
@@ -27,6 +27,9 @@
 
 (use-package google-maps
   :commands google-maps)
+
+(use-package free-keys
+  :commands free-keys)
 
 (use-package jump-char
   :bind (("M-m" . jump-char-forward)))

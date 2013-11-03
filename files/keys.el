@@ -211,6 +211,7 @@
 (defvar lisp-find-map)
 (define-prefix-command 'lisp-find-map)
 (bind-key "C-h e" 'lisp-find-map)
+(bind-key "C-h e b" 'free-keys)
 (bind-key "C-h e d" 'info-lookup-symbol)
 (bind-key "C-h e f" 'find-function)
 (bind-key "C-h e F" 'find-face-definition)
