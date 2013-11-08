@@ -1,3 +1,5 @@
+(require 'bookmark+-autoloads)
+
 (use-package ace-jump-mode
   :bind (("C-\\" . ace-jump-mode))
   :config
@@ -17,13 +19,63 @@
          ("C-x C-2" . elwm-split-window))
   :init
   (progn
-    (add-hook 'dired-mode-hook (lambda () (bind-key "M-o" 'elwm-activate-window dired-mode-map))))
+    (add-hook 'dired-mode-hook (lambda () (bind-key "M-o" 'elwm-activate-window dired-mode-map)))))
+
+(use-package ediff
+  :pre-init
+  (progn
+    (defvar ctl-dot-equals-prefix-map)
+    (define-prefix-command 'ctl-dot-equals-prefix-map)
+    (bind-key "C-. =" 'ctl-dot-equals-prefix-map))
+  :bind (("C-. = b" . ediff-buffers)
+         ("C-. = B" . ediff-buffers3)
+         ("C-. = =" . ediff-files)
+         ("C-. = f" . ediff-files)
+         ("C-. = F" . ediff-files3)
+         ("C-. = r" . ediff-revision)
+         ("C-. = p" . ediff-patch-file)
+         ("C-. = P" . ediff-patch-buffer)
+         ("C-. = l" . ediff-regions-linewise)
+         ("C-. = w" . ediff-regions-wordwise))
   :config
   (progn
-    (unbind-key "C-x o")))
+    (defvar my-ediff-before-config nil "Window configuration before ediff.")
+    (defvar my-ediff-after-config nil "Window configuration after ediff.")
+
+    (defun my-ediff-before-setup ()
+      "Function to be called before any buffers or window setup for
+    ediff."
+      (setq my-ediff-before-config (current-window-configuration))
+      (set-register ?b (list my-ediff-before-config (point-marker))))
+
+    (defun my-ediff-after-setup ()
+      "Function to be called after buffers and window setup for ediff."
+      (setq my-ediff-after-config (current-window-configuration))
+      (set-register ?e (list my-ediff-after-config (point-marker))))
+
+    (defun my-ediff-quit ()
+      "Function to be called when ediff quits."
+      (when my-ediff-before-config
+        (set-window-configuration my-ediff-before-config))
+      ;; clean up ediff bullshit
+      (->> (buffer-list)
+        (-map 'buffer-name)
+        (--select (string-match-p "\\*[Ee]diff" it))
+        (-map 'kill-buffer)))
+
+    (add-hook 'ediff-before-setup-hook 'my-ediff-before-setup)
+    (add-hook 'ediff-after-setup-windows-hook 'my-ediff-after-setup 'append)
+    (add-hook 'ediff-quit-hook 'my-ediff-quit)))
 
 (use-package expand-region
   :bind ("s-'" . er/expand-region))
+
+(use-package golden-ratio
+  :config
+  (progn
+    (defun my-golden-ratio-inhibit ()
+      (--any? (string-match-p "\\*Ediff Control Panel" it)
+              (mapcar 'buffer-name (mapcar 'window-buffer (window-list)))))))
 
 (use-package google-maps
   :commands google-maps)
@@ -68,6 +120,12 @@ called, percentage usage and the command."
 (use-package letcheck
   :commands letcheck-mode)
 
+(use-package popwin
+  :commands popwin-mode
+  :config
+  (progn
+    (push '("*Pp Eval Output*" :height 15) popwin:special-display-config)))
+
 (use-package revbufs
   :bind ("C-<f5>" . revbufs))
 
@@ -111,6 +169,9 @@ called, percentage usage and the command."
 
 (use-package wc-mode
   :commands wc-mode)
+
+(use-package wiktionary-translate
+  :bind ("<insert>" . wd-show-translation))
 
 (use-package "world-time-mode"
   :bind ("C-. t" . world-time-list))
