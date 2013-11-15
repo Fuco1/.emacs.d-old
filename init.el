@@ -8,19 +8,20 @@
 (tooltip-mode -1)
 
 ;; maximize window at startup
-;; (defun maximize-frame ()
-;;   "Maximizes the active frame in Windows"
-;;   (interactive)
-;;   ;; Send a `WM_SYSCOMMAND' message to the active frame with the
-;;   ;; `SC_MAXIMIZE' parameter.
-;;   (when (eq system-type 'windows-nt)
-;;     (w32-send-sys-command 61488)))
-;; (add-hook 'window-setup-hook 'maximize-frame t)
+(defun maximize-frame ()
+  "Maximizes the active frame in Windows"
+  (interactive)
+  ;; Send a `WM_SYSCOMMAND' message to the active frame with the
+  ;; `SC_MAXIMIZE' parameter.
+  (when (eq system-type 'windows-nt)
+    (w32-send-sys-command 61488)))
+(add-hook 'window-setup-hook 'maximize-frame t)
 
 ;; add repos
 (setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
                          ("marmalade" . "http://marmalade-repo.org/packages/")
-                         ("melpa" . "http://melpa.milkbox.net/packages/")))
+                         ("melpa" . "http://melpa.milkbox.net/packages/")
+                         ("org" . "http://orgmode.org/elpa/")))
 (package-initialize)
 (load "~/.emacs.d/autoinstall")
 
@@ -89,7 +90,7 @@
 (load custom-file)
 
 ;; Reload theme -- hackish
-;; (load "~/.emacs.d/themes/my-tango-dark-theme")
+(load "~/.emacs.d/themes/my-tango-dark-theme")
 
 ;; autoopen files
 (find-file "~/.emacs.d/init.el")

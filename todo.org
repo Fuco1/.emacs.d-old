@@ -1,9 +1,17 @@
 * BUUUUUUGS
-
-** TODO <p>asd asd</p> + C-M-e v emacs-lisp-mode zmaze closing zavorku
-** TODO \cdot | \cata{\varphi} traspose v latechu prehodi cdot/cata a ne celu zavorku
-** TODO v H-p nefunguje prehadzovanie parov ak je point v symbole
-** TODO (after?) < v emacs lisp berie ako escape... bad!
+** DONE <p>asd asd</p> + C-M-e v emacs-lisp-mode zmaze closing zavorku
+   CLOSED: [2013-11-02 Sat 14:42]
+   - State "DONE"       from "TODO"       [2013-11-02 Sat 14:42]
+Neni to bug... len chybal <> par. Tento poziadavok by sa mal fixnut v novom parser systeme
+** DONE \cdot | \cata{\varphi} traspose v latechu prehodi cdot/cata a ne celu zavorku
+   CLOSED: [2013-11-02 Sat 15:31]
+   - State "DONE"       from "TODO"       [2013-11-02 Sat 15:31]
+** DONE v H-p nefunguje prehadzovanie parov ak je point v symbole
+   CLOSED: [2013-11-02 Sat 15:32]
+   - State "DONE"       from "TODO"       [2013-11-02 Sat 15:32]
+** DONE (after?) < v emacs lisp berie ako escape... bad!
+   CLOSED: [2013-11-02 Sat 15:33]
+   - State "DONE"       from "TODO"       [2013-11-02 Sat 15:33]
 ** TODO org-bloky brat ako komentare
 #+BEGIN:emacs-lisp-mode
 (sp-local-pair 'ruby-mode "if"< nil :skip-match 'foobar) ;; skoci sem, zle vyhodnocuje ""
@@ -20,7 +28,7 @@
 - [ ] manipulation
 - [ ] autopairing & autoskipping (needs rewrite)
 - [ ] wrapping (needs rewrite)
-** [ ] various minor modes for editing built on top of the infrastructure
+** various minor modes for editing built on top of the infrastructure [1/1]
 - [X] sp-paredit (smartparens-strict-mode)
 
 * TODO pridat :bind do sp-pair a sp-local-pair ktore automaticky nabinduje klavesu na "wrap thing" pre dany par... t.j. funkciu
@@ -52,7 +60,9 @@ napr v latex moze byt prefix
 
 GENIUS!
 
-* TODO pridat aj :suffix nastavovac. Napr v haskellu. Defaultne priliepat symbol-prefix class?
+* DONE pridat aj :suffix nastavovac. Napr v haskellu. Defaultne priliepat symbol-prefix class?
+  CLOSED: [2013-11-02 Sat 15:44]
+  - State "DONE"       from "TODO"       [2013-11-02 Sat 15:44]
 
 * TODO some words in latex I want to add to \{this\}
 1. spocitat C-M-f az po prvy sexp
@@ -66,9 +76,11 @@ GENIUS!
 ** TODO ignoruje normalne expressions. To je asi ziadane chovanie
 ale treba pridat prepinac ktory prepne ignorovanie tagou (nejaky prefixovy "sp-prefix" argument)
 
-** TODO niektore zarovnavacie pravidla su sux pre html (asi najlepsie bude neaplikovat ziadne) [33%]
-- [ ] slurp
-- [ ] barf
+** DONE niektore zarovnavacie pravidla su sux pre html (asi najlepsie bude neaplikovat ziadne) [100%]
+   CLOSED: [2013-11-02 Sat 15:55]
+   - State "DONE"       from "TODO"       [2013-11-02 Sat 15:55]
+- [X] slurp
+- [X] barf
 - [X] convolute
 
   <p>
@@ -105,7 +117,6 @@ oznaci | (>foo< bar)
 * TODO pridat moznost na tag-wrap ze za tag naskoci automaticky newline (uzitocne pre \begin{} \end{})
 * TODO pridat moznost menit "_" v matching tagoch. Uzitocne na zmeny environmentu/tagu v html
 * TODO add paredit-semicolon
-
 * TODO pridat funkciu "down to" ktora skoci do specifickeho typu bloku, ignorujuc ostatne.
 uzitocne v
 int| foo (parametre) {<jump here>
@@ -123,7 +134,10 @@ see: https://github.com/zk-phi/cedit
 "asdasd \" sdfsdf
 - fixnut v modoch kde niesu povolene multi-line retazce -> RET na \" to zmeni na "
 
-* TODO pridat moznost do `sp-autoinsert-if-followed-by-same' kde sa nasledujuci vyraz obali.
+* CANCELLED pridat moznost do `sp-autoinsert-if-followed-by-same' kde sa nasledujuci vyraz obali. :CANCELLED:
+  CLOSED: [2013-11-02 Sat 16:06]
+  - State "CANCELLED"  from "TODO"       [2013-11-02 Sat 16:06] \\
+    Toto je blbost
 * DONE join sexp
   CLOSED: [2013-03-28 Thu 02:06]
   - State "DONE"       from "TODO"       [2013-03-28 Thu 02:06]
@@ -170,8 +184,9 @@ I don't know if there is any issue with executing the preceeding cursors in `pre
            (>>= ,@(cdr forms))
          nil)
     `(,@(car forms))))
-* TODO resetovat (setq sp-recent-keys nil) ked sa pohne kurzor niekam mimo, toto napr zamedzi (\(|\)) ked chcem (\(|))
-
+* DONE resetovat (setq sp-recent-keys nil) ked sa pohne kurzor niekam mimo, toto napr zamedzi (\(|\)) ked chcem (\(|))
+  CLOSED: [2013-11-02 Sat 16:12]
+  - State "DONE"       from "TODO"       [2013-11-02 Sat 16:12]
 * TODO misc navigacia [50%]
 - (bla |bla) (foo foo) -> (bla bla) (|foo foo), t.j. C-M-e C-M-d ... kde to zapracovat?
 - [X] pridane do sp-beginning-of-sexp / sp-end-of-sexp
@@ -179,7 +194,10 @@ I don't know if there is any issue with executing the preceeding cursors in `pre
 - (bla |bla) (foo foo) -> (bla bla) (foo foo)| t.j. C-M-e C-M-f (H-2 H-p C-M-f)
 - [ ]
 
-* TODO make sp-show-pair-match-face inherit from the default show-paren-mode faces.
+* CANCELLED make sp-show-pair-match-face inherit from the default show-paren-mode faces. :CANCELLED:
+  CLOSED: [2013-11-02 Sat 16:14]
+  - State "CANCELLED"  from "TODO"       [2013-11-02 Sat 16:14] \\
+    Neda sa, show paren mode faces niesu na autoloade
 * TODO pridat convolute ktory ale ponecha sub-sexpy a len zameni hlavicky
 
 (let ((x t)                 (while something
@@ -207,14 +225,19 @@ ako to spravit chytre?
   CLOSED: [2013-05-10 Fri 18:09]
   - State "DONE"       from "TODO"       [2013-05-10 Fri 18:09]
 * TODO poriadne refaktorovat skip-to-symbol, skip-to-delim, skip-to-string, integrovat stringy
-* TODO ignorovat chyby "no sexp found" a zobrat dalsiu.
+* CANCELLED ignorovat chyby "no sexp found" a zobrat dalsiu.      :CANCELLED:
+  CLOSED: [2013-11-02 Sat 16:17]
+  - State "CANCELLED"  from "TODO"       [2013-11-02 Sat 16:17] \\
+    can't reproduce
 Napriklad v C++
 
 cout |<< bla << bla
 
 hlasi chybu
 
-* TODO pridat \\{\\} par
+* DONE pridat \\{\\} par
+  CLOSED: [2013-11-02 Sat 16:18]
+  - State "DONE"       from "TODO"       [2013-11-02 Sat 16:18]
 ** DONE je tu bug...
 ked sa prida: (sp-local-pair sp--lisp-modes "\\\\{" "\\\\}" :when '(sp-in-string-p))
 
@@ -222,16 +245,20 @@ tak \{\} par nefunguje v buffery ak sa napise \\{
 * TODO pridat automaticky escape \ v stringoch. Takisto \[ by malo vyplut \\[ pokial sme v stringu. Celkovo cely escape by sa zislo prekopat
 * TODO steal rainbow-delimiters
 * TODO pridat navigaciu v pythone
-
 * DONE pridat narrow-to-sexp
   CLOSED: [2013-09-26 Thu 18:46]
   - State "DONE"       from "TODO"       [2013-09-26 Thu 18:46]
 * TODO add option to select entire html tag if point is inside the tag (this should be made general enough to work for all tags)
 staci aby to hladalo "is-inside-tag-p" na riadku kde je kurzor. Nepredpokladam ze budu multi-line tagy... aj ked html mozno mozu byt. => spravit to konfigurovatelne
 
-* TODO add :trigger option to pairs... slowly work on unification of tags and pairs.
+* DONE add :trigger option to pairs...
+  CLOSED: [2013-11-02 Sat 16:32]
+  - State "DONE"       from "TODO"       [2013-11-02 Sat 16:32]
 * TODO refactor `sp--get-pair-list-wrap` and friends to take some keywords/predicates to select the pairs for the list
-* TODO add `navigate` action keyword
+* CANCELLED add `navigate` action keyword                         :CANCELLED:
+  CLOSED: [2013-11-02 Sat 16:36]
+  - State "CANCELLED"  from "TODO"       [2013-11-02 Sat 16:36] \\
+    uz mame skip-match
 * TODO add `hilight` action keyword.
 * TODO point po barf moze ostat mimo sexp
 
@@ -244,15 +271,17 @@ staci aby to hladalo "is-inside-tag-p" na riadku kde je kurzor. Nepredpokladam z
 
 po barfe je enclosing exp `foo`
 
-* TODO hybrid sexp na zaciatku alebo nakonci bufferu nefungje
+* DONE hybrid sexp na zaciatku alebo nakonci bufferu nefungje
+  CLOSED: [2013-11-02 Sat 16:43]
+  - State "DONE"       from "TODO"       [2013-11-02 Sat 16:43]
 
 * TODO typing in front of string-like sexp is very slow!
 * TODO |"foo" ked sa napise \" tak to neskipne dovnutra ale vlozi dalsi par (a pritom hodi error)
-
+  toto obecne nefunguje pre vsetky "stringlike" pary
 * TODO Pridate nejake jednoduche UI na vkladanie znakov po vlozeni paru (napr po [] automaticky vlozit " | ")
 
-* edwm ========================
 
+* edwm ========================
 
 * TODO Z master arey C-u transpose si vypyta okno v stacku.
 * TODO Urobit "define-layout" makro kde sa definuju vsetky potrebne predikaty/funkcie

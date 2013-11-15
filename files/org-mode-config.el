@@ -3,13 +3,45 @@
   ;; The following lines are always needed.  Choose your own keys.
   :bind  (("C-c l" . org-store-link)
           ("<f12>" . org-agenda)
-          ("C-c C-x C-o" . org-clock-out))
+          ("C-c C-x C-o" . org-clock-out)
+          ("C-c C-x <C-i-key>" . org-clock-in))
   :config
   (progn
+    (defface my-org-bold
+      '((t (:weight bold :inherit font-lock-variable-name-face)))
+       "The face used to highlight pair overlays.")
+
+    (defface my-org-italic
+      '((t (:slant italic :inherit font-lock-variable-name-face)))
+       "The face used to highlight pair overlays.")
+
+    (defface my-org-code
+      '((t (:family "Consolas" :inherit font-lock-constant-face)))
+       "The face used to highlight pair overlays.")
+
     (bind-key "TAB" 'smart-tab org-mode-map)
     (bind-key "C-e" 'my-end-of-code-or-line org-mode-map)
     (bind-key "C-a" 'my-back-to-indentation-or-beginning org-mode-map)
     (bind-key "C-c C-x r" 'org-clock-remove-overlays org-mode-map)
+    ;; TODO lepsia mapa pre "toggle prikazy?"
+    (bind-key "C-c C-x L" 'org-toggle-link-display org-mode-map)
+
+    (defun my-org-open-at-point (&optional arg)
+      "Just like `org-open-at-point', but open link in this window."
+      (interactive "P")
+      (if (equal arg '(16))
+          (org-open-at-point arg)
+        (let ((current-prefix-argument nil))
+          (if arg
+              (org-open-at-point '(4))
+            (let ((org-link-frame-setup (acons 'file 'find-file org-link-frame-setup)))
+              (org-open-at-point '(4)))))))
+    (bind-key "C-c C-o" 'my-org-open-at-point org-mode-map)
+
+    (defun my-goto-current-clocked-task ()
+      (interactive)
+      (org-goto-marker-or-bmk org-clock-marker))
+    (bind-key "<f1> <f10>" 'my-goto-current-clocked-task)
 
     (require 'org-table)
     ;; org/orgtbl bindings
@@ -89,10 +121,11 @@
                               org-rmail
                               org-vm
                               org-wl
-                              org-w3m)))
+                              org-w3m
+                              org-drill)))
 
     ;; position the habit graph on the agenda to the right of the default
-    (setq org-habit-graph-column 50)
+    (setq org-habit-graph-column 81)
 
 ;;;;;;;;;;;;;;;;;;;;; CAPTURE
     (setq org-directory "~/org")
@@ -104,13 +137,13 @@
     ;; Capture templates for: TODO tasks, Notes, appointments, phone calls, and org-protocol
     (setq org-capture-templates
           (quote (("t" "todo" entry (file "~/org/refile.org")
-                   "* TODO %?\n%U\n%a\n" :clock-in t :clock-resume t)
+                   "* TODO %?\n%U\n%a\n" :clock-keep t)
                   ("s" "someday" entry (file "~/org/refile.org")
-                   "* SOMEDAY %?\n%U\n%a\n" :clock-in t :clock-resume t)
+                   "* SOMEDAY %?\n%U\n%a\n" :clock-keep t)
                   ("n" "note" entry (file "~/org/refile.org")
-                   "* %? :NOTE:\n%U\n%a\n" :clock-in t :clock-resume t)
+                   "* %? :NOTE:\n%U\n%a\n" :clock-keep t)
                   ("j" "Journal" entry (file+datetree "~/org/diary.org")
-                   "* %?\n%U\n" :clock-in t :clock-resume t))))
+                   "* %?\n%U\n" :clock-keep t))))
 
     ;; Remove empty LOGBOOK drawers on clock out
     (defun bh/remove-empty-drawer-on-clock-out ()

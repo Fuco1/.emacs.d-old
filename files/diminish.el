@@ -3,6 +3,8 @@
   '(diminish 'undo-tree-mode))
 (diminish 'visual-line-mode)
 (diminish 'smartparens-mode)
+(eval-after-load "achievements-functions"
+  '(diminish 'achievements-mode))
 (eval-after-load "eldoc"
   '(diminish 'eldoc-mode " δ"))
 (eval-after-load 'projectile

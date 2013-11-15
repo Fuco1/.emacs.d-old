@@ -110,8 +110,6 @@ starting with \\ and followed by a block of text enclosed in {}."
           (setq TeX-parse-self t)
           (TeX-PDF-mode t)
           (setq reftex-plug-into-AUCTeX t)
-          (setq TeX-source-correlate-mode t)
-          (setq TeX-source-correlate-method 'synctex)
           (reftex-mode t)
           (TeX-fold-mode t)
 

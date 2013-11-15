@@ -51,7 +51,7 @@
 (bind-key "<f1>" 'f1-prefix-map)
 (bind-key "<f1> <f2>" (lambda () (interactive) (find-file "~/.emacs.d/init.el")))
 (bind-key "<f1> <f3>" 'view-echo-area-messages)
-(bind-key "<f1> <f9>" 'my-switch-to-scratch)
+(bind-key "<f1> <f12>" 'my-switch-to-scratch)
 
 ;; ibuffer > list-buffers
 (bind-key "C-x C-b" 'ibuffer)

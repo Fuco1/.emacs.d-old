@@ -16,7 +16,9 @@
 (setq locale-coding-system 'utf-8)
 (set-terminal-coding-system 'utf-8)
 (set-keyboard-coding-system 'utf-8)
-(set-selection-coding-system 'utf-8)
+(if (eq system-type 'windows-nt)
+    (set-selection-coding-system 'utf-16le-dos)
+  (set-selection-coding-system 'utf-8))
 (prefer-coding-system 'utf-8)
 
 ;; cua-selection-mode for all the goodies ;)

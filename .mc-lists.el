@@ -53,6 +53,7 @@
       '(
         beautify-smex
         beginning-of-buffer
+        elwm-activate-window
         eval-and-replace
         handle-switch-frame
         haskell-indentation-delete-backward-char

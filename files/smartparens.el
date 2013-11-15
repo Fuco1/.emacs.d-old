@@ -92,7 +92,7 @@
   (sp-local-pair "*" "*" :unless '(sp-point-after-word-p sp-point-at-bol-p) :wrap "C-*" :skip-match 'sp--org-skip-asterisk)
   (sp-local-pair "_" "_" :unless '(sp-point-after-word-p) :wrap "C-_" :skip-match 'sp--org-skip-markup)
   (sp-local-pair "/" "/" :unless '(sp-point-after-word-p) :skip-match 'sp--org-skip-markup)
-  (sp-local-pair "=" "=" :unless '(sp-point-after-word-p) :skip-match 'sp--org-skip-code))
+  (sp-local-pair "~" "~" :unless '(sp-point-after-word-p) :skip-match 'sp--org-skip-code))
 
 (defun sp--org-skip-markup (ms mb me)
   (save-excursion
@@ -125,8 +125,35 @@
 
 ;;; lisp modes
 (sp-with-modes (append '(inferior-emacs-lisp-mode) sp--lisp-modes)
-  (sp-local-pair "(" nil :wrap "C-("))
+  (sp-local-pair "(" nil
+                 :wrap "C-("
+                 :pre-handlers '(my-add-space-before-sexp-insertion)
+                 :post-handlers '(my-add-space-after-sexp-insertion))
+  (sp-local-pair "`" nil
+                 :skip-match (lambda (ms mb me)
+                               (cond
+                                ((equal ms "'")
+                                 (or (sp--org-skip-markup ms mb me)
+                                     (not (sp-point-in-string-or-comment))))
+                                (t (not (sp-point-in-string-or-comment)))))))
 
+(defun my-add-space-after-sexp-insertion (id action _context)
+  (when (eq action 'insert)
+    (save-excursion
+      (forward-char (sp-get-pair id :cl-l))
+      (when (or (eq (char-syntax (following-char)) ?w)
+                (looking-at (sp--get-opening-regexp)))
+        (insert " ")))))
+
+(defun my-add-space-before-sexp-insertion (id action _context)
+  (when (eq action 'insert)
+    (save-excursion
+      (backward-char (length id))
+      (when (or (eq (char-syntax (preceding-char)) ?w)
+                (looking-at (sp--get-closing-regexp)))
+        (insert " ")))))
+
+;;; C++
 (sp-local-pair 'c++-mode "{" nil :post-handlers '((my-create-newline-and-enter-sexp "RET")))
 (defun my-create-newline-and-enter-sexp (&rest _ignored)
   "Open a new brace or bracket expression, with relevant newlines and indent. "
@@ -145,23 +172,3 @@
     (save-excursion
       (backward-char 1)
       (looking-back "\\sw\\|\\s_\\|\\s'"))))
-
-(sp-local-pair 'emacs-lisp-mode "(" nil
-               :pre-handlers '(my-add-space-before-sexp-insertion)
-               :post-handlers '(my-add-space-after-sexp-insertion))
-
-(defun my-add-space-after-sexp-insertion (id action _context)
-  (when (eq action 'insert)
-    (save-excursion
-      (forward-char (sp-get-pair id :cl-l))
-      (when (or (eq (char-syntax (following-char)) ?w)
-                (looking-at (sp--get-opening-regexp)))
-        (insert " ")))))
-
-(defun my-add-space-before-sexp-insertion (id action _context)
-  (when (eq action 'insert)
-    (save-excursion
-      (backward-char (length id))
-      (when (or (eq (char-syntax (preceding-char)) ?w)
-                (looking-at (sp--get-closing-regexp)))
-        (insert " ")))))
