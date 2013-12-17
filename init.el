@@ -22,8 +22,12 @@
                          ("marmalade" . "http://marmalade-repo.org/packages/")
                          ("melpa" . "http://melpa.milkbox.net/packages/")
                          ("org" . "http://orgmode.org/elpa/")))
+(defconst emacs-package-init-time (current-time))
 (package-initialize)
 (load "~/.emacs.d/autoinstall")
+(let ((elapsed (float-time (time-subtract (current-time)
+                                          emacs-package-init-time))))
+  (message "Initializing packages... done (%.3fs)" elapsed))
 
 (require 'parenface)
 (require 'uniquify)
