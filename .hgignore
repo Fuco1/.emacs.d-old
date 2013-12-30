@@ -29,3 +29,10 @@ projectile-bookmarks.eld
 projectile.cache
 tramp
 *.elc
+.achievements
+.emacs-places
+.emacs.keyfreq
+.ido.last
+.org-id-locations
+.recentf
+.smex-items
