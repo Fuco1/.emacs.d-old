@@ -51,6 +51,7 @@
 (bind-key "<f1>" 'f1-prefix-map)
 (bind-key "<f1> <f2>" (lambda () (interactive) (find-file "~/.emacs.d/init.el")))
 (bind-key "<f1> <f3>" 'view-echo-area-messages)
+(bind-key "<f1> <f4>" 'ffap)
 (bind-key "<f1> <f12>" 'my-switch-to-scratch)
 
 ;; ibuffer > list-buffers
@@ -252,9 +253,11 @@
 (bind-key "C-. i s" (lambda () (interactive) (set-input-method "slovak-prog-2")))
 (bind-key "C-. i c" (lambda () (interactive) (set-input-method "czech")))
 (bind-key "C-. i r" (lambda () (interactive) (set-input-method "russian-computer")))
+(bind-key "C-. i q" (lambda () (interactive) (set-input-method "cyrillic-translit")))
 (bind-key "C-. i i" (lambda () (interactive) (set-input-method "italian-keyboard")))
 (bind-key "C-. i g" (lambda () (interactive) (set-input-method "german")))
 (bind-key "C-. i t" (lambda () (interactive) (set-input-method "TeX")))
+(bind-key "C-. i l" (lambda () (interactive) (set-input-method "latin-macrons")))
 
 (bind-key "H-u" 'universal-argument)
 (bind-key "H-u" 'universal-argument-more universal-argument-map)

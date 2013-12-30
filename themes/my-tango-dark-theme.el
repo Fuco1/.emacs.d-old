@@ -17,15 +17,19 @@ is extension of default `tango-dark' face.")
       (alum-4 "#888a85") (alum-5 "#555753") (alum-6 "#2e3436")
       ;; Not in Tango palette; used for better contrast.
       (cham-0 "#b4fa70") (blue-0 "#8cc4ff") (plum-0 "#e6a8df")
-      (red-0 "#ff4b4b")  (alum-5.5 "#41423f") (alum-7 "#212526"))
+      (red-0 "#ff4b4b")  (alum-5.5 "#41423f") (alum-7 "#212526")
+      (fixed-sys (if (eq system-type 'windows-nt) "Consolas" "Inconsolata"))
+      (fixed-sys-height (if (eq system-type 'windows-nt) 100 120))
+      (variable-font (if (eq system-type 'windows-nt) "Verdana" "Liberation Sans")))
 
   (custom-theme-set-faces
    'my-tango-dark
    ;; Ensure sufficient contrast on low-color terminals.
    `(default ((,class (:foreground ,alum-1
                                    :background ,alum-6
-                                   :family "Consolas"
-                                   :foundry "outline"))))
+                                   :family ,fixed-sys
+                                   :foundry "outline"
+                                   :height ,fixed-sys-height))))
    `(cursor ((,class (:background ,butter-1))))
    ;; Highlighting faces
    `(fringe ((,class (:background ,alum-7))))
@@ -161,13 +165,13 @@ is extension of default `tango-dark' face.")
                                            :background ,choc-1
                                            :foreground "black"))))
    `(eshell-prompt ((,class (:foreground ,plum-2 :weight bold))))
-   `(fixed-pitch ((,class (:height 100 :family "Consolas"))))
+   `(fixed-pitch ((,class (:height 98 :family ,fixed-sys))))
    `(hl-line ((,class (:inherit nil :background ,alum-7))))
-   `(markdown-pre-face ((,class (:inherit font-lock-constant-face :family "Consolas"))))
+   `(markdown-pre-face ((,class (:inherit font-lock-constant-face :family ,fixed-sys))))
    `(markdown-inline-code-face ((,class (:inherit markdown-pre-face))))
    `(org-table ((,class (:inherit fixed-pitch :foreground ,blue-0))))
    `(paren-face ((,class (:foreground ,alum-4))))
-   `(variable-pitch ((,class (:height 120 :family "Verdana")))))
+   `(variable-pitch ((,class (:height 120 :family ,variable-font)))))
 
   (custom-theme-set-variables
    'my-tango-dark

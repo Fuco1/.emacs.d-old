@@ -46,12 +46,46 @@
   (bind-key "M-RET" 'my-image-dired-display-external image-dired-display-image-mode-map))
 (add-hook 'image-dired-display-image-mode-hook 'my-image-dired-display-image-init)
 
+(defun my-dired-beginning-of-defun (&optional arg)
+  (interactive "p")
+  (unless (= (line-number-at-pos) 1)
+    (call-interactively 'diredp-prev-subdir)
+    t))
+
+(defun my-dired-extract-index-name ()
+  (save-excursion
+    (back-to-indentation)
+    (buffer-substring-no-properties
+     (point)
+     (1- (re-search-forward ":$")))))
+
+(defun my-dired-imenu-create-index ()
+  (let* ((alist (imenu-default-create-index-function))
+         (uniquified (f-uniquify-alist (-map 'car alist))))
+    (--remove (= 0 (length (car it))) (--map (cons (cdr (assoc (car it) uniquified)) (cdr it)) alist))))
+
 (defun my-dired-init ()
   "Bunch of stuff to run for dired, either immediately or when it's loaded."
+  (set (make-local-variable 'coding-system-for-read) 'cp1250)
+  (set (make-local-variable 'file-name-coding-system) 'cp1250)
+  (set (make-local-variable 'beginning-of-defun-function) 'my-dired-beginning-of-defun)
+  (set (make-local-variable 'imenu-extract-index-name-function) 'my-dired-extract-index-name)
+  (set (make-local-variable 'imenu-create-index-function) 'my-dired-imenu-create-index)
+
   (defvar slash-dired-prefix-map)
   (define-prefix-command 'slash-dired-prefix-map)
 
   (with-map-bind-keys dired-mode-map
+    ("C-x C-f" 'my-dired-ido-find-file)
+    ("k" 'my-dired-do-kill-lines)
+
+    ("K" 'my-dired-kill-subdir)
+    ("P" 'my-dired-parent-directory)
+    ("I" 'my-dired-maybe-insert-subdir)
+
+    ("M-p" 'diredp-prev-subdir)
+    ("M-n" 'diredp-next-subdir)
+
     ("<insert>" 'dired-mark)
     ("SPC" 'dired-mark)
     ("<delete>" 'dired-unmark-backward)
@@ -68,7 +102,8 @@
     ("(" 'dired-details-toggle)
     ("M-<f5>" 'dired-arc-pack-files)
     ("M-<f6>" 'dired-arc-unpack-file)
-    ("l" 'dired-arc-list-archive))
+    ;; ("l" 'dired-arc-list-archive)
+    )
 
   (dired-omit-mode t)
   (visual-line-mode -1)
@@ -229,6 +264,81 @@ Interactive use only useful if `image-dired-track-movement' is nil."
     (when (eq major-mode 'image-dired-display-image-mode)
       (image-dired-display-current-image-sized))))
 
+;;;_. Virtual dired
+;; these functions depend on the dired plus package
+(defun dired-virtual-revert (&optional _arg _noconfirm)
+  "Enable revert for virtual direds."
+  (let ((m (dired-file-name-at-point)))
+    (goto-char 1)
+    (dired-next-subdir 1)
+    (dired-do-redisplay nil t)
+    (while (dired-next-subdir 1 t)
+      (dired-do-redisplay nil t))
+    (when m (dired-goto-file m))
+    (set-buffer-modified-p t)))
+
+(defun my-dired-ido-find-file ()
+  "Like `ido-find-file' but with `default-directory' set to the
+one specified by listing header."
+  (interactive)
+  (let ((default-directory (dired-current-directory)))
+    (ido-find-file)))
+
+(defun my-dired-do-kill-lines (&optional arg fmt)
+  "See `dired-do-kill-lines'.
+
+With no prefix argument, kill file under point or marked files.
+
+With prefix argument, kill that many files."
+  (interactive "P")
+  (cond
+   ((not arg)
+    (condition-case err
+        (if (or (equal (car (dired-get-marked-files))
+                       (dired-file-name-at-point))
+                (equal (concat (car (dired-get-marked-files)) "/")
+                       (dired-file-name-at-point)))
+            (progn
+              (dired-mark 1)
+              (diredp-previous-line 1)
+              (dired-do-kill-lines nil fmt)
+              (diredp-next-line 1)
+              (diredp-previous-line 1))
+          (dired-do-kill-lines arg fmt))
+      (error ;; if no file is under point, kill the next subdir
+       (my-dired-kill-subdir))))
+   (t
+    (dired-do-kill-lines arg fmt))))
+
+(defun my-dired-kill-subdir (&optional arg)
+  "Kill this directory listing.
+
+With \\[universal-argument] and point on subdirectory line, kill
+the subdirectory listing."
+  (interactive "P")
+  (cond
+   ((equal '(4) arg)
+    (save-excursion
+      (dired-goto-subdir (dired-file-name-at-point))
+      (dired-kill-subdir)))
+   (t
+    (my-dired-parent-directory)
+    (save-excursion
+      (call-interactively 'dired-maybe-insert-subdir)
+      (dired-do-kill-lines '(4))))))
+
+(defun my-dired-maybe-insert-subdir ()
+  "Just like `dired-maybe-insert-subdir' but don't move point."
+  (interactive)
+  (save-excursion
+    (call-interactively 'dired-maybe-insert-subdir)))
+
+(defun my-dired-parent-directory ()
+  "Go to parent directory listing. This is like calling
+`dired-maybe-insert-subdir' on the listing header."
+  (interactive)
+  (diredp-next-subdir 0)
+  (call-interactively 'dired-maybe-insert-subdir))
 
 ;;;_. Sorting
 (require 'ls-lisp)

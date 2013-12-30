@@ -7,17 +7,35 @@
           ("C-c C-x <C-i-key>" . org-clock-in))
   :config
   (progn
+    (use-package org-drill
+      :commands org-drill
+      :defer t
+      :config
+      (progn
+        (defun org-drill-present-two-sided-card-no-cloze ()
+          (with-hidden-comments
+           (let ((drill-sections (org-drill-hide-all-subheadings-except nil)))
+             (when drill-sections
+               (save-excursion
+                 (goto-char (nth (random* (min 2 (length drill-sections)))
+                                 drill-sections))
+                 (org-show-subtree)))
+             (ignore-errors
+               (org-display-inline-images t))
+             (org-cycle-hide-drawers 'all)
+             (prog1 (org-drill-presentation-prompt)
+               (org-drill-hide-subheadings-if 'org-drill-entry-p)))))))
     (defface my-org-bold
       '((t (:weight bold :inherit font-lock-variable-name-face)))
-       "The face used to highlight pair overlays.")
+      "The face used to highlight pair overlays.")
 
     (defface my-org-italic
       '((t (:slant italic :inherit font-lock-variable-name-face)))
-       "The face used to highlight pair overlays.")
+      "The face used to highlight pair overlays.")
 
     (defface my-org-code
       '((t (:family "Consolas" :inherit font-lock-constant-face)))
-       "The face used to highlight pair overlays.")
+      "The face used to highlight pair overlays.")
 
     (bind-key "TAB" 'smart-tab org-mode-map)
     (bind-key "C-e" 'my-end-of-code-or-line org-mode-map)
@@ -42,6 +60,21 @@
       (interactive)
       (org-goto-marker-or-bmk org-clock-marker))
     (bind-key "<f1> <f10>" 'my-goto-current-clocked-task)
+
+    (defun my-org-narrow-to-top-heading ()
+      (interactive)
+      (save-excursion
+        (ignore-errors (while (outline-up-heading 1)))
+        (org-narrow-to-subtree)))
+    (bind-key "C-x n t" 'my-org-narrow-to-top-heading org-mode-map)
+
+    (defun my-org-metacontrolreturn ()
+      "Execute `org-meta-return' followed by `org-meta-right'.
+This usually makes new item indented one level deeper."
+      (interactive)
+      (org-meta-return)
+      (org-metaright))
+    (bind-key "<C-M-return>" 'my-org-metacontrolreturn)
 
     (require 'org-table)
     ;; org/orgtbl bindings
@@ -345,3 +378,30 @@
                    ((org-agenda-overriding-header "Tasks to Archive")
                     (org-agenda-skip-function 'bh/skip-non-archivable-tasks)
                     (org-tags-match-list-sublevels nil))))))))
+
+
+(defun my-org-add-drill-entry (header1 header2 depth)
+  (insert)
+  )
+
+(defun my-org-add-drill-entry-german ()
+  (interactive)
+  (my-org-add-drill-entry "German" "Translation" 3))
+
+
+(defun my-org-drill-fulltext (word)
+  (interactive "sWord: ")
+  (widen)
+  (occur word)
+  (other-window 1)
+  (when (re-search-forward (concat "[0-9]:" word) nil t)
+    (end-of-line)))
+
+(bind-key "a" 'my-occur-mode-goto-card-occurrence occur-mode-map)
+(defun my-occur-mode-goto-card-occurrence ()
+  (interactive)
+  (occur-mode-goto-occurrence)
+  (outline-up-heading 1)
+  (org-narrow-to-subtree)
+  (org-show-subtree)
+  (org-cycle-hide-drawers t))

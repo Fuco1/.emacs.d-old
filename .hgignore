@@ -16,6 +16,7 @@ vendor/*
 .ispell
 .projectile
 ac-comphist.dat
+achievements
 bookmarks
 calc.el
 commit.bat

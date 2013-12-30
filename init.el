@@ -84,7 +84,6 @@
 (load "files/recentf-config")
 (load "files/tramp")
 (load "files/vendor")
-(load "c:/Users/Matus/AppData/Roaming/.emacs.d/dev/shell-pop-el/shell-pop")
 
 ;; diminish useless modeline clutter
 (load "files/diminish")

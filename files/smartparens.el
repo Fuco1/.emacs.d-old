@@ -13,7 +13,6 @@
 (define-key sp-keymap (kbd "C-S-a") 'sp-end-of-sexp)
 
 (define-key sp-keymap (kbd "C-M-e") 'sp-up-sexp)
-(define-key emacs-lisp-mode-map (kbd ")") 'sp-up-sexp)
 (define-key sp-keymap (kbd "C-M-u") 'sp-backward-up-sexp)
 (define-key sp-keymap (kbd "C-M-t") 'sp-transpose-sexp)
 
@@ -67,6 +66,8 @@
 (bind-key "<up>" 'sp-indent-adjust-sexp sp-keymap)
 (bind-key "<down>" 'sp-dedent-adjust-sexp sp-keymap)
 (bind-key "<right>" 'sp-slurp-hybrid-sexp sp-keymap)
+
+(bind-key ";" 'sp-comment emacs-lisp-mode-map)
 
 ;;;;;;;;;;;;;;;;;;
 ;; pair management
@@ -124,7 +125,7 @@
   (sp-local-tag "i" "\"<" "\">"))
 
 ;;; lisp modes
-(sp-with-modes (append '(inferior-emacs-lisp-mode) sp--lisp-modes)
+(sp-with-modes sp--lisp-modes
   (sp-local-pair "(" nil
                  :wrap "C-("
                  :pre-handlers '(my-add-space-before-sexp-insertion)
@@ -150,11 +151,14 @@
     (save-excursion
       (backward-char (length id))
       (when (or (eq (char-syntax (preceding-char)) ?w)
-                (looking-at (sp--get-closing-regexp)))
+                (and (looking-back (sp--get-closing-regexp))
+                     (not (eq (char-syntax (preceding-char)) ?'))))
         (insert " ")))))
 
 ;;; C++
-(sp-local-pair 'c++-mode "{" nil :post-handlers '((my-create-newline-and-enter-sexp "RET")))
+(sp-local-pair 'c++-mode "{" nil :post-handlers '(("||\n[i]" "RET")))
+(sp-local-pair 'c++-mode "/*" "*/" :post-handlers '((" | " "SPC")
+                                                    ("* ||\n[i]" "RET")))
 (defun my-create-newline-and-enter-sexp (&rest _ignored)
   "Open a new brace or bracket expression, with relevant newlines and indent. "
   (newline)

@@ -118,3 +118,12 @@ This is the opposite of fill-paragraph."
       (delete-char 1)))
   (when (looking-at "$")
     (delete-char 1)))
+
+(defun my-no-mode-find-file (filename)
+  (interactive (list (ido-read-file-name
+                      "File: "
+                      (or (and (eq major-mode 'dired-mode)
+                               (dired-current-directory))
+                          default-directory))))
+  (let ((auto-mode-alist nil))
+    (find-file filename)))

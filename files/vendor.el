@@ -74,11 +74,31 @@
   :config
   (progn
     (defun my-golden-ratio-inhibit ()
-      (--any? (string-match-p "\\*Ediff Control Panel" it)
-              (mapcar 'buffer-name (mapcar 'window-buffer (window-list)))))))
+      (or (--any? (string-match-p "\\*Ediff Control Panel" it)
+                  (mapcar 'buffer-name (mapcar 'window-buffer (window-list))))
+          ))))
 
 (use-package google-maps
   :commands google-maps)
+
+(use-package guide-key
+  :commands guide-key-mode
+  :config
+  (progn
+    ;; (defadvice guide-key/popup-guide-buffer (around fix-width activate)
+    ;;   (let ((window (car (get-buffer-window-list " *guide-key*")))
+    ;;         (config popwin:popup-last-config))
+    ;;     ad-do-it
+    ;;     (save-window-excursion
+    ;;       (select-window window)
+    ;;       (goto-char (point-max))
+    ;;       (let ((cl (line-number-at-pos))
+    ;;             (wh (window-height window)))
+    ;;         (message "%d %d" cl wh)
+    ;;         (when (< cl wh)
+    ;;           (window-resize window (- (- wh cl))))))
+    ;;     (setq popwin:popup-last-config config)))
+    ))
 
 (use-package free-keys
   :commands free-keys)
@@ -87,7 +107,8 @@
   :bind (("M-m" . jump-char-forward)))
 
 (use-package keyadvice
-  :commands keyadvice-mode)
+  :defer t
+  :init (progn (load "vendor/keyadvice.el/autoloads.el")))
 
 (use-package keyfreq
   :bind ("C-. C-k" . keyfreq-show)
@@ -119,6 +140,12 @@ called, percentage usage and the command."
 
 (use-package letcheck
   :commands letcheck-mode)
+
+(use-package magit
+  :defer t
+  :config
+  (progn
+    (require 'flyspell)))
 
 (use-package popwin
   :commands popwin-mode

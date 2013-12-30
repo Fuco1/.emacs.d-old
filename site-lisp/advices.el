@@ -47,6 +47,11 @@
   ad-do-it
   (golden-ratio-mode 1))
 
+(defadvice guide-key/popup-guide-buffer (around fix-golden-ration activate)
+  (golden-ratio-mode -1)
+  ad-do-it
+  (golden-ratio-mode 1))
+
 (defadvice quit-window (around fix-golden-ration activate)
   ad-do-it
   (golden-ratio))
@@ -57,3 +62,7 @@
          (wins-to-kill (mapcar (lambda (w) (cons (member (window-buffer w) cb) w)) wl)))
     ad-do-it
     (mapc (lambda (w) (when (car w) (delete-window (cdr w)))) wins-to-kill)))
+
+(defadvice shell-command (around fix-encoding activate)
+  (let ((coding-system-for-read 'cp1250))
+    ad-do-it))

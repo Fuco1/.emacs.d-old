@@ -18,3 +18,12 @@
         ("C-c C-f" 'sp-html-next-tag)
         ("C-c C-b" 'sp-html-previous-tag)))
     (add-hook 'html-mode-hook 'my-html-mode-setup)))
+
+(use-package css-mode
+  :defer t
+  :config
+  (progn
+    (defun my-css-mode-setup ()
+      (multi-web-mode 1)
+      (emmet-mode 1))
+    (add-hook 'css-mode-hook 'my-css-mode-setup)))
