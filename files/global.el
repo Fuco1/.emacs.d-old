@@ -42,8 +42,7 @@
 (defun my-buffer-face-mode-variable ()
   "Set font to a variable width (proportional) fonts in current buffer"
   (interactive)
-  (setq buffer-face-mode-face '(:family "Verdana" :height 120))
-  (buffer-face-mode))
+  (variable-pitch-mode))
 
 ;; Use monospaced font faces in current buffer
 (defun my-buffer-face-mode-fixed ()
