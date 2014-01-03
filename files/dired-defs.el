@@ -14,6 +14,7 @@
 ;; loads dired, dired-aux, dired-x
 (require 'image-dired)
 (require 'dired-aux)
+(require 'dired-x)
 (require 'dired+)
 (require 'cl-lib)
 (use-package dired-details
@@ -66,8 +67,9 @@
 
 (defun my-dired-init ()
   "Bunch of stuff to run for dired, either immediately or when it's loaded."
-  (set (make-local-variable 'coding-system-for-read) 'cp1250)
-  (set (make-local-variable 'file-name-coding-system) 'cp1250)
+  (when (eq system-type 'windows-nt)
+    (set (make-local-variable 'coding-system-for-read) 'cp1250)
+    (set (make-local-variable 'file-name-coding-system) 'cp1250))
   (set (make-local-variable 'beginning-of-defun-function) 'my-dired-beginning-of-defun)
   (set (make-local-variable 'imenu-extract-index-name-function) 'my-dired-extract-index-name)
   (set (make-local-variable 'imenu-create-index-function) 'my-dired-imenu-create-index)
