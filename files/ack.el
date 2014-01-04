@@ -1,4 +1,20 @@
+(use-package ag
+  :pre-init
+  (progn
+    (defvar f9-ag-prefix-map)
+    (define-prefix-command 'f9-ag-prefix-map)
+    (bind-key "<f9>" 'f9-ag-prefix-map))
+  :bind (("<f9> <f9>" . ag)
+         ("<f9> <f10>" . ag-regexp)
+         ("<f9> <f8>" . ag-files))
+  :config
+  (progn
+    (require 'wgrep)
+    (require 'wgrep-ag)
+    (add-hook 'ag-mode-hook 'wgrep-ag-setup)))
+
 (use-package ack-and-a-half
+  :disabled t
   :pre-init
   (progn
     (defvar f9-ack-prefix-map)
