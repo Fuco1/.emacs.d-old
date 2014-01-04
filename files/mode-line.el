@@ -82,9 +82,12 @@
 
 (setq my-abbrev-file-name-alist
       `((,abbreviated-home-dir . "~/")
-        ("^d:/Languages/" . ":L:")
+        ("^d:/languages/" . ":L:")
         ("^d:/progs/emacs-24.1/lisp/" . ":E:")
         ("^d:/download/fic/" . ":FIC:")
+        ("^/media/Data/languages/" . ":L:")
+        ("^/media/Data/progs/emacs-24.1/lisp/" . ":E:")
+        ("^/media/Data/download/fic/" . ":FIC:")
         ("~/.emacs.d/elpa/" . ":ELPA:")
         ("~/.emacs.d/" . ":ED:")))
 
