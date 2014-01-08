@@ -55,6 +55,7 @@
             (let ((org-link-frame-setup (acons 'file 'find-file org-link-frame-setup)))
               (org-open-at-point '(4)))))))
     (bind-key "C-c C-o" 'my-org-open-at-point org-mode-map)
+    (bind-key "C-c C-=" 'org-open-at-point org-mode-map)
 
     (defun my-goto-current-clocked-task ()
       (interactive)
@@ -131,6 +132,14 @@ This usually makes new item indented one level deeper."
                       (buffer-substring-no-properties :beg :end)))))
         (delete-region b e)
         (insert (format "[[%s][%s]]" link desc))))
+
+    (defun my-org-make-numbered-list (beg end)
+      (interactive "r")
+      (string-rectangle beg end "- ")
+      (beginning-of-line)
+      (org-call-with-arg 'org-cycle-list-bullet 'previous)
+      (org-call-with-arg 'org-cycle-list-bullet 'previous))
+    (bind-key "C-c 1" 'my-org-make-numbered-list org-mode-map)
 
     (load "files/org-clock")
     (load "files/org-project")
@@ -337,11 +346,7 @@ This usually makes new item indented one level deeper."
                                 (org-agenda-skip-function 'bh/skip-stuck-projects)
                                 (org-tags-match-list-sublevels nil)
                                 (org-agenda-todo-ignore-scheduled 'future)
-                                (org-agenda-todo-ignore-deadlines 'future)))
-                    (tags "-REFILE/"
-                          ((org-agenda-overriding-header "Tasks to Archive")
-                           (org-agenda-skip-function 'bh/skip-non-archivable-tasks)
-                           (org-tags-match-list-sublevels nil))))
+                                (org-agenda-todo-ignore-deadlines 'future))))
                    nil)
                   ("r" "Tasks to Refile" tags "REFILE"
                    ((org-agenda-overriding-header "Tasks to Refile")
@@ -380,14 +385,63 @@ This usually makes new item indented one level deeper."
                     (org-tags-match-list-sublevels nil))))))))
 
 
-(defun my-org-add-drill-entry (header1 header2 depth)
-  (insert)
-  )
-
-(defun my-org-add-drill-entry-german ()
+(defun my-org-add-drill-entry ()
   (interactive)
-  (my-org-add-drill-entry "German" "Translation" 3))
+  (insert
+   (format
+    "* Word :drill:
+    :PROPERTIES:
+    :DRILL_CARD_TYPE: twosidednocloze
+    :END:
+** %s
 
+** English
+
+** Examples
+
+** Notes
+
+"
+    my-org-drill-language))
+  (re-search-backward ":PROPERTIES:" nil t)
+  (org-cycle)
+  (re-search-forward ":END:" nil t)
+  (forward-line 2))
+
+(defun my-format-russian-verb ()
+  (interactive)
+  (beginning-of-line)
+  (forward-word)
+  (kill-sexp)
+  (delete-char 1)
+  (save-excursion (insert " "))
+  (transpose-words 1)
+  (backward-word 2)
+  (insert "- ")
+  (forward-word)
+  (insert ":")
+  (forward-word)
+  (newline)
+  (delete-char 2)
+  (insert "- ")
+  (forward-char 4)
+  (kill-word 1)
+  (insert ":")
+  (end-of-line)
+  (delete-char -1))
+
+(defun my-format-russian-meaning ()
+  (interactive)
+  (delete-char -1)
+  (outline-previous-visible-heading 1)
+  (forward-line)
+  (delete-char 1)
+  (let ((beg (point))
+        (end (progn
+               (outline-next-visible-heading 1)
+               (forward-line -1)
+               (point))))
+    (my-org-make-numbered-list beg end)))
 
 (defun my-org-drill-fulltext (word)
   (interactive "sWord: ")
@@ -405,3 +459,13 @@ This usually makes new item indented one level deeper."
   (org-narrow-to-subtree)
   (org-show-subtree)
   (org-cycle-hide-drawers t))
+
+(defun my-org-status ()
+  (cond
+   ((not (marker-buffer org-clock-marker))
+    "<fc=#d3d7cf>No active task</fc>")
+   (t
+    (let* ((status (substring-no-properties org-mode-line-string 1
+                                            (1- (length org-mode-line-string))))
+           (split-status (split-string status " (")))
+      (concat "<fc=#8ae234>" (car split-status) "</fc> (" (cadr split-status))))))
