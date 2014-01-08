@@ -210,7 +210,7 @@ move the current line down and yank"
 
 (defun my-back-to-indentation ()
   (if visual-line-mode
-      (cl-flet ((beginning-of-line (arg) (beginning-of-visual-line arg)))
+      (flet ((beginning-of-line (arg) (beginning-of-visual-line arg)))
         (back-to-indentation))
     (back-to-indentation)))
 
@@ -220,7 +220,7 @@ there, jump to the beginning of current line.  If visual mode is
 enabled, move according to the visual lines."
   (interactive "p")
   (cond
-   ((and (functionp'org-table-p)
+   ((and (functionp 'org-table-p)
          (org-table-p))
     (let ((eob (save-excursion
                  (re-search-backward "|")
