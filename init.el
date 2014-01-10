@@ -55,6 +55,7 @@
 (load "site-lisp/emacs-lisp-mode")
 (load "site-lisp/macros")
 (load "site-lisp/vendor")
+(load "site-lisp/redef")
 
 ;; load keys
 (load "files/keys")
