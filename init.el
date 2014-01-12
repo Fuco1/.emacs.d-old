@@ -96,9 +96,6 @@
 ;; Reload theme -- hackish
 (load "~/.emacs.d/themes/my-tango-dark-theme")
 
-;; autoopen files
-(find-file "~/.emacs.d/init.el")
-
 ;;; post init.
 (when window-system
   (let ((elapsed (float-time (time-subtract (current-time)
