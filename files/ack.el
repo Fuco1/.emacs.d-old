@@ -6,7 +6,9 @@
     (bind-key "<f9>" 'f9-ag-prefix-map))
   :bind (("<f9> <f9>" . ag)
          ("<f9> <f10>" . ag-regexp)
-         ("<f9> <f8>" . ag-files))
+         ("<f9> <f8>" . ag-files)
+         ("M-<f2>" . ag-project-dired)
+         ("C-<f2>" . ag-dired))
   :config
   (progn
     (require 'wgrep)
