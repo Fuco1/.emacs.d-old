@@ -19,3 +19,5 @@
   '(diminish 'skeleton-complete-mode))
 (eval-after-load "golden-ratio"
   '(diminish 'golden-ratio-mode))
+(eval-after-load "guide-key"
+  '(diminish 'guide-key-mode))
