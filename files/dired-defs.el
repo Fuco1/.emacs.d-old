@@ -22,6 +22,14 @@
 (use-package w32-browser
   :commands dired-w32-browser)
 
+(defconst my-dired-media-files-extensions '("mp3" "mp4" "MP3" "MP4" "avi" "mpg" "flv" "ogg")
+  "Media file extensions that should launch in VLC.
+
+Also used for highlighting.")
+
+(add-to-list 'dired-guess-shell-alist-user (list (regexp-opt my-dired-media-files-extensions)
+                                                 "vlc"))
+
 ;;;_. Key bindings & hooks
 (defun my-image-dired-thumbnail-mode-init ()
   (bind-key "b" 'image-dired-backward-image image-dired-thumbnail-mode-map)
@@ -465,7 +473,7 @@ to chose from."
 (defmacro my-diredp-hilight-file (face-name color extensions)
   (let ((regexp (concat
                  "^[^!].[^d].*[0-9][ ]\\(.*\\."
-                 (regexp-opt extensions)
+                 (regexp-opt (if (listp extensions) extensions (symbol-value extensions)))
                  "\\)$")))
     `(progn
        (defface ,face-name '((t (:foreground ,color))) "My diredp rainbow face" :group 'Dired-Plus)
@@ -474,15 +482,19 @@ to chose from."
                  '(dired-mode)))))
 
 (my-diredp-hilight-file my-diredp-html-face "#4e9a06" ("htm" "html" "xhtml"))
-(my-diredp-hilight-file my-diredp-document-face "#fce94f" ("doc" "docx" "odt" "pdb" "pdf" "ps" "rtf"))
 (my-diredp-hilight-file my-diredp-xml-face "DarkGreen" ("xml" "xsd" "xsl" "xslt" "wsdl"))
+
+(my-diredp-hilight-file my-diredp-document-face "#fce94f" ("doc" "docx" "odt" "pdb" "pdf" "ps" "rtf"))
+(my-diredp-hilight-file my-diredp-media-face "#ce5c00" my-dired-media-files-extensions)
+(my-diredp-hilight-file my-diredp-image-face "#ff4b4b" ("jpg" "png" "jpeg" "gif"))
+
 (my-diredp-hilight-file my-diredp-log-face "#c17d11" ("log"))
+(my-diredp-hilight-file my-diredp-sourcefile-face "#fcaf3e" ("py" "c" "cc" "h" "java" "pl" "rb"))
+
+(my-diredp-hilight-file my-diredp-executable-face "#8cc4ff" ("exe" "msi"))
 (my-diredp-hilight-file my-diredp-compressed-face "#ad7fa8" ("zip" "bz2" "tgz" "txz" "gz" "xz" "z" "Z" "jar" "war" "ear" "rar" "sar" "xpi" "apk" "xz" "tar"))
 (my-diredp-hilight-file my-diredp-packaged-face "#e6a8df" ("deb" "rpm"))
-(my-diredp-hilight-file my-diredp-encrypted-face "#ce5c00" ("gpg" "pgp"))
-(my-diredp-hilight-file my-diredp-image-face "#ff4b4b" ("jpg" "png" "jpeg" "gif"))
-(my-diredp-hilight-file my-diredp-sourcefile-face "#fcaf3e" ("py" "c" "cc" "h" "java" "pl"))
-(my-diredp-hilight-file my-diredp-executable-face "#8cc4ff" ("exe" "msi"))
+(my-diredp-hilight-file my-diredp-encrypted-face "LightBlue" ("gpg" "pgp"))
 
 (my-diredp-rainbow my-diredp-broken-link-face (:inherit dired-warning :italic t) "\\(^[!].l.*$\\)")
 
