@@ -119,6 +119,28 @@ Also used for highlighting.")
   (visual-line-mode -1)
   (toggle-truncate-lines 1))
 (add-hook 'dired-mode-hook 'my-dired-init)
+(add-hook 'dired-after-readin-hook 'my-format-available-space)
+
+(defun my-format-available-space ()
+  (save-excursion
+    (goto-char (point-min))
+    (forward-line)
+    (when (search-forward "directory" (line-end-position) t)
+      (forward-char)
+      (let* ((avail (word-at-point))
+             (avail-hr (s-trim (ls-lisp-format-file-size (* 1024 (string-to-int avail)) t 1)))
+             (inhibit-read-only t)
+             (kill-ring kill-ring))
+        (kill-word 1)
+        (insert avail-hr)))
+    (when (search-forward "available" (line-end-position) t)
+      (forward-char)
+      (let* ((avail (word-at-point))
+             (avail-hr (s-trim (ls-lisp-format-file-size (* 1024 (string-to-int avail)) t 1)))
+             (inhibit-read-only t)
+             (kill-ring kill-ring))
+        (kill-word 1)
+        (insert avail-hr)))))
 
 (defun my-dired-filter-by-regexp (regexp)
   (interactive "sRegexp: ")
@@ -278,13 +300,32 @@ Interactive use only useful if `image-dired-track-movement' is nil."
 ;; these functions depend on the dired plus package
 (defun dired-virtual-revert (&optional _arg _noconfirm)
   "Enable revert for virtual direds."
-  (let ((m (dired-file-name-at-point)))
+  (let ((m (dired-file-name-at-point))
+        (buffer-modified (buffer-modified-p)))
     (goto-char 1)
     (dired-next-subdir 1)
     (dired-do-redisplay nil t)
     (while (dired-next-subdir 1 t)
       (dired-do-redisplay nil t))
     (when m (dired-goto-file m))
+    (set-buffer-modified-p buffer-modified)))
+
+(defun dired-virtual-save-buffer ()
+  (let ((subdirs (nreverse (mapcar 'car dired-subdir-alist)))
+        (title (buffer-name))
+        (file (buffer-file-name)))
+    (with-temp-buffer
+      (--map (insert "  " it ":\n\n") subdirs)
+      (goto-char (point-min))
+      (forward-line)
+      (insert "  " title "\n")
+      (write-region (point-min) (point-max) (file-truename file)))
+    (set-buffer-modified-p nil)
+    t))
+
+(defadvice dired-maybe-insert-subdir (around fix-virtual-dired activate)
+  ad-do-it
+  (when (bound-and-true-p my-virtual-dired-p)
     (set-buffer-modified-p t)))
 
 (defun my-dired-ido-find-file ()
@@ -354,14 +395,17 @@ the subdirectory listing."
 (require 'ls-lisp)
 
 ;; redefine this function, to fix the formatting of file sizes in dired mode
-(defun ls-lisp-format-file-size (file-size human-readable)
+(defun ls-lisp-format-file-size (file-size &optional human-readable level)
+  (setq level (or level 1000))
   (if (or (not human-readable)
           (< file-size 1024))
       (format (if (floatp file-size) " %11.0f" " %11d") file-size)
     (do ((file-size (/ file-size 1024.0) (/ file-size 1024.0))
          ;; kilo, mega, giga, tera, peta, exa
-         (post-fixes (list "k" "M" "G" "T" "P" "E") (cdr post-fixes)))
-        ((< file-size 1024) (format " %10.0f%s"  file-size (car post-fixes))))))
+         (post-fixes (list "k" "M" "G" "T" "P" "E") (cdr post-fixes))
+         (l level (1- l)))
+        ((or (= 0 l)
+             (< file-size 1024)) (format " %10.0f%s"  file-size (car post-fixes))))))
 
 (defvar dired-sort-modes-list
   '(("size" "S" "")
@@ -696,13 +740,27 @@ to chose from."
 (defun my-dired-find-file ()
   "In Dired, visit the file or directory named on this line.
 
-Like `dired-file-file' but handles archives via avfs."
+If point is on a file, behaves like `dired-file-file' but handles
+archives via avfs.
+
+If point is on a directory header, open a new dired for the
+directory under point."
   (interactive)
-  (let ((file (dired-get-file-for-visit))
+  (let ((file (condition-case nil
+                  (dired-get-file-for-visit)
+                (error "")))
         (find-file-run-dired t))
-    (if (my-avfs-archive-p file)
-        (my-open-avfs file)
-      (find-file file))))
+    (cond
+     ((my-avfs-archive-p file)
+      (my-open-avfs file))
+     ((dired-get-subdir)
+      (-when-let (end (save-excursion (re-search-forward "[/:]" (line-end-position) t)))
+        (let ((path (buffer-substring-no-properties
+                     (+ 2 (line-beginning-position))
+                     (1- end))))
+          (find-file path))))
+     (t
+      (find-file file)))))
 (define-key dired-mode-map [remap dired-find-file] 'my-dired-find-file)
 
 (defadvice find-file-noselect (before fix-avfs-arguments activate)

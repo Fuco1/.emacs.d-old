@@ -26,7 +26,7 @@
                          ("melpa" . "http://melpa.milkbox.net/packages/")
                          ("org" . "http://orgmode.org/elpa/")))
 
-(with-elapsed-timer "Initializing packages"
+(use-package-with-elapsed-timer "Initializing packages"
   (package-initialize)
   (load "~/.emacs.d/autoinstall")
 
@@ -45,7 +45,7 @@
 (autoload 'zap-up-to-char "misc"
   "Kill up to, but not including ARGth occurrence of CHAR." t)
 
-(with-elapsed-timer "Loading site lisp"
+(use-package-with-elapsed-timer "Loading site lisp"
   ;; load site lisp
   (load "site-lisp/advices")
   (load "site-lisp/defuns-buffer")
@@ -61,7 +61,7 @@
   (load "files/keys"))
 
 ;; load settings
-(with-elapsed-timer "Loading settings"
+(use-package-with-elapsed-timer "Loading settings"
   (load "files/global")
   (load "files/layouts")
   (load "files/mode-line")
@@ -69,7 +69,7 @@
   (load "files/windows"))
 
 ;; load config files
-(with-elapsed-timer "Loading vendor"
+(use-package-with-elapsed-timer "Loading vendor"
   (load "files/vendor"))
 
 ;; diminish useless modeline clutter

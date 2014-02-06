@@ -363,8 +363,11 @@ inserted character."
     `(progn
        (defun ,fname ()
          (interactive)
-         (goto-char (point-min))
-         ,@forms)
+         (let ((p (point)))
+           (goto-char (point-min))
+           ,@forms
+           (when (= p (point))
+             (goto-char (point-min)))))
        (add-hook ',mode-hook (lambda () (define-key ,mode-map [remap beginning-of-buffer] ',fname))))))
 
 (defmacro my-special-buffer-jump-to-bottom (mode &rest forms)
@@ -375,8 +378,11 @@ inserted character."
     `(progn
        (defun ,fname ()
          (interactive)
-         (goto-char (point-max))
-         ,@forms)
+         (let ((p (point)))
+           (goto-char (point-max))
+           ,@forms
+           (when (= p (point))
+             (goto-char (point-max)))))
        (add-hook ',mode-hook (lambda () (define-key ,mode-map [remap end-of-buffer] ',fname))))))
 
 (my-special-buffer-back-to-top dired

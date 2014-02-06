@@ -8,7 +8,8 @@
         ("C-M-;" 'clippy-describe-function)
         ("C-. ." 'my-describe-thing-in-buffer)
         ("C-x C-d l" 'my-extract-to-let)
-        ("C-x C-d m" 'my-merge-let-forms))
+        ("C-x C-d m" 'my-merge-let-forms)
+        ("C-x C-d c" 'my-lisp-condify-if))
 
       (set-input-method "english-prog")
       (eldoc-mode 1)
@@ -69,14 +70,15 @@ function on `my-emacs-lisp-open-line-list'."
       (goto-char beg)
       (insert "("))
 
-    (defun my-goto-dominating-let ()
-      "Find dominating let form"
+    (defun my-goto-dominating-form (what)
+      "Find dominating form starting with WHAT."
+      (unless (listp what) (setq what (list what)))
       (while (and (> (car (syntax-ppss)) 0)
                   (not (ignore-errors
                          (backward-up-list)
                          (save-excursion
                            (down-list)
-                           (memq (symbol-at-point) '(let let*))))))))
+                           (memq (symbol-at-point) what)))))))
 
     (defun my-extract-to-let (name &optional arg)
       "Extract the form at point into a variable called NAME placed
@@ -91,7 +93,7 @@ inner let form point is inside of."
         (save-excursion
           (cond
            (raw
-            (my-goto-dominating-let)
+            (my-goto-dominating-form '(let let*))
             (progn
               (down-list)
               (forward-sexp 2)
@@ -120,13 +122,13 @@ inner let form point is inside of."
       "Merge the most inner let form into the next outer one."
       (interactive)
       (save-excursion
-        (my-goto-dominating-let)
+        (my-goto-dominating-form '(let let*))
         (down-list)
         (forward-sexp 2)
         (backward-sexp)
         (let ((var-list (sp-get (sp--next-thing-selection) (delete-and-extract-region :beg-prf :end))))
           (sp-splice-sexp-killing-backward 1)
-          (my-goto-dominating-let)
+          (my-goto-dominating-form '(let let*))
           (down-list)
           (forward-sexp 2)
           (backward-down-list)
@@ -134,4 +136,35 @@ inner let form point is inside of."
           (backward-down-list)
           (sp-unwrap-sexp)
           (backward-up-list 2)
-          (indent-sexp))))))
+          (indent-sexp))))
+
+    (defun my-next-sexp ()
+      (ignore-errors
+        (forward-sexp 2)
+        (backward-sexp)))
+
+    (defun my-lisp-condify-if ()
+      (interactive)
+      (save-excursion
+        (my-goto-dominating-form 'if)
+        (let ((p (point)))
+          (down-list)
+          (my-next-sexp)
+          (let ((condition (sexp-at-point))
+                (body1 (progn
+                         (my-next-sexp)
+                         (sexp-at-point)))
+                (body2 (progn
+                         (my-next-sexp)
+                         (sexp-at-point))))
+            (goto-char p)
+            (cl-destructuring-bind (beg . end) (bounds-of-thing-at-point 'sexp)
+              (delete-region beg end))
+            (insert
+             (format "(cond
+                   (%s
+                     %s)
+                   (t
+                     %s))" condition body1 body2))
+            (goto-char p)
+            (indent-sexp)))))))

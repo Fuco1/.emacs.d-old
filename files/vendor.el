@@ -169,13 +169,23 @@ return to regular interpretation of self-insert characters."
          ("C-x C-j" . dired-jump))
   :init
   (progn
+    (defvar my-virtual-dired-p nil
+      "Non-nil if the buffer is virtual dired.")
+
     (defun my-virtual-dired-mode ()
       (save-excursion
         (goto-char (point-min))
         (back-to-indentation)
-        (let ((ddir (thing-at-point 'filename)))
-          (virtual-dired (substring ddir 0 (1- (length ddir)))))
-        (dired-virtual-revert)))
+        (let* ((ddir (thing-at-point 'filename))
+               (dired-buffers dired-buffers))
+          (virtual-dired (substring ddir 0 (1- (length ddir))))
+          (set-buffer-modified-p nil)
+          (setq write-contents-functions 'dired-virtual-save-buffer)
+          (set (make-local-variable 'my-virtual-dired-p) t))
+        (goto-line 2)
+        (let ((buffer-name (s-trim (thing-at-point 'line))))
+          (dired-virtual-revert)
+          (rename-buffer buffer-name))))
 
     (defun my-dired-files (&optional arg)
       "Like `ido-dired'.  With prefix argument call
