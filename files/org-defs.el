@@ -16,6 +16,7 @@
          (org-cycle-hide-drawers 'all)
          (prog1 (org-drill-presentation-prompt)
            (org-drill-hide-subheadings-if 'org-drill-entry-p)))))))
+
 (defface my-org-bold
   '((t (:weight bold :inherit font-lock-variable-name-face)))
   "The face used to highlight pair overlays.")
@@ -138,23 +139,23 @@ This usually makes new item indented one level deeper."
 (define-prefix-command 'my-org-filter-map)
 (bind-key "C-c F" 'my-org-filter-map org-mode-map)
 
-;; write a macro to abstract this pattern
-(defun my-org-books-filter ()
-  (interactive)
-  (org-match-sparse-tree nil "+BOOKS"))
-(bind-key "C-c F b" 'my-org-books-filter org-mode-map)
-(defun my-org-books-no-done-filter ()
-  (interactive)
-  (org-match-sparse-tree nil "+BOOKS-TODO=\"DONE\""))
-(bind-key "C-c F B" 'my-org-books-no-done-filter org-mode-map)
-(defun my-org-mov-filter ()
-  (interactive)
-  (org-match-sparse-tree nil "+MOV"))
-(bind-key "C-c F m" 'my-org-mov-filter org-mode-map)
-(defun my-org-mov-no-done-filter ()
-  (interactive)
-  (org-match-sparse-tree nil "+MOV-TODO=\"DONE\""))
-(bind-key "C-c F M" 'my-org-mov-no-done-filter org-mode-map)
+(defmacro my-org-custom-filter (tag key)
+  (let ((filter-name (intern (concat "my-org-" (symbol-name tag) "-filter")))
+        (filter-name-no-done (intern (concat "my-org-" (symbol-name tag) "-no-done-filter")))
+        (filter-string (concat "+" (upcase (symbol-name tag))))
+        (filter-string-no-done (concat "+" (upcase (symbol-name tag)) "-TODO=\"DONE\"")))
+    `(progn
+      (defun ,filter-name ()
+        (interactive)
+        (org-match-sparse-tree nil ,filter-string))
+      (defun ,filter-name-no-done ()
+        (interactive)
+        (org-match-sparse-tree nil ,filter-string-no-done))
+      (bind-key ,(concat "C-c F " key) ',filter-name org-mode-map)
+      (bind-key ,(concat "C-c F " (upcase key)) ',filter-name-no-done org-mode-map))))
+
+(my-org-custom-filter books "b")
+(my-org-custom-filter mov "m")
 
 (load "files/org-clock")
 (load "files/org-project")
