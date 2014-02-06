@@ -93,7 +93,8 @@
   (sp-local-pair "*" "*" :unless '(sp-point-after-word-p sp-point-at-bol-p) :wrap "C-*" :skip-match 'sp--org-skip-asterisk)
   (sp-local-pair "_" "_" :unless '(sp-point-after-word-p) :wrap "C-_" :skip-match 'sp--org-skip-markup)
   (sp-local-pair "/" "/" :unless '(sp-point-after-word-p) :skip-match 'sp--org-skip-markup)
-  (sp-local-pair "~" "~" :unless '(sp-point-after-word-p) :skip-match 'sp--org-skip-code))
+  (sp-local-pair "~" "~" :unless '(sp-point-after-word-p) :skip-match 'sp--org-skip-code)
+  (sp-local-pair "«" "»"))
 
 (defun sp--org-skip-markup (ms mb me)
   (save-excursion
@@ -129,14 +130,9 @@
   (sp-local-pair "(" nil
                  :wrap "C-("
                  :pre-handlers '(my-add-space-before-sexp-insertion)
-                 :post-handlers '(my-add-space-after-sexp-insertion))
-  (sp-local-pair "`" nil
-                 :skip-match (lambda (ms mb me)
-                               (cond
-                                ((equal ms "'")
-                                 (or (sp--org-skip-markup ms mb me)
-                                     (not (sp-point-in-string-or-comment))))
-                                (t (not (sp-point-in-string-or-comment)))))))
+                 :post-handlers '(my-add-space-after-sexp-insertion)))
+
+
 
 (defun my-add-space-after-sexp-insertion (id action _context)
   (when (eq action 'insert)
@@ -159,12 +155,6 @@
 (sp-local-pair 'c++-mode "{" nil :post-handlers '(("||\n[i]" "RET")))
 (sp-local-pair 'c++-mode "/*" "*/" :post-handlers '((" | " "SPC")
                                                     ("* ||\n[i]" "RET")))
-(defun my-create-newline-and-enter-sexp (&rest _ignored)
-  "Open a new brace or bracket expression, with relevant newlines and indent. "
-  (newline)
-  (indent-according-to-mode)
-  (forward-line -1)
-  (indent-according-to-mode))
 
 ;;; haskell mode
 (sp-with-modes '(haskell-mode)

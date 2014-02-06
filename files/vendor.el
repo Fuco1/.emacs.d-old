@@ -87,8 +87,110 @@
     (require 'wgrep-ag)
     (add-hook 'ag-mode-hook 'wgrep-ag-setup)))
 
+(use-package allout
+  :commands allout-mode
+  :config
+  (progn
+    (defun my-allout-init ()
+      (unbind-key "M-k" allout-mode-map))
+
+    (add-hook 'allout-mode-hook 'my-allout-init)
+    ;; redefine this to make it work with smartparens
+    (defun allout-pre-command-business ()
+      "Outline `pre-command-hook' function for outline buffers.
+
+Among other things, implements special behavior when the cursor is on the
+topic bullet character.
+
+When the cursor is on the bullet character, self-insert
+characters are reinterpreted as the corresponding
+control-character in the `allout-mode-map-value'.  The
+`allout-mode' `post-command-hook' insures that the cursor which
+has moved as a result of such reinterpretation is positioned on
+the bullet character of the destination topic.
+
+The upshot is that you can get easy, single (ie, unmodified) key
+outline maneuvering operations by positioning the cursor on the bullet
+char.  When in this mode you can use regular cursor-positioning
+command/keystrokes to relocate the cursor off of a bullet character to
+return to regular interpretation of self-insert characters."
+
+      (if (not (allout-mode-p))
+          nil
+        (setq allout-command-counter (1+ allout-command-counter))
+        (setq allout-this-command-hid-text nil)
+        ;; Do hot-spot navigation.
+        (if (and (memq this-command '(sp--self-insert-command self-insert-command))
+                 (eq (point)(allout-current-bullet-pos)))
+            (allout-hotspot-key-handler))))))
+
+(use-package auto-complete-config
+  :commands auto-complete-mode
+  :config
+  (progn
+    (ac-config-default)
+    (setq-default ac-sources
+                  (append '(
+                            ac-source-filename
+                            ac-source-yasnippet
+                            )
+                          ac-sources))
+
+    (setq ac-use-menu-map t)
+    (bind-key "RET" 'popup-isearch-done popup-isearch-keymap)))
+
+(use-package calendar
+  :defer t
+  :config
+  (progn
+    (defadvice calendar-exit (around close-window activate)
+      (let* ((wl (window-list))
+             (cb (calendar-buffer-list))
+             (wins-to-kill (mapcar (lambda (w) (cons (member (window-buffer w) cb) w)) wl)))
+        ad-do-it
+        (mapc (lambda (w) (when (car w) (delete-window (cdr w)))) wins-to-kill)))))
+
 (use-package clippy
   :commands clippy-describe-function)
+
+(use-package css-mode
+  :defer t
+  :config
+  (progn
+    (defun my-css-mode-setup ()
+      (multi-web-mode 1)
+      (emmet-mode 1))
+    (add-hook 'css-mode-hook 'my-css-mode-setup)))
+
+;; see commentary in dired-defs.el
+(use-package dired
+  :mode ("\\.wdired\\'" . my-virtual-dired-mode)
+  :bind (("C-x d"  . my-dired-files)
+         ("C-x C-j" . dired-jump))
+  :init
+  (progn
+    (defun my-virtual-dired-mode ()
+      (save-excursion
+        (goto-char (point-min))
+        (back-to-indentation)
+        (let ((ddir (thing-at-point 'filename)))
+          (virtual-dired (substring ddir 0 (1- (length ddir)))))
+        (dired-virtual-revert)))
+
+    (defun my-dired-files (&optional arg)
+      "Like `ido-dired'.  With prefix argument call
+`diredp-dired-files' with negative argument."
+      (interactive "P")
+      (if arg
+          (progn
+            (when (not (featurep 'icicles))
+              (require 'icicles))
+            (setq current-prefix-arg -1)
+            (call-interactively 'diredp-dired-files))
+        (ido-dired))))
+  :config
+  (progn
+    (load "files/dired-defs")))
 
 (use-package ediff
   :pre-init
@@ -154,43 +256,117 @@
   (progn
     (add-hook 'dired-mode-hook (lambda () (bind-key "M-o" 'elwm-activate-window dired-mode-map)))))
 
+(use-package emmet-mode
+  :defer t
+  :diminish emmet-mode)
+
+(use-package erc
+  :defer t
+  :config
+  (progn
+    (erc-track-mode 1)
+    (erc-track-minor-mode 1)))
+
+(use-package eshell
+  :commands eshell
+  :config
+  (progn
+    (load "files/eshell-defs")))
+
 (use-package expand-region
   :bind ("s-'" . er/expand-region))
 
 (use-package golden-ratio
+  :diminish golden-ratio-mode
   :config
   (progn
     (defun my-golden-ratio-inhibit ()
       (or (--any? (string-match-p "\\*Ediff Control Panel" it)
-                  (mapcar 'buffer-name (mapcar 'window-buffer (window-list))))
-          ))))
+                  (mapcar 'buffer-name (mapcar 'window-buffer (window-list))))))))
 
 (use-package google-maps
   :commands google-maps)
 
 (use-package guide-key
-  :commands guide-key-mode
-  :init
-  (progn (guide-key-mode 1))
+  :diminish guide-key-mode
   :config
   (progn
-    ;; (defadvice guide-key/popup-guide-buffer (around fix-width activate)
-    ;;   (let ((window (car (get-buffer-window-list " *guide-key*")))
-    ;;         (config popwin:popup-last-config))
-    ;;     ad-do-it
-    ;;     (save-window-excursion
-    ;;       (select-window window)
-    ;;       (goto-char (point-max))
-    ;;       (let ((cl (line-number-at-pos))
-    ;;             (wh (window-height window)))
-    ;;         (message "%d %d" cl wh)
-    ;;         (when (< cl wh)
-    ;;           (window-resize window (- (- wh cl))))))
-    ;;     (setq popwin:popup-last-config config)))
-    ))
+    (defadvice guide-key/popup-guide-buffer (around fix-golden-ration activate)
+      (golden-ratio-mode -1)
+      ad-do-it
+      (golden-ratio-mode 1))))
 
 (use-package free-keys
   :commands free-keys)
+
+(use-package haskell-mode
+  :mode ("\\.hs\\'" . haskell-mode)
+  :config
+  (progn
+    (require 'haskell-indentation)
+    (bind-key "C-c h" 'haskell-hoogle haskell-mode-map)
+    (bind-key "C-c C-r" 'my-haskell-reload haskell-mode-map)
+    (bind-key "<backspace>" 'sp-backward-delete-char haskell-indentation-mode-map)
+
+    (defun my-haskell-reload (&optional reload)
+      (interactive)
+      (inferior-haskell-load-file reload)
+      (other-window 1))
+
+    (defun my-hs-end-of-defun ()
+      (forward-char)
+      (re-search-forward "^[[:alpha:]]")
+      (backward-char))
+
+    (defun my-hs-beg-of-defun ()
+      (re-search-backward "^[[:alpha:]]"))
+
+    (defun my-haskell-init ()
+      (set (make-local-variable 'end-of-defun-function) 'my-hs-end-of-defun)
+      (set (make-local-variable 'beginning-of-defun-function) 'my-hs-beg-of-defun))
+
+    (add-hook 'haskell-mode-hook 'my-haskell-init)))
+
+(use-package ibuffer
+  :bind ("<f1> <f1>" . ibuffer)
+  :init
+  (progn
+    ;; startup function
+    (defun customize-ibuffer-mode ()
+      "Startup function."
+      (ibuffer-switch-to-saved-filter-groups "default")
+      (add-to-list 'ibuffer-hidden-filter-groups "Tramp")
+      (add-to-list 'ibuffer-hidden-filter-groups "emacs-elpa")
+      (visual-line-mode -1)
+      (toggle-truncate-lines 1))
+    (add-hook 'ibuffer-mode-hook 'customize-ibuffer-mode))
+  :config
+  (progn
+    (load "files/ibuffer-defs")))
+
+(use-package ido
+  :defer t
+  :bind (("M-." . ido-goto-symbol)) ;; was Find tag
+  :config
+  (progn
+    (load "files/ido-defs")))
+
+(use-package "isearch"
+  :bind (("C-s" . isearch-forward-regexp)
+         ("C-r" . isearch-backward-regexp))
+  :config
+  (progn
+    (load "files/isearch-defs")))
+
+(use-package ispell
+  :bind (("<f10>" . ispell-word)
+         ("C-<f10>" . flyspell-mode))
+  :config
+  (progn
+    (defadvice ispell-word (around fix-golden-ration activate)
+      (golden-ratio-mode -1)
+      ad-do-it
+      (golden-ratio-mode 1))))
 
 (use-package jump-char
   :bind (("M-m" . jump-char-forward)))
@@ -236,6 +412,32 @@ called, percentage usage and the command."
   (progn
     (require 'flyspell)))
 
+(use-package markdown-mode
+  :mode ("\\.md$" . gfm-mode)
+  :config
+  (progn
+    (load "files/markdown-defs")))
+
+(use-package multi-web-mode
+  :defer t
+  :config
+  (progn
+    (setq mweb-tags '((php-mode "<\\?php\\|<\\? \\|<\\?=" "\\?>")
+                      (javascript-mode "<script +\\(type=\"text/javascript\"\\|language=\"javascript\"\\)[^>]*>" "</script>")
+                      (css-mode "<style +type=\"text/css\"[^>]*>" "</style>")))
+    (setq mweb-filename-extensions '("php" "htm" "html" "ctp" "phtml" "php4" "php5"))))
+
+(use-package org
+  :mode ("\\.org\\'" . org-mode)
+  ;; The following lines are always needed.  Choose your own keys.
+  :bind  (("C-c l" . org-store-link)
+          ("<f12>" . org-agenda)
+          ("C-c C-x C-o" . org-clock-out)
+          ("C-c C-x <C-i-key>" . org-clock-in))
+  :config
+  (progn
+    (load "files/org-defs.el")))
+
 (use-package popwin
   :commands popwin-mode
   :config
@@ -244,6 +446,7 @@ called, percentage usage and the command."
 
 (use-package projectile
   :defer t
+  :diminish projectile-mode
   :config
   (progn
     (defun projectile-project-root ()
@@ -280,11 +483,39 @@ The current directory is assumed to be the project's root otherwise."
                     (concat "-path \"*/" x "\"")) projectile-globally-ignored-directories " -not ")
        " -type f -print0"))))
 
+(use-package recentf
+  :bind (("C-c r f" . recentf-open-files)
+         ("C-x C-r" . recentf-open-files)
+         ("C-c r c" . recentf-cleanup))
+  :config
+  (progn
+    (load "files/recentf-defs")))
+
 (use-package revbufs
   :bind ("C-<f5>" . revbufs))
 
+(use-package sgml-mode
+  :defer t
+  :config
+  (progn
+    (defadvice sgml-delete-tag (after reindent-buffer activate)
+      (cleanup-buffer))
+
+    (defun my-html-mode-setup ()
+      (multi-web-mode 1)
+      (emmet-mode 1)
+      (with-map-bind-keys html-mode-map
+        ("C-c C-f" 'sp-html-next-tag)
+        ("C-c C-b" 'sp-html-previous-tag)))
+    (add-hook 'html-mode-hook 'my-html-mode-setup)))
+
+(use-package skeleton-complete
+  :defer t
+  :diminish skeleton-complete-mode)
+
 (use-package smartparens
   :defer t
+  :diminish smartparens-mode
   :init
   (progn
     (load "~/.emacs.d/files/smartparens")))
@@ -321,13 +552,55 @@ The current directory is assumed to be the project's root otherwise."
       (define-key ido-completion-map (kbd "C-a") 'move-beginning-of-line)
       (define-key ido-completion-map (kbd "=") "-"))))
 
+(use-package sunrise-commander
+  :defer t
+  :config
+  (progn
+    (defadvice sr-tabs-add (after remove-sunrise-from-name activate)
+      (sr-tabs-rename (replace-regexp-in-string "(Sunrise)" "" (buffer-name))))))
+
+(use-package tex-site
+  :load-path "site-lisp/auctex/"
+  :mode ("\\.tex\\'" . TeX-latex-mode)
+  :commands (TeX-latex-mode
+             TeX-mode
+             tex-mode
+             LaTeX-mode
+             latex-mode)
+  :config
+  (progn
+    (load "files/latex-defs")))
+
+(use-package tramp
+  :defer t
+  :config
+  (progn
+    ;; (setq tramp-default-method "plinkx")
+    ;; (setq tramp-terminal-type "dumb")
+
+    ;; in file `tramp-sh.el' it is necessary to add
+    ;; (tramp-password-end-of-line "xy") ;see docstring for "xy"
+    ;; to "plinkx" method.
+    ))
+
+(use-package two-column
+  :defer t
+  :config
+  (progn
+    (defadvice 2C-dissociate (after close-window-after-disconnect activate)
+      (delete-window))))
+
+(use-package undo-tree
+  :bind (("C-x u" . undo-tree-visualize))
+  :diminish undo-tree-mode)
+
 (use-package wc-mode
   :commands wc-mode)
 
 (use-package wiktionary-translate
   :bind ("<insert>" . wd-show-translation))
 
-(use-package "world-time-mode"
+(use-package world-time-mode
   :bind ("C-. t" . world-time-list))
 
 (use-package yasnippet

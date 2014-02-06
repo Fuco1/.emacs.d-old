@@ -1,10 +1,10 @@
 ;; set frame format
 (setq-default
  frame-title-format
- '("%b  ;  %*"
+ '("%b ; %*"
    (:eval (when (buffer-file-name)
-            (concat "  ;  "
-                    (abbreviate-file-name default-directory))))
+            (concat " ; "
+                    (my-abbreviate-file-name default-directory (buffer-name)))))
    " - Emacs"))
 
 ;; set line format

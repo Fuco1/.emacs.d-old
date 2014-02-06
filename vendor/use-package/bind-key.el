@@ -1,4 +1,4 @@
-;;; bind-key --- A simple way to manage personal keybindings
+;;; bind-key.el --- A simple way to manage personal keybindings
 
 ;; Copyright (C) 2012 John Wiegley
 
@@ -6,7 +6,7 @@
 ;; Created: 16 Jun 2012
 ;; Version: 1.0
 ;; Keywords: keys keybinding config dotemacs
-;; X-URL: https://github.com/jwiegley/bind-key
+;; URL: https://github.com/jwiegley/use-package
 
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as
@@ -80,12 +80,12 @@
 
 (define-minor-mode override-global-mode
   "A minor mode so that keymap settings override other modes."
-  t "" override-global-map)
+  t "")
 
-(add-hook 'after-init-hook
-          (function
-           (lambda ()
-             (override-global-mode 1))))
+;; the keymaps in `emulation-mode-map-alists' take precedence over
+;; `minor-mode-map-alist'
+(add-to-list 'emulation-mode-map-alists
+             `((override-global-mode . ,override-global-map)))
 
 (defvar personal-keybindings nil)
 
@@ -165,10 +165,10 @@
       (cons (string< (caar l) (caar r)) nil)))))
 
 (defun describe-personal-keybindings ()
+  "Display all the personal keybindings defined by `bind-key'."
   (interactive)
-  (with-current-buffer (get-buffer-create "*Personal Keybindings*")
-    (delete-region (point-min) (point-max))
-    (insert "Key name          Command                                 Comments
+  (with-output-to-temp-buffer "*Personal Keybindings*"
+    (princ "Key name          Command                                 Comments
 ----------------- --------------------------------------- ---------------------
 ")
     (let (last-binding)
@@ -179,12 +179,12 @@
                                (car (compare-keybindings l r))))))
 
         (if (not (eq (cdar last-binding) (cdar binding)))
-            (insert ?\n (format "\n%s\n%s\n\n"
-                                (cdar binding)
-                                (make-string 79 ?-)))
+            (princ (format "\n\n%s\n%s\n\n"
+                           (cdar binding)
+                           (make-string 79 ?-)))
           (if (and last-binding
                    (cdr (compare-keybindings last-binding binding)))
-              (insert ?\n)))
+              (princ "\n")))
 
         (let* ((key-name (caar binding))
                (at-present (lookup-key (or (symbol-value (cdar binding))
@@ -197,22 +197,24 @@
                                       (get-binding-description was-command)))
                (at-present-desc (get-binding-description at-present))
                )
-          (insert
-           (format
-            "%-18s%-40s%s\n"
-            key-name command-desc
-            (if (string= command-desc at-present-desc)
-                (if (or (null was-command)
-                        (string= command-desc was-command-desc))
-                    ""
-                  (format "(%s)" was-command-desc))
-              (format "[now: %s]" at-present)))))
+          (let ((line
+                 (format
+                  "%-18s%-40s%s\n"
+                  key-name (format "`%s\'" command-desc)
+                  (if (string= command-desc at-present-desc)
+                      (if (or (null was-command)
+                              (string= command-desc was-command-desc))
+                          ""
+                        (format "was `%s\'" was-command-desc))
+                    (format "[now: `%s\']" at-present)))))
+            (princ (if (string-match "[ \t]+\n" line)
+                       (replace-match "\n" t t line)
+                     line))))
 
-        (setq last-binding binding)))
-
-    (goto-char (point-min))
-    (display-buffer (current-buffer))))
+        (setq last-binding binding)))))
 
 (provide 'bind-key)
-
+;; Local Variables:
+;; indent-tabs-mode: nil
+;; End:
 ;;; bind-key.el ends here

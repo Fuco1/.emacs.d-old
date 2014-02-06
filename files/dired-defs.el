@@ -664,6 +664,54 @@ to chose from."
       (move-marker (process-mark proc) 1 (current-buffer)))
     (setq mode-line-process '(":%s"))))
 
+;;;_. avfs
+(defvar my-avfs-root "~/.avfs")
+(defvar my-avfs-archives '("zip" "rar" "tar"))
+(defvar my-hide-avfs-root t)
+
+(defun my-avfs-archive-filename (filename)
+  (concat my-avfs-root (file-truename filename) "#"))
+
+(defun my-avfs-archive-p (filename)
+  (let ((extensions (concat "\\." (regexp-opt my-avfs-archives) "\\'")))
+    (string-match-p extensions filename)))
+
+(defun my-open-avfs (filename)
+  (find-file (my-avfs-archive-filename filename)))
+
+(defun my-hide-avfs-root ()
+  (save-excursion
+    (when my-hide-avfs-root
+      (goto-char (point-min))
+      (when (search-forward (file-truename my-avfs-root) nil t)
+        (let ((inhibit-read-only t))
+          (put-text-property (match-beginning 0) (match-end 0) 'invisible t))))))
+
+(add-hook 'dired-after-readin-hook 'my-hide-avfs-root)
+
+(defun my-dired-open-avfs ()
+  (interactive)
+  (my-open-avfs (dired-file-name-at-point)))
+
+(defun my-dired-find-file ()
+  "In Dired, visit the file or directory named on this line.
+
+Like `dired-file-file' but handles archives via avfs."
+  (interactive)
+  (let ((file (dired-get-file-for-visit))
+        (find-file-run-dired t))
+    (if (my-avfs-archive-p file)
+        (my-open-avfs file)
+      (find-file file))))
+(define-key dired-mode-map [remap dired-find-file] 'my-dired-find-file)
+
+(defadvice find-file-noselect (before fix-avfs-arguments activate)
+  "If the target is archive that can be handled via avfs,
+automagically change the filename to the location of virtual
+directory representing this archive."
+  (when (my-avfs-archive-p (ad-get-arg 0))
+    (ad-set-arg 0 (my-avfs-archive-filename (ad-get-arg 0)))))
+
 ;;;_. Zip support
 
 (add-to-list 'dired-compress-file-suffixes '("\\.zip\\'" ".zip" "unzip"))

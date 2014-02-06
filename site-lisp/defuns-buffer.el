@@ -48,16 +48,19 @@ Warn me if I want to kill a scratch buffer."
         (kill-buffer (current-buffer)))
     (kill-buffer (current-buffer))))
 
+(defvar my-inhibit-buffer-cleanup nil)
+
 (defun cleanup-buffer-safe ()
   "Perform a bunch of safe operations on the whitespace content of a buffer.
 Does not indent buffer, because it is used for a before-save-hook, and that
 might be bad."
   (interactive)
-  (let ((inhibit-read-only t))
-    (unless (memq major-mode '(makefile-gmake-mode))
-      (untabify-buffer))
-    (delete-trailing-whitespace)
-    (set-buffer-file-coding-system 'utf-8)))
+  (unless my-inhibit-buffer-cleanup
+    (let ((inhibit-read-only t))
+      (unless (memq major-mode '(makefile-gmake-mode))
+        (untabify-buffer))
+      (delete-trailing-whitespace)
+      (set-buffer-file-coding-system 'utf-8))))
 
 (defun cleanup-buffer ()
   "Perform a bunch of operations on the whitespace content of a buffer.
@@ -66,7 +69,7 @@ Including indent-buffer, which should not be called automatically on save."
   (cleanup-buffer-safe)
   (indent-buffer))
 
-(defun my-create-directory-on-save ()
+(defun my-create-directory-on-save (&optional _)
   (when buffer-file-name
     (let ((dir (file-name-directory buffer-file-name)))
       (when (and (not (file-exists-p dir))

@@ -1,7 +1,7 @@
 ;;; Global key bindigns
 
 ;; setting the PC keyboard's various keys to
-;; Super or Hyper, for emacs running on Windows.
+;; Super or Hyper, or emacs running on Windows.
 (setq w32-pass-lwindow-to-system nil
       w32-pass-rwindow-to-system nil
       w32-pass-apps-to-system nil
@@ -52,6 +52,7 @@
 (bind-key "<f1> <f2>" (lambda () (interactive) (find-file "~/.emacs.d/init.el")))
 (bind-key "<f1> <f3>" 'view-echo-area-messages)
 (bind-key "<f1> <f4>" 'ffap)
+(bind-key "<f1> <f5>" (lambda () (interactive) (let ((default-directory "~")) (ido-find-file))))
 (bind-key "<f1> <f12>" 'my-switch-to-scratch)
 
 ;; ibuffer > list-buffers
@@ -250,6 +251,7 @@
 (bind-key "C-. i" 'ctl-dot-i-prefix-map)
 (bind-key "C-. i m" 'set-input-method)
 (bind-key "C-. i e" 'toggle-input-method)
+(bind-key "<XF86HomePage>" 'toggle-input-method)
 (bind-key "C-. i s" (lambda () (interactive) (set-input-method "slovak-prog-2")))
 (bind-key "C-. i c" (lambda () (interactive) (set-input-method "czech")))
 (bind-key "C-. i r" (lambda () (interactive) (set-input-method "russian-computer")))
@@ -312,7 +314,7 @@ inserted character."
 (bind-key "M-g RET" 'skeleton-display-abbrev)
 
 ;; input methods
-;;(bind-key "C-\\" 'toggle-input-method)
+(bind-key "C-\\" 'toggle-input-method)
 (bind-key "C-\\" 'my-cycle-language)
 (defvar my-input-method :english)
 
@@ -343,6 +345,12 @@ inserted character."
           (setq default-input-method current-input-method)
         (when new-input-method
           (customize-mark-as-set 'default-input-method))))))
+
+;; emms
+;; (bind-key "<A-XF86AudioPlay>" 'emms-pause)
+;; (require 'emms-setup)
+;; (emms-standard)
+;; (emms-default-players)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Jump to "logical" top/bottom of buffer in listing buffers

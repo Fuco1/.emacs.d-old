@@ -24,4 +24,8 @@
         ("rubinius" . "rbx -r irb/completion")
         ("yarv"     . "irb1.9 -r irb/completion")
         ("macruby"  . "macirb -r irb/completion")
-        ("pry"      . "pry")))))
+        ("pry"      . "pry"))))
+
+  (defadvice shell-command (around fix-encoding activate)
+    (let ((coding-system-for-read 'cp1250))
+      ad-do-it)))
