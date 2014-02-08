@@ -28,7 +28,13 @@
             "Narrow "))
    (-3 "%p")
    " "
-   (17 ("(%l,%c," (:eval (format "%s" (point))) ")"))
+   (17 (:eval (if (use-region-p)
+                  (format "(wc:%d,%d,%d)"
+                          (abs (- (point) (mark)))
+                          (count-words-region (point) (mark))
+                          (abs (- (line-number-at-pos (point))
+                                  (line-number-at-pos (mark)))))
+                (format "(%%l,%%c,%d)" (point)))))
 
    ;; Path to the file in buffer. If it doesn't have associated file,
    ;; display nothing.
@@ -54,20 +60,23 @@
    ;; see ~/.emacs.d/vendor/wc-mode/wc-mode.el
    (wc-mode
     (6 (" (wc:" (:eval (if (use-region-p)
-                  (format "%d,%d,%d"
-                          (abs (- (point) (mark)))
-                          (count-words-region (point) (mark))
-                          (abs (- (line-number-at-pos (point))
-                                  (line-number-at-pos (mark)))))
-                (format "%d,%d,%d"
-                        (point-max)
-                        (count-words-region (point-min) (point-max))
-                        (line-number-at-pos (point-max)))))
+                           (format "%d,%d,%d"
+                                   (abs (- (point) (mark)))
+                                   (count-words-region (point) (mark))
+                                   (abs (- (line-number-at-pos (point))
+                                           (line-number-at-pos (mark)))))
+                         (format "%d,%d,%d"
+                                 (point-max)
+                                 (count-words-region (point-min) (point-max))
+                                 (line-number-at-pos (point-max)))))
         ")")
        ))
 
    " (" mode-line-mule-info ")"
    " " global-mode-string
+
+   ;; hack to make the modeline refresh after each change in buffer
+   (:propertize "%l" face (:foreground "black"))
    ))
 
 (setq-default 2C-mode-line-format mode-line-format)
