@@ -76,7 +76,7 @@
    " " global-mode-string
 
    ;; hack to make the modeline refresh after each change in buffer
-   (:propertize "%l" face (:foreground "black"))
+   (:propertize "%l" face (:foreground "black" :height 0))
    ))
 
 (setq-default 2C-mode-line-format mode-line-format)
