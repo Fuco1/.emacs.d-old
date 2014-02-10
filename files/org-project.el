@@ -1,212 +1,214 @@
-;; disable the default behaviour of "stuck" projects
-(setq org-stuck-projects (quote ("" nil nil "")))
+(defvar my-org-ignore-task-in-project-by-tag
+  '("BOOKS")
+  "Tasks with these tags should be ignored when determining if a
+task is a subtask in a project.")
+
+(defun my-org-entry-is-task-p ()
+  "Return non-nil if header at point has any keyword."
+  (member (org-get-todo-state) org-todo-keywords-1))
 
 (defun bh/is-project-p ()
-  "Any task with a todo keyword subtask"
+  "Any task with a todo keyword subtask.
+
+Done subtasks and subtask tagged with a tag in
+`my-org-ignore-task-in-project-by-tag' are skipped."
   (save-restriction
-	(widen)
-	(let ((has-subtask)
-		  (subtree-end (save-excursion (org-end-of-subtree t)))
-		  (is-a-task (member (nth 2 (org-heading-components)) org-todo-keywords-1)))
-	  (save-excursion
-		(forward-line 1)
-		(while (and (not has-subtask)
-					(< (point) subtree-end)
-					(re-search-forward "^\*+ " subtree-end t))
-		  (when (member (org-get-todo-state) org-todo-keywords-1)
-			(setq has-subtask t))))
-	  (and is-a-task has-subtask))))
+    (widen)
+    (let ((subtree-end (save-excursion (org-end-of-subtree t)))
+          has-subtask)
+      (when (and (org-entry-is-todo-p) (not (org-is-habit-p)))
+        (save-excursion
+          (forward-line 1)
+          (while (and (not has-subtask)
+                      (< (point) subtree-end)
+                      (re-search-forward "^\*+ " subtree-end t))
+            (when (and (org-entry-is-todo-p)
+                       (not (--any? (member it my-org-ignore-task-in-project-by-tag) (org-get-tags-at))))
+              (setq has-subtask t)))
+          has-subtask)))))
+
+(defun bh/is-subproject-p ()
+  "Any task which is a subtask of another project"
+  (let (is-subproject)
+    (when (org-entry-is-todo-p)
+      (save-excursion
+        (while (and (not is-subproject) (org-up-heading-safe))
+          (when (org-entry-is-todo-p)
+            (setq is-subproject t)))))
+    is-subproject))
 
 (defun bh/is-project-subtree-p ()
   "Any task with a todo keyword that is in a project subtree.
 Callers of this function already widen the buffer view."
-  (let ((task (save-excursion (org-back-to-heading 'invisible-ok)
-							  (point))))
-	(save-excursion
-	  (bh/find-project-task)
-	  (if (equal (point) task)
-		  nil
-		t))))
+  (let ((task (save-excursion (org-back-to-heading 'invisible-ok) (point))))
+    (save-excursion
+      (bh/find-project-task)
+      (/= (point) task))))
 
 (defun bh/is-task-p ()
   "Any task with a todo keyword and no subtask"
   (save-restriction
-	(widen)
-	(let ((has-subtask)
-		  (subtree-end (save-excursion (org-end-of-subtree t)))
-		  (is-a-task (member (nth 2 (org-heading-components)) org-todo-keywords-1)))
-	  (save-excursion
-		(forward-line 1)
-		(while (and (not has-subtask)
-					(< (point) subtree-end)
-					(re-search-forward "^\*+ " subtree-end t))
-		  (when (member (org-get-todo-state) org-todo-keywords-1)
-			(setq has-subtask t))))
-	  (and is-a-task (not has-subtask)))))
-
-(defun bh/is-subproject-p ()
-  "Any task which is a subtask of another project"
-  (let ((is-subproject)
-		(is-a-task (member (nth 2 (org-heading-components)) org-todo-keywords-1)))
-	(save-excursion
-	  (while (and (not is-subproject) (org-up-heading-safe))
-		(when (member (nth 2 (org-heading-components)) org-todo-keywords-1)
-		  (setq is-subproject t))))
-	(and is-a-task is-subproject)))
+    (widen)
+    (let ((subtree-end (save-excursion (org-end-of-subtree t)))
+          has-subtask)
+      (when (my-org-entry-is-task-p)
+        (save-excursion
+          (forward-line 1)
+          (while (and (not has-subtask)
+                      (< (point) subtree-end)
+                      (re-search-forward "^\*+ " subtree-end t))
+            (when (my-org-entry-is-task-p)
+              (setq has-subtask t)))))
+      (not has-subtask))))
 
 (defun bh/list-sublevels-for-projects-indented ()
   "Set org-tags-match-list-sublevels so when restricted to a subtree we list all subtasks.
   This is normally used by skipping functions where this variable is already local to the agenda."
   (if (marker-buffer org-agenda-restrict-begin)
-	  (setq org-tags-match-list-sublevels 'indented)
-	(setq org-tags-match-list-sublevels nil))
+      (setq org-tags-match-list-sublevels 'indented)
+    (setq org-tags-match-list-sublevels nil))
   nil)
 
 (defun bh/list-sublevels-for-projects ()
   "Set org-tags-match-list-sublevels so when restricted to a subtree we list all subtasks.
   This is normally used by skipping functions where this variable is already local to the agenda."
   (if (marker-buffer org-agenda-restrict-begin)
-	  (setq org-tags-match-list-sublevels t)
-	(setq org-tags-match-list-sublevels nil))
+      (setq org-tags-match-list-sublevels t)
+    (setq org-tags-match-list-sublevels nil))
   nil)
 
 (defun bh/skip-stuck-projects ()
-  "Skip trees that are not stuck projects"
+  "Skip trees that are stuck projects"
   (save-restriction
-	(widen)
-	(let ((next-headline (save-excursion (or (outline-next-heading) (point-max)))))
-	  (if (bh/is-project-p)
-		  (let* ((subtree-end (save-excursion (org-end-of-subtree t)))
-				 (has-next ))
-			(save-excursion
-			  (forward-line 1)
-			  (while (and (not has-next) (< (point) subtree-end) (re-search-forward "^\\*+ NEXT " subtree-end t))
-				(unless (member "WAITING" (org-get-tags-at))
-				  (setq has-next t))))
-			(if has-next
-				nil
-			  next-headline)) ; a stuck project, has subtasks but no next task
-		nil))))
+    (widen)
+    (let ((next-headline (save-excursion (or (outline-next-heading) (point-max)))))
+      (if (bh/is-project-p)
+          (let* ((subtree-end (save-excursion (org-end-of-subtree t)))
+                 has-next)
+            (save-excursion
+              (forward-line 1)
+              (while (and (not has-next) (< (point) subtree-end) (re-search-forward "^\\*+ NEXT " subtree-end t))
+                (unless (member "WAITING" (org-get-tags-at))
+                  (setq has-next t))))
+            (if has-next nil next-headline)) ; a stuck project, has subtasks but no next task
+        nil))))
 
 (defun bh/skip-non-stuck-projects ()
   "Skip trees that are not stuck projects"
   (bh/list-sublevels-for-projects-indented)
   (save-restriction
-	(widen)
-	(let ((next-headline (save-excursion (or (outline-next-heading) (point-max)))))
-	  (if (bh/is-project-p)
-		  (let* ((subtree-end (save-excursion (org-end-of-subtree t)))
-				 (has-next ))
-			(save-excursion
-			  (forward-line 1)
-			  (while (and (not has-next) (< (point) subtree-end) (re-search-forward "^\\*+ NEXT " subtree-end t))
-				(unless (member "WAITING" (org-get-tags-at))
-				  (setq has-next t))))
-			(if has-next
-				next-headline
-			  nil)) ; a stuck project, has subtasks but no next task
-		next-headline))))
+    (widen)
+    (let ((next-headline (save-excursion (or (outline-next-heading) (point-max)))))
+      (if (bh/is-project-p)
+          (let* ((subtree-end (save-excursion (org-end-of-subtree t)))
+                 (has-next ))
+            (save-excursion
+              (forward-line 1)
+              (while (and (not has-next) (< (point) subtree-end) (re-search-forward "^\\*+ NEXT " subtree-end t))
+                (unless (member "WAITING" (org-get-tags-at))
+                  (setq has-next t))))
+            (if has-next next-headline nil)) ; a stuck project, has subtasks but no next task
+        next-headline))))
 
 (defun bh/skip-non-projects ()
   "Skip trees that are not projects"
   (bh/list-sublevels-for-projects-indented)
   (if (save-excursion (bh/skip-non-stuck-projects))
-	  (save-restriction
-		(widen)
-		(let ((subtree-end (save-excursion (org-end-of-subtree t))))
-		  (cond
-		   ((and (bh/is-project-p)
-				 (marker-buffer org-agenda-restrict-begin))
-			nil)
-		   ((and (bh/is-project-p)
-				 (not (marker-buffer org-agenda-restrict-begin))
-				 (not (bh/is-project-subtree-p)))
-			nil)
-		   (t
-			subtree-end))))
-	(save-excursion (org-end-of-subtree t))))
-
-(defun bh/skip-project-trees-and-habits ()
-  "Skip trees that are projects"
-  (save-restriction
-	(widen)
-	(let ((subtree-end (save-excursion (org-end-of-subtree t))))
-	  (cond
-	   ((bh/is-project-p)
-		subtree-end)
-	   ((org-is-habit-p)
-		subtree-end)
-	   (t
-		nil)))))
+      (save-restriction
+        (widen)
+        (let ((subtree-end (save-excursion (org-end-of-subtree t))))
+          (cond
+           ((and (bh/is-project-p)
+                 (marker-buffer org-agenda-restrict-begin))
+            nil)
+           ((and (bh/is-project-p)
+                 (not (marker-buffer org-agenda-restrict-begin))
+                 (not (bh/is-project-subtree-p)))
+            nil)
+           (t
+            subtree-end))))
+    (save-excursion (org-end-of-subtree t))))
 
 (defun bh/skip-projects-and-habits-and-single-tasks ()
   "Skip trees that are projects, tasks that are habits, single non-project tasks"
   (save-restriction
-	(widen)
-	(let ((next-headline (save-excursion (or (outline-next-heading) (point-max)))))
-	  (cond
-	   ((org-is-habit-p)
-		next-headline)
-	   ((bh/is-project-p)
-		next-headline)
-	   ((and (bh/is-task-p) (not (bh/is-project-subtree-p)))
-		next-headline)
-	   (t
-		nil)))))
+    (widen)
+    (let ((next-headline (save-excursion (or (outline-next-heading) (point-max)))))
+      (when (or (org-is-habit-p)
+                (bh/is-project-p)
+                (and (bh/is-task-p)
+                     (not (bh/is-project-subtree-p))))
+        next-headline))))
 
 (defun bh/skip-project-tasks-maybe ()
   "Show tasks related to the current restriction.
 When restricted to a project, skip project and sub project tasks, habits, NEXT tasks, and loose tasks.
 When not restricted, skip project and sub-project tasks, habits, and project related tasks."
   (save-restriction
-	(widen)
-	(let* ((subtree-end (save-excursion (org-end-of-subtree t)))
-		   (next-headline (save-excursion (or (outline-next-heading) (point-max))))
-		   (limit-to-project (marker-buffer org-agenda-restrict-begin)))
-	  (cond
-	   ((bh/is-project-p)
-		next-headline)
-	   ((org-is-habit-p)
-		subtree-end)
-	   ((and (not limit-to-project)
-			 (bh/is-project-subtree-p))
-		subtree-end)
-	   ((and limit-to-project
-			 (bh/is-project-subtree-p)
-			 (member (org-get-todo-state) (list "NEXT")))
-		subtree-end)
-	   (t
-		nil)))))
+    (widen)
+    (let* ((subtree-end (save-excursion (org-end-of-subtree t)))
+           (next-headline (save-excursion (or (outline-next-heading) (point-max))))
+           (limit-to-project (marker-buffer org-agenda-restrict-begin)))
+      (cond
+       ((bh/is-project-p)
+        next-headline)
+       ((org-is-habit-p)
+        subtree-end)
+       ((and (not limit-to-project)
+             (bh/is-project-subtree-p))
+        subtree-end)
+       ((and limit-to-project
+             (bh/is-project-subtree-p)
+             (member (org-get-todo-state) (list "NEXT")))
+        subtree-end)
+       (t
+        nil)))))
 
-(defun bh/skip-projects-and-habits ()
-  "Skip trees that are projects and tasks that are habits"
-  (save-restriction
-	(widen)
-	(let ((subtree-end (save-excursion (org-end-of-subtree t))))
-	  (cond
-	   ((bh/is-project-p)
-		subtree-end)
-	   ((org-is-habit-p)
-		subtree-end)
-	   (t
-		nil)))))
-
-(defun bh/skip-non-subprojects ()
-  "Skip trees that are not projects"
-  (let ((next-headline (save-excursion (outline-next-heading))))
-	(if (bh/is-subproject-p)
-		nil
-	  next-headline)))
-
-(defun bh/mark-next-parent-tasks-todo ()
+(defun my-org-update-parent-tasks-todo ()
   "Visit each parent task and change NEXT states to TODO"
-  (let ((mystate (or (and (fboundp 'state)
-						  state)
-					 (nth 2 (org-heading-components)))))
-	(when (equal mystate "NEXT")
-	  (save-excursion
-		(while (org-up-heading-safe)
-		  (when (member (nth 2 (org-heading-components)) (list "NEXT"))
-			(org-todo "TODO")))))))
+  (let ((mystate (nth 2 (org-heading-components)))
+        moved-up)
+    (cond
+     ((equal mystate "NEXT")
+      (save-excursion
+        (while (and (setq moved-up (org-up-heading-safe)) (not (my-org-entry-is-task-p))))
+        (when (and moved-up
+                   (member (org-get-todo-state) (list "NEXT" "DONE")))
+          (org-todo "TODO"))))
+     ((equal mystate "TODO")
+      (save-excursion
+        (while (and (setq moved-up (org-up-heading-safe)) (not (my-org-entry-is-task-p))))
+        (when (and moved-up
+                   (member (org-get-todo-state) (list "DONE")))
+          (org-todo "TODO"))))
+     ((equal mystate "DONE")
+      (save-excursion
+        (while (and (setq moved-up (org-up-heading-safe)) (not (my-org-entry-is-task-p))))
+        (when moved-up
+          (let (all-done)
+            (save-excursion
+              (org-goto-first-child)
+              (setq all-done (if (my-org-entry-is-task-p) (org-entry-is-done-p) t))
+              (while (and all-done (org-goto-sibling))
+                (when (my-org-entry-is-task-p)
+                  (setq all-done (org-entry-is-done-p)))))
+            (when all-done
+              (org-todo "DONE")))))))))
 
-(add-hook 'org-after-todo-state-change-hook 'bh/mark-next-parent-tasks-todo 'append)
+(defun my-org-update-siblings-tasks-todo ()
+  (let ((mystate (nth 2 (org-heading-components))))
+    (cond
+     ((equal mystate "NEXT")
+      (let ((pos (save-excursion (org-back-to-heading 'invisible-ok) (point))))
+        (when (org-up-heading-safe)
+          (org-goto-first-child)
+          (do ((has-sibling t (org-goto-sibling)))
+              ((not has-sibling))
+            (when (and (member (org-get-todo-state) (list "NEXT"))
+                       (/= (point) pos))
+              (let ((org-after-todo-state-change-hook))
+                (org-todo "TODO"))))))))))
+
+
+(add-hook 'org-after-todo-state-change-hook 'my-org-update-parent-tasks-todo 'append)
+(add-hook 'org-after-todo-state-change-hook 'my-org-update-siblings-tasks-todo 'append)

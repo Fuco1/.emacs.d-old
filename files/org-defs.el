@@ -142,8 +142,10 @@ This usually makes new item indented one level deeper."
 (defmacro my-org-custom-filter (tag key)
   (let ((filter-name (intern (concat "my-org-" (symbol-name tag) "-filter")))
         (filter-name-no-done (intern (concat "my-org-" (symbol-name tag) "-no-done-filter")))
+        (filter-name-next (intern (concat "my-org-" (symbol-name tag) "-next-filter")))
         (filter-string (concat "+" (upcase (symbol-name tag))))
-        (filter-string-no-done (concat "+" (upcase (symbol-name tag)) "-TODO=\"DONE\"")))
+        (filter-string-no-done (concat "+" (upcase (symbol-name tag)) "-TODO=\"DONE\""))
+        (filter-string-next (concat "+" (upcase (symbol-name tag)) "+TODO=\"NEXT\"")))
     `(progn
       (defun ,filter-name ()
         (interactive)
@@ -151,8 +153,12 @@ This usually makes new item indented one level deeper."
       (defun ,filter-name-no-done ()
         (interactive)
         (org-match-sparse-tree nil ,filter-string-no-done))
+      (defun ,filter-name-next ()
+        (interactive)
+        (org-match-sparse-tree nil ,filter-string-next))
       (bind-key ,(concat "C-c F " key) ',filter-name org-mode-map)
-      (bind-key ,(concat "C-c F " (upcase key)) ',filter-name-no-done org-mode-map))))
+      (bind-key ,(concat "C-c F " (upcase key)) ',filter-name-no-done org-mode-map)
+      (bind-key ,(concat "C-c F M-" key) ',filter-name-next org-mode-map))))
 
 (my-org-custom-filter books "b")
 (my-org-custom-filter mov "m")
@@ -318,6 +324,28 @@ This usually makes new item indented one level deeper."
 ;; Compact the block agenda view
 ;; (setq org-agenda-compact-blocks t)
 
+(defun my-org-agenda-is-task-p ()
+  "Return non-nil if line at point is a task."
+  (org-get-at-bol 'org-marker))
+
+(defun my-org-agenda-remove-empty-lists ()
+  (let ((headers '("Tasks to Refile"
+                   "Stuck Projects"
+                   "Next Tasks"
+                   "Tasks"
+                   "Projects"
+                   "Waiting and Postponed Tasks")))
+    (--each headers
+      (save-excursion
+        (goto-char (point-min))
+        (search-forward it nil t)
+        (unless (save-excursion
+                  (forward-line)
+                  (my-org-agenda-is-task-p))
+          (delete-region (line-beginning-position) (1+ (line-end-position))))))))
+
+(add-hook 'org-agenda-finalize-hook 'my-org-agenda-remove-empty-lists)
+
 ;; Custom agenda command definitions
 (setq org-agenda-custom-commands
       (quote (("N" "Notes" tags "NOTE"
@@ -335,7 +363,7 @@ This usually makes new item indented one level deeper."
                 (tags-todo "-CANCELLED/!"
                            ((org-agenda-overriding-header "Stuck Projects")
                             (org-agenda-skip-function 'bh/skip-non-stuck-projects)))
-                (tags-todo "-WAITING-CANCELLED/!NEXT"
+                (tags-todo "-WAITING-CANCELLED-BOOKS/!NEXT"
                            ((org-agenda-overriding-header "Next Tasks")
                             (org-agenda-skip-function 'bh/skip-projects-and-habits-and-single-tasks)
                             (org-agenda-todo-ignore-scheduled t)
