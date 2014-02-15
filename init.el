@@ -83,7 +83,7 @@
 (load custom-file)
 
 ;; Reload theme -- hackish
-;; (load "~/.emacs.d/themes/my-tango-dark-theme")
+(load "~/.emacs.d/themes/my-tango-dark-theme")
 
 ;; xiki support
 ;; (add-to-list 'load-path "/usr/share/emacs/site-lisp")
