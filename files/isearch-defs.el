@@ -96,7 +96,7 @@ directory, go right back into search."
   (isearch-exit)
   (if (eq major-mode 'dired-mode)
       ;; we're assuming no files are marked
-      (let ((d (car (dired-get-marked-files))))
+      (let ((d (dired-get-filename)))
         (dired-find-file)
         (when (file-directory-p d)
           (dired-isearch-filenames)))))
