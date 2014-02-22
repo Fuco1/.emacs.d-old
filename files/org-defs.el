@@ -1,6 +1,11 @@
 (use-package org-drill
   :commands org-drill
-  :defer t
+  :init
+  (progn
+    (bind-keys :map org-mode-map
+      ("H-d" . org-drill)
+      ("H-r" . org-drill-resume)
+      ("H-a" . org-drill-again)))
   :config
   (progn
     (defun org-drill-present-two-sided-card-no-cloze ()
@@ -29,13 +34,28 @@
   '((t (:family "Consolas" :inherit font-lock-constant-face)))
   "The face used to highlight pair overlays.")
 
-(bind-key "TAB" 'smart-tab org-mode-map)
-(bind-key "C-e" 'my-end-of-code-or-line org-mode-map)
-(bind-key "C-a" 'my-back-to-indentation-or-beginning org-mode-map)
-(bind-key "C-c C-x r" 'org-clock-remove-overlays org-mode-map)
-;; TODO lepsia mapa pre "toggle prikazy?"
-(bind-key "C-c C-x L" 'org-toggle-link-display org-mode-map)
-(bind-key "C-c R" 'org-remove-occur-highlights org-mode-map)
+
+(bind-keys :map org-mode-map
+  ("TAB" . smart-tab)
+  ("C-e" . my-end-of-code-or-line)
+  ("C-a" . my-back-to-indentation-or-beginning)
+  ("C-c C-x r" . org-clock-remove-overlays)
+  ;; TODO lepsia mapa pre "toggle prikazy?"
+  ("C-c C-x L" . org-toggle-link-display)
+  ("C-c R" . org-remove-occur-highlights)
+
+  ("C-x n t" . my-org-narrow-to-top-heading)
+  ("C-x n P" . my-org-narrow-to-project)
+  ("C-x n N" . my-org-narrow-to-subtree)
+  ("C-x n W" . my-org-widen))
+
+(bind-keys :map org-agenda-mode-map
+  ("C-n" . org-agenda-next-item)
+  ("C-p" . org-agenda-previous-item)
+  ("P" . my-org-narrow-to-project)
+  ("U" . my-org-narrow-to-parent)
+  ("N" . my-org-narrow-to-subtree)
+  ("W" . my-org-widen))
 
 (defun my-org-open-at-point (&optional arg)
   "Just like `org-open-at-point', but open link in this window."
@@ -54,13 +74,6 @@
   (interactive)
   (org-goto-marker-or-bmk org-clock-marker))
 (bind-key "<f1> <f10>" 'my-goto-current-clocked-task)
-
-(defun my-org-narrow-to-top-heading ()
-  (interactive)
-  (save-excursion
-    (ignore-errors (while (outline-up-heading 1)))
-    (org-narrow-to-subtree)))
-(bind-key "C-x n t" 'my-org-narrow-to-top-heading org-mode-map)
 
 (defun my-org-metacontrolreturn ()
   "Execute `org-meta-return' followed by `org-meta-right'.
@@ -163,35 +176,93 @@ This usually makes new item indented one level deeper."
 (my-org-custom-filter books "b")
 (my-org-custom-filter mov "m")
 
-(load "files/org-clock")
 (load "files/org-project")
 
-(set-face-attribute 'org-table nil :inherit 'fixed-pitch)
+;;;_. Narrowing
 
-;; Enable modules
-(setq org-modules (quote (org-bbdb
-                          org-bibtex
-                          org-crypt
-                          org-gnus
-                          org-id
-                          org-info
-                          org-jsinfo
-                          org-habit
-                          org-inlinetask
-                          org-irc
-                          org-mew
-                          org-mhe
-                          org-protocol
-                          org-rmail
-                          org-vm
-                          org-wl
-                          org-w3m
-                          org-drill)))
+(defun my-org-narrow-to-top-heading ()
+  "Narrow to the top-most tree containing point."
+  (interactive)
+  (save-excursion
+    (ignore-errors (while (outline-up-heading 1)))
+    (org-narrow-to-subtree)))
 
-;; position the habit graph on the agenda to the right of the default
-(setq org-habit-graph-column 81)
+;; abstract these three into a macro, maybe?
+(defun my-org--narrow-to-subtree ()
+  "Narrow to subtree at point and also set agenda restriction."
+  (widen)
+  (org-narrow-to-subtree)
+  (save-restriction
+    (org-agenda-set-restriction-lock)))
 
-;;;;;;;;;;;;;;;;;;;;; CAPTURE
+(defun my-org-narrow-to-subtree ()
+  "Narrow to subtree at point and also set agenda restriction.
+
+If invoked from agenda, narrow to the subtree of the task at
+point and rebuild the agenda view."
+  (interactive)
+  (if (equal major-mode 'org-agenda-mode)
+      (progn
+        (org-with-point-at (org-get-at-bol 'org-hd-marker)
+          (my-org--narrow-to-subtree))
+        (when org-agenda-sticky
+          (org-agenda-redo)))
+    (my-org--narrow-to-subtree)))
+
+(defun my-org--narrow-to-parent ()
+  "Narrow to parent of subtree at point and also set agenda restriction."
+  (widen)
+  (save-excursion
+    (org-up-heading-safe)
+    (my-org--narrow-to-subtree)))
+
+(defun my-org-narrow-to-parent ()
+  "Narrow to parent of subtree at point and also set agenda restriction.
+
+If invoked from agenda, narrow to the parent of the task at point
+and rebuild the agenda view."
+  (interactive)
+  (if (equal major-mode 'org-agenda-mode)
+      (progn
+        (org-with-point-at (org-get-at-bol 'org-hd-marker)
+          (my-org--narrow-to-parent))
+        (when org-agenda-sticky
+          (org-agenda-redo)))
+    (my-org--narrow-to-parent)))
+
+(defun my-org--narrow-to-project ()
+  "Narrow to project at point and also set agenda restriction."
+  (widen)
+  (save-excursion
+    (bh/find-project-task)
+    (my-org--narrow-to-subtree)))
+
+(defun my-org-narrow-to-project ()
+  "Narrow to project at point and also set agenda restriction.
+
+If invoked from agenda, narrow to the project of the task at
+point and rebuild the agenda view."
+  (interactive)
+  (if (equal major-mode 'org-agenda-mode)
+      (progn
+        (org-with-point-at (org-get-at-bol 'org-hd-marker)
+          (my-org--narrow-to-project))
+        (when org-agenda-sticky
+          (org-agenda-redo)))
+    (my-org--narrow-to-project)))
+
+(defun my-org-widen ()
+  "Remove agenda restrictions or widen the buffer."
+  (interactive)
+  (if (equal major-mode 'org-agenda-mode)
+      (progn
+        (org-agenda-remove-restriction-lock)
+        (when org-agenda-sticky
+          (org-agenda-redo)))
+    (widen)
+    (org-agenda-remove-restriction-lock)))
+
+;;;_. Capture
 (setq org-directory "~/org")
 (setq org-default-notes-file "~/org/refile.org")
 
@@ -201,11 +272,11 @@ This usually makes new item indented one level deeper."
 ;; Capture templates for: TODO tasks, Notes, appointments, phone calls, and org-protocol
 (setq org-capture-templates
       (quote (("t" "todo" entry (file "~/org/refile.org")
-               "* TODO %?\n%U\n%a\n" :clock-keep t)
+               "* TODO %?\n%U\n" :clock-keep t)
               ("s" "someday" entry (file "~/org/refile.org")
-               "* SOMEDAY %?\n%U\n%a\n" :clock-keep t)
+               "* SOMEDAY %?\n%U\n" :clock-keep t)
               ("n" "note" entry (file "~/org/refile.org")
-               "* %? :NOTE:\n%U\n%a\n" :clock-keep t)
+               "* %? :NOTE:\n%U\n%" :clock-keep t)
               ("j" "Journal" entry (file+datetree "~/org/diary.org")
                "* %?\n%U\n" :clock-keep t))))
 
@@ -292,38 +363,7 @@ This usually makes new item indented one level deeper."
                             ("READING" . ?r)
                             ("LATIN" . ?l))))
 
-;; Allow setting single tags without the menu
-(setq org-fast-tag-selection-single-key (quote expert))
-
-;; Archiving settings
-(setq org-archive-mark-done nil)
-(setq org-archive-location "%s_archive::* Archived Tasks")
-
-(defun bh/skip-non-archivable-tasks ()
-  "Skip trees that are not available for archiving"
-  (save-restriction
-    (widen)
-    (let ((next-headline (save-excursion (or (outline-next-heading) (point-max)))))
-      ;; Consider only tasks with done todo headings as archivable candidates
-      (if (member (org-get-todo-state) org-done-keywords)
-          (let* ((subtree-end (save-excursion (org-end-of-subtree t)))
-                 (daynr (string-to-int (format-time-string "%d" (current-time))))
-                 (a-month-ago (* 60 60 24 (+ daynr 1)))
-                 (last-month (format-time-string "%Y-%m-" (time-subtract (current-time) (seconds-to-time a-month-ago))))
-                 (this-month (format-time-string "%Y-%m-" (current-time)))
-                 (subtree-is-current (save-excursion
-                                       (forward-line 1)
-                                       (and (< (point) subtree-end)
-                                            (re-search-forward (concat last-month "\\|" this-month) subtree-end t)))))
-            (if subtree-is-current
-                next-headline ; Has a date in this month or last month, skip it
-              nil))  ; available to archive
-        (or next-headline (point-max))))))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;; AGENDA VIEW
-;; Compact the block agenda view
-;; (setq org-agenda-compact-blocks t)
-
 (defun my-org-agenda-is-task-p ()
   "Return non-nil if line at point is a task."
   (org-get-at-bol 'org-marker))
@@ -334,7 +374,8 @@ This usually makes new item indented one level deeper."
                    "Next Tasks"
                    "Tasks"
                    "Projects"
-                   "Waiting and Postponed Tasks")))
+                   "Waiting and Postponed Tasks"
+                   "Reading")))
     (--each headers
       (save-excursion
         (goto-char (point-min))
@@ -342,91 +383,100 @@ This usually makes new item indented one level deeper."
         (unless (save-excursion
                   (forward-line)
                   (my-org-agenda-is-task-p))
-          (delete-region (line-beginning-position) (1+ (line-end-position))))))))
+          (delete-region (line-beginning-position) (1+ (line-end-position))))))
+    (save-excursion
+      (goto-char (point-min))
+      (when (re-search-forward (regexp-opt headers) nil t)
+        (goto-char (match-beginning 0))
+        (backward-char)
+        (insert (propertize (concat "\n" (make-string (/ (window-width) 2) ?─)) 'face 'org-time-grid))))))
 
 (add-hook 'org-agenda-finalize-hook 'my-org-agenda-remove-empty-lists)
 
 ;; Custom agenda command definitions
+(defun my-org-agenda-filter (prefix title &rest args)
+  `((,prefix . ,title)
+    (,(concat prefix "a") . "All")
+    (,(concat prefix "p") . "Ready")
+    (,(concat prefix "d") . "Done")
+    ,@(--mapcat
+       `((,(concat prefix (car it)) tags-todo ,(concat "+" (cdr it) "+TODO=\"NEXT\""))
+         (,(concat prefix "a" (car it)) tags ,(concat "+" (cdr it)))
+         (,(concat prefix "p" (car it)) tags ,(concat "+" (cdr it) "-TODO=\"DONE\""))
+         (,(concat prefix "d" (car it)) tags ,(concat "+" (cdr it) "+TODO=\"DONE\"")
+          ((org-agenda-cmp-user-defined 'my-org-compare-closed-entries)
+           (org-agenda-sorting-strategy '(user-defined-up)))))
+       args)))
+
 (setq org-agenda-custom-commands
-      (quote (("N" "Notes" tags "NOTE"
-               ((org-agenda-overriding-header "Notes")
-                (org-tags-match-list-sublevels t)))
-              ("h" "Habits" tags-todo "STYLE=\"habit\""
-               ((org-agenda-overriding-header "Habits")
-                (org-agenda-sorting-strategy
-                 '(todo-state-down effort-up category-keep))))
-              (" " "Agenda"
-               ((agenda "" nil)
-                (tags "REFILE"
-                      ((org-agenda-overriding-header "Tasks to Refile")
-                       (org-tags-match-list-sublevels nil)))
-                (tags-todo "-CANCELLED/!"
-                           ((org-agenda-overriding-header "Stuck Projects")
-                            (org-agenda-skip-function 'bh/skip-non-stuck-projects)))
-                (tags-todo "-WAITING-CANCELLED-BOOKS/!NEXT"
-                           ((org-agenda-overriding-header "Next Tasks")
-                            (org-agenda-skip-function 'bh/skip-projects-and-habits-and-single-tasks)
-                            (org-agenda-todo-ignore-scheduled t)
-                            (org-agenda-todo-ignore-deadlines t)
-                            (org-agenda-todo-ignore-with-date t)
-                            (org-tags-match-list-sublevels t)
-                            (org-agenda-sorting-strategy
-                             '(todo-state-down effort-up category-keep))))
-                (tags-todo "-REFILE-CANCELLED/!-HOLD-WAITING-SOMEDAY"
-                           ((org-agenda-overriding-header "Tasks")
-                            (org-agenda-skip-function 'bh/skip-project-tasks-maybe)
-                            (org-agenda-todo-ignore-scheduled t)
-                            (org-agenda-todo-ignore-deadlines t)
-                            (org-agenda-todo-ignore-with-date t)
-                            (org-agenda-sorting-strategy
-                             '(category-keep))))
-                (tags-todo "-HOLD-CANCELLED/!"
-                           ((org-agenda-overriding-header "Projects")
-                            (org-agenda-skip-function 'bh/skip-non-projects)
-                            (org-agenda-sorting-strategy
-                             '(category-keep))))
-                (tags-todo "-CANCELLED+WAITING/!"
-                           ((org-agenda-overriding-header "Waiting and Postponed Tasks")
-                            (org-agenda-skip-function 'bh/skip-stuck-projects)
-                            (org-tags-match-list-sublevels nil)
-                            (org-agenda-todo-ignore-scheduled 'future)
-                            (org-agenda-todo-ignore-deadlines 'future))))
-               nil)
-              ("r" "Tasks to Refile" tags "REFILE"
-               ((org-agenda-overriding-header "Tasks to Refile")
-                (org-tags-match-list-sublevels nil)))
-              ("#" "Stuck Projects" tags-todo "-CANCELLED/!"
-               ((org-agenda-overriding-header "Stuck Projects")
-                (org-agenda-skip-function 'bh/skip-non-stuck-projects)))
-              ("n" "Next Tasks" tags-todo "-WAITING-CANCELLED/!NEXT"
-               ((org-agenda-overriding-header "Next Tasks")
-                (org-agenda-skip-function 'bh/skip-projects-and-habits-and-single-tasks)
-                (org-agenda-todo-ignore-scheduled t)
-                (org-agenda-todo-ignore-deadlines t)
-                (org-agenda-todo-ignore-with-date t)
-                (org-tags-match-list-sublevels t)
-                (org-agenda-sorting-strategy
-                 '(todo-state-down effort-up category-keep))))
-              ("R" "Tasks" tags-todo "-REFILE-CANCELLED/!-HOLD-WAITING"
-               ((org-agenda-overriding-header "Tasks")
-                (org-agenda-skip-function 'bh/skip-project-tasks-maybe)
-                (org-agenda-sorting-strategy
-                 '(category-keep))))
-              ("S" "Someday" todo "SOMEDAY"
-               ((org-agenda-overriding-header "Someday")
-                (org-tags-match-list-sublevels nil)))
-              ("p" "Projects" tags-todo "-HOLD-CANCELLED/!"
-               ((org-agenda-overriding-header "Projects")
-                (org-agenda-skip-function 'bh/skip-non-projects)
-                (org-agenda-sorting-strategy
-                 '(category-keep))))
-              ("w" "Waiting Tasks" tags-todo "-CANCELLED+WAITING/!"
-               ((org-agenda-overriding-header "Waiting and Postponed tasks"))
-               (org-tags-match-list-sublevels nil))
-              ("A" "Tasks to Archive" tags "-REFILE/"
-               ((org-agenda-overriding-header "Tasks to Archive")
-                (org-agenda-skip-function 'bh/skip-non-archivable-tasks)
-                (org-tags-match-list-sublevels nil))))))
+      `((" " "Agenda"
+         ((agenda "" nil)
+          (tags "REFILE"
+                ((org-agenda-overriding-header "Tasks to Refile")
+                 (org-tags-match-list-sublevels nil)))
+          (tags-todo "-CANCELLED/!"
+                     ((org-agenda-overriding-header "Stuck Projects")
+                      (org-agenda-skip-function 'bh/skip-non-stuck-projects)))
+          (tags-todo "-WAITING-CANCELLED-BOOKS/!NEXT"
+                     ((org-agenda-overriding-header "Next Tasks")
+                      (org-agenda-skip-function 'bh/skip-projects-and-habits-and-single-tasks)
+                      (org-agenda-todo-ignore-scheduled t)
+                      (org-agenda-todo-ignore-deadlines t)
+                      (org-agenda-todo-ignore-with-date t)
+                      (org-tags-match-list-sublevels t)
+                      (org-agenda-sorting-strategy '(priority-down todo-state-down effort-up category-keep))))
+          (tags-todo "-REFILE-CANCELLED-Reading/!-HOLD-WAITING-SOMEDAY"
+                     ((org-agenda-overriding-header "Tasks")
+                      (org-agenda-skip-function 'bh/skip-project-tasks-maybe)
+                      (org-agenda-todo-ignore-scheduled t)
+                      (org-agenda-todo-ignore-deadlines t)
+                      (org-agenda-todo-ignore-with-date t)
+                      (org-agenda-sorting-strategy '(category-keep))))
+          (tags-todo "-HOLD-CANCELLED/!"
+                     ((org-agenda-overriding-header "Projects")
+                      (org-agenda-skip-function 'bh/skip-non-projects)
+                      (org-agenda-sorting-strategy '(category-keep))))
+          (tags-todo "-CANCELLED+WAITING/!"
+                     ((org-agenda-overriding-header "Waiting and Postponed Tasks")
+                      (org-agenda-skip-function 'bh/skip-stuck-projects)
+                      (org-tags-match-list-sublevels nil)
+                      (org-agenda-todo-ignore-scheduled 'future)
+                      (org-agenda-todo-ignore-deadlines 'future)))
+          (tags-todo "Reading"
+                     ((org-agenda-overriding-header "Reading")
+                      (org-tags-match-list-sublevels nil))))
+         nil)
+        ("h" "Habits" tags-todo "STYLE=\"habit\""
+         ((org-agenda-overriding-header "Habits")
+          (org-agenda-sorting-strategy '(todo-state-down effort-up category-keep))))
+        ,@(my-org-agenda-filter "f" "Media filter" '("b" . "BOOKS") '("m" . "MOV"))))
+
+(defun my-org-compare-closed-entries (a b)
+  "Compare two agenda entries A and B based on CLOSED time."
+  (let ((closed-a (org-time-string-to-time (org-entry-get (get-text-property 1 'org-marker a) "CLOSED")))
+        (closed-b (org-time-string-to-time (org-entry-get (get-text-property 1 'org-marker b) "CLOSED"))))
+    (cond
+     ((equal closed-a closed-b) nil)
+     ((time-less-p closed-a closed-b) -1)
+     (t +1))))
+
+;; Resume clocking task when emacs is restarted
+(org-clock-persistence-insinuate)
+
+;; this is added to the clock-in hook
+(defun bh/clock-in-to-next (kw)
+  "Switch a task from TODO to NEXT when clocking in.
+Skips capture tasks, projects, and subprojects.
+Switch projects and subprojects from NEXT back to TODO"
+  (when (not (and (boundp 'org-capture-mode) org-capture-mode))
+    (cond
+     ((and (member (org-get-todo-state) (list "TODO"))
+           (bh/is-task-p)
+           (not (org-is-habit-p)))
+      "NEXT")
+     ((and (member (org-get-todo-state) (list "NEXT"))
+           (bh/is-project-p))
+      "TODO"))))
 
 (defun my-org-add-drill-entry ()
   (interactive)

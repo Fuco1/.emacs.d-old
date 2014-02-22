@@ -1,3 +1,5 @@
+;; some code here is adopted from http://doc.norang.ca/org-mode.html
+
 (defvar my-org-ignore-task-in-project-by-tag
   '("BOOKS")
   "Tasks with these tags should be ignored when determining if a
@@ -36,6 +38,17 @@ Done subtasks and subtask tagged with a tag in
           (when (org-entry-is-todo-p)
             (setq is-subproject t)))))
     is-subproject))
+
+(defun bh/find-project-task ()
+  "Move point to the parent (project) task if any"
+  (save-restriction
+    (widen)
+    (let ((parent-task (save-excursion (org-back-to-heading 'invisible-ok) (point))))
+      (while (org-up-heading-safe)
+        (when (my-org-entry-is-task-p)
+          (setq parent-task (point))))
+      (goto-char parent-task)
+      parent-task)))
 
 (defun bh/is-project-subtree-p ()
   "Any task with a todo keyword that is in a project subtree.
