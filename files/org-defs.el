@@ -22,6 +22,17 @@
          (prog1 (org-drill-presentation-prompt)
            (org-drill-hide-subheadings-if 'org-drill-entry-p)))))))
 
+(use-package org-agenda
+  :defer t
+  :config
+  (bind-keys :map org-agenda-mode-map
+             ("C-n" . org-agenda-next-item)
+             ("C-p" . org-agenda-previous-item)
+             ("P" . my-org-narrow-to-project)
+             ("U" . my-org-narrow-to-parent)
+             ("N" . my-org-narrow-to-subtree)
+             ("W" . my-org-widen)))
+
 (defface my-org-bold
   '((t (:weight bold :inherit font-lock-variable-name-face)))
   "The face used to highlight pair overlays.")
@@ -33,7 +44,6 @@
 (defface my-org-code
   '((t (:family "Consolas" :inherit font-lock-constant-face)))
   "The face used to highlight pair overlays.")
-
 
 (bind-keys :map org-mode-map
   ("TAB" . smart-tab)
@@ -48,14 +58,6 @@
   ("C-x n P" . my-org-narrow-to-project)
   ("C-x n N" . my-org-narrow-to-subtree)
   ("C-x n W" . my-org-widen))
-
-(bind-keys :map org-agenda-mode-map
-  ("C-n" . org-agenda-next-item)
-  ("C-p" . org-agenda-previous-item)
-  ("P" . my-org-narrow-to-project)
-  ("U" . my-org-narrow-to-parent)
-  ("N" . my-org-narrow-to-subtree)
-  ("W" . my-org-widen))
 
 (defun my-org-open-at-point (&optional arg)
   "Just like `org-open-at-point', but open link in this window."
