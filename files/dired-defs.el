@@ -21,38 +21,57 @@
   :commands dired-details-toggle)
 (use-package w32-browser
   :commands dired-w32-browser)
+(use-package dired-avfs)
+(use-package dired-filter)
+(use-package dired-open)
 
 (defconst my-dired-media-files-extensions '("mp3" "mp4" "MP3" "MP4" "avi" "mpg" "flv" "ogg")
   "Media file extensions that should launch in VLC.
 
 Also used for highlighting.")
 
+(use-package dired-rainbow
+  :init
+  (progn
+    (dired-rainbow-define html "#4e9a06" ("htm" "html" "xhtml"))
+    (dired-rainbow-define xml "DarkGreen" ("xml" "xsd" "xsl" "xslt" "wsdl"))
+
+    (dired-rainbow-define document "#fce94f" ("doc" "docx" "odt" "pdb" "pdf" "ps" "rtf"))
+    (dired-rainbow-define media "#ce5c00" my-dired-media-files-extensions)
+    (dired-rainbow-define image "#ff4b4b" ("jpg" "png" "jpeg" "gif"))
+
+    (dired-rainbow-define log "#c17d11" ("log"))
+    (dired-rainbow-define sourcefile "#fcaf3e" ("py" "c" "cc" "h" "java" "pl" "rb"))
+
+    (dired-rainbow-define executable "#8cc4ff" ("exe" "msi"))
+    (dired-rainbow-define compressed "#ad7fa8" ("zip" "bz2" "tgz" "txz" "gz" "xz" "z" "Z" "jar" "war" "ear" "rar" "sar" "xpi" "apk" "xz" "tar"))
+    (dired-rainbow-define packaged "#e6a8df" ("deb" "rpm"))
+    (dired-rainbow-define encrypted "LightBlue" ("gpg" "pgp"))))
+
 (add-to-list 'dired-guess-shell-alist-user (list (regexp-opt my-dired-media-files-extensions)
                                                  "vlc"))
 
 ;;;_. Key bindings & hooks
 (defun my-image-dired-thumbnail-mode-init ()
-  (bind-key "b" 'image-dired-backward-image image-dired-thumbnail-mode-map)
-  (bind-key "f" 'image-dired-forward-image image-dired-thumbnail-mode-map)
-  (bind-key "n" 'image-dired-next-line image-dired-thumbnail-mode-map)
-  (bind-key "p" 'image-dired-previous-line image-dired-thumbnail-mode-map)
-  (bind-key "q" 'kill-this-buffer image-dired-thumbnail-mode-map))
+  (bind-keys :map image-dired-thumbnail-mode-map
+     ("b" . image-dired-backward-image)
+     ("f" . image-dired-forward-image)
+     ("n" . image-dired-next-line)
+     ("p" . image-dired-previous-line)
+     ("q" . kill-this-buffer)))
 (add-hook 'image-dired-thumbnail-mode-hook 'my-image-dired-thumbnail-mode-init)
 
 (defun my-image-dired-display-image-init ()
-  (bind-key "q" 'kill-this-buffer image-dired-display-image-mode-map)
-  (bind-key "SPC" 'my-image-dired-display-next image-dired-display-image-mode-map)
-  (bind-key "<backspace>" 'my-image-dired-display-previous image-dired-display-image-mode-map)
-
-  (bind-key "<wheel-down>" 'my-image-dired-display-next image-dired-display-image-mode-map)
-  (bind-key "<wheel-up>" 'my-image-dired-display-previous image-dired-display-image-mode-map)
-
-  (bind-key "m" 'my-image-dired-mark-image-in-dired image-dired-display-image-mode-map)
-  (bind-key "u" 'my-image-dired-unmark-image-in-dired image-dired-display-image-mode-map)
-
-
-  (bind-key "RET" 'my-image-dired-display-open image-dired-display-image-mode-map)
-  (bind-key "M-RET" 'my-image-dired-display-external image-dired-display-image-mode-map))
+  (bind-keys :map image-dired-display-image-mode-map
+     ("q" . kill-this-buffer)
+     ("SPC" . my-image-dired-display-next)
+     ("<backspace>" . my-image-dired-display-previous)
+     ("<wheel-down>" . my-image-dired-display-next)
+     ("<wheel-up>" . my-image-dired-display-previous)
+     ("m" . my-image-dired-mark-image-in-dired)
+     ("u" . my-image-dired-unmark-image-in-dired)
+     ("RET" . my-image-dired-display-open)
+     ("M-RET" . my-image-dired-display-external)))
 (add-hook 'image-dired-display-image-mode-hook 'my-image-dired-display-image-init)
 
 (defun my-dired-beginning-of-defun (&optional arg)
@@ -82,44 +101,44 @@ Also used for highlighting.")
   (set (make-local-variable 'imenu-extract-index-name-function) 'my-dired-extract-index-name)
   (set (make-local-variable 'imenu-create-index-function) 'my-dired-imenu-create-index)
 
-  (defvar slash-dired-prefix-map)
-  (define-prefix-command 'slash-dired-prefix-map)
+  ;; (defvar slash-dired-prefix-map)
+  ;; (define-prefix-command 'slash-dired-prefix-map)
 
-  (with-map-bind-keys dired-mode-map
-    ("C-x C-f" 'my-dired-ido-find-file)
-    ("k" 'my-dired-do-kill-lines)
+  (bind-keys :map dired-mode-map
+    ("C-x C-f" . my-dired-ido-find-file)
+    ("k" . my-dired-do-kill-lines)
 
-    ("K" 'my-dired-kill-subdir)
-    ("P" 'my-dired-parent-directory)
-    ("I" 'my-dired-maybe-insert-subdir)
+    ("K" . my-dired-kill-subdir)
+    ("P" . my-dired-parent-directory)
+    ("I" . my-dired-maybe-insert-subdir)
 
-    ("M-p" 'diredp-prev-subdir)
-    ("M-n" 'diredp-next-subdir)
+    ("M-p" . diredp-prev-subdir)
+    ("M-n" . diredp-next-subdir)
 
-    ("<insert>" 'dired-mark)
-    ("SPC" 'dired-mark)
-    ("<delete>" 'dired-unmark-backward)
-    ("<backspace>" 'dired-up-directory)
-    ("C-s" 'dired-isearch-filenames)
-    ("ESC C-s" 'dired-isearch-filenames-regexp)
-    ("C-o" 'dired-omit-mode)
-    ("/" 'slash-dired-prefix-map)
-    ("/ r" 'my-dired-filter-by-regexp)
-    ("/ e" 'my-dired-filter-by-ext)
-    ("/ /" 'my-dired-filter-by-name)
-    ("/ h" 'my-dired-hide-by-ext)
-    ("/ i" 'my-dired-list-all-subdirs)
-    ("(" 'dired-details-toggle)
-    ("M-<f5>" 'dired-arc-pack-files)
-    ("M-<f6>" 'dired-arc-unpack-file)
+    ("<insert>" . dired-mark)
+    ("SPC" . dired-mark)
+    ("<delete>" . dired-unmark-backward)
+    ("<backspace>" . dired-up-directory)
+    ("C-o" . dired-filter-mode)
+    ("(" . dired-details-toggle)
+    ("M-<f5>" . dired-arc-pack-files)
+    ("M-<f6>" . dired-arc-unpack-file)
     ;; ("l" 'dired-arc-list-archive)
     )
 
-  (dired-omit-mode t)
+  (dired-filter-mode t)
   (visual-line-mode -1)
   (toggle-truncate-lines 1))
 (add-hook 'dired-mode-hook 'my-dired-init)
 (add-hook 'dired-after-readin-hook 'my-format-available-space)
+
+;; revert the dired buffers automatically after these operations.
+(--each '(dired-do-rename
+          dired-do-copy
+          dired-create-directory
+          wdired-abort-changes)
+  (eval `(defadvice ,it (after revert-buffer activate)
+           (revert-buffer))))
 
 (defun my-format-available-space ()
   (save-excursion
@@ -142,42 +161,7 @@ Also used for highlighting.")
         (kill-word 1)
         (insert avail-hr)))))
 
-(defun my-dired-filter-by-regexp (regexp)
-  (interactive "sRegexp: ")
-  (let ((cbuffer (current-buffer)))
-    (dired-mark-files-regexp regexp)
-    (call-interactively 'diredp-marked)
-    (with-current-buffer cbuffer
-      (dired-unmark-all-marks))))
-
-(defun my-dired-filter-by-ext (ext)
-  (interactive "sExtension: ")
-  (let ((cbuffer (current-buffer)))
-    (dired-mark-files-regexp (concat "\\." ext "\\'"))
-    (call-interactively 'diredp-marked)
-    (with-current-buffer cbuffer
-      (dired-unmark-all-marks))))
-
-(defun my-dired-filter-by-name (name)
-  (interactive "sName: ")
-  (let ((cbuffer (current-buffer)))
-    (dired-mark-files-regexp (regexp-quote name))
-    (call-interactively 'diredp-marked)
-    (with-current-buffer cbuffer
-      (dired-unmark-all-marks))))
-
-(defun my-dired-hide-by-ext (ext &optional arg)
-  (interactive "sExtension: \nP")
-  (let ((cbuffer (current-buffer)))
-    (dired-mark-files-regexp (concat "\\." ext "\\'"))
-    (dired-toggle-marks)
-    (setq current-prefix-arg nil)
-    (call-interactively 'diredp-marked)
-    (with-current-buffer cbuffer
-      (dired-unmark-all-marks)
-      (when arg (kill-this-buffer)))))
-
-;; TODO: pridat C-b z totalcmd
+;; TODO: pridat C-b z totalcmd ... staci pouzit ag-dired-regexp s patternom .*
 
 (defun my-dired-list-all-subdirs (arg)
   (interactive "P")
@@ -504,271 +488,6 @@ to chose from."
   (interactive)
   (let ((dired-isearch-filenames t))
     (isearch-forward nil t)))
-
-;;;_. Pretty colors
-(defmacro my-diredp-rainbow (symbol spec regexp &optional group)
-  (setq group (or group 1))
-  `(progn
-     (defface ,symbol '((t ,spec)) "My diredp rainbow face" :group 'Dired-Plus)
-     ,@(mapcar (lambda (m)
-                 `(font-lock-add-keywords ',m '((,regexp ,group ',symbol))))
-               '(dired-mode))))
-
-(defmacro my-diredp-hilight-file (face-name color extensions)
-  (let ((regexp (concat
-                 "^[^!].[^d].*[0-9][ ]\\(.*\\."
-                 (regexp-opt (if (listp extensions) extensions (symbol-value extensions)))
-                 "\\)$")))
-    `(progn
-       (defface ,face-name '((t (:foreground ,color))) "My diredp rainbow face" :group 'Dired-Plus)
-       ,@(mapcar (lambda (m)
-                   `(font-lock-add-keywords ',m '((,regexp 1 ',face-name))))
-                 '(dired-mode)))))
-
-(my-diredp-hilight-file my-diredp-html-face "#4e9a06" ("htm" "html" "xhtml"))
-(my-diredp-hilight-file my-diredp-xml-face "DarkGreen" ("xml" "xsd" "xsl" "xslt" "wsdl"))
-
-(my-diredp-hilight-file my-diredp-document-face "#fce94f" ("doc" "docx" "odt" "pdb" "pdf" "ps" "rtf"))
-(my-diredp-hilight-file my-diredp-media-face "#ce5c00" my-dired-media-files-extensions)
-(my-diredp-hilight-file my-diredp-image-face "#ff4b4b" ("jpg" "png" "jpeg" "gif"))
-
-(my-diredp-hilight-file my-diredp-log-face "#c17d11" ("log"))
-(my-diredp-hilight-file my-diredp-sourcefile-face "#fcaf3e" ("py" "c" "cc" "h" "java" "pl" "rb"))
-
-(my-diredp-hilight-file my-diredp-executable-face "#8cc4ff" ("exe" "msi"))
-(my-diredp-hilight-file my-diredp-compressed-face "#ad7fa8" ("zip" "bz2" "tgz" "txz" "gz" "xz" "z" "Z" "jar" "war" "ear" "rar" "sar" "xpi" "apk" "xz" "tar"))
-(my-diredp-hilight-file my-diredp-packaged-face "#e6a8df" ("deb" "rpm"))
-(my-diredp-hilight-file my-diredp-encrypted-face "LightBlue" ("gpg" "pgp"))
-
-(my-diredp-rainbow my-diredp-broken-link-face (:inherit dired-warning :italic t) "\\(^[!].l.*$\\)")
-
-;;;_. Find dired hacked to work with windows
-;;; re-eval `find-dired-filter' to replace \\ with /
-(use-package find-dired
-  :defer t
-  :config
-  (progn
-    (defun find-dired-filter (proc string)
-      ;; Filter for \\[find-dired] processes.
-      (let ((buf (process-buffer proc))
-            (inhibit-read-only t))
-        (if (buffer-name buf)
-            (with-current-buffer buf
-              (save-excursion
-                (save-restriction
-                  (widen)
-                  (let ((buffer-read-only nil)
-                        (beg (point-max))
-                        (l-opt (and (consp find-ls-option)
-                                    (string-match "l" (cdr find-ls-option))))
-                        (ls-regexp (concat "^ +[^ \t\r\n]+\\( +[^ \t\r\n]+\\) +"
-                                           "[^ \t\r\n]+ +[^ \t\r\n]+\\( +[0-9]+\\)")))
-                    (goto-char beg)
-                    (insert string)
-                    (goto-char beg)
-                    (or (looking-at "^")
-                        (forward-line 1))
-                    (while (looking-at "^")
-                      (insert "  ")
-                      (forward-line 1))
-                    (goto-char (- beg 3))
-                    (while (search-forward "\\\\" nil t)
-                      (delete-region (point) (- (point) 2))
-                      (insert "/"))
-                    (while (search-forward "\\" nil t)
-                      (delete-region (point) (- (point) 1))
-                      (insert "/"))
-                    (while (search-forward "\\.\\" nil t)
-                      (delete-region (point) (- (point) 2)))
-                    ;; Convert ` ./FILE' to ` FILE'
-                    ;; This would lose if the current chunk of output
-                    ;; starts or ends within the ` ./', so back up a bit:
-                    (goto-char (- beg 3))  ; no error if < 0
-                    (while (search-forward " ./" nil t)
-                      (delete-region (point) (- (point) 2)))
-                    ;; Pad the number of links and file size.  This is a
-                    ;; quick and dirty way of getting the columns to line up
-                    ;; most of the time, but it's not foolproof.
-                    (when l-opt
-                      (goto-char beg)
-                      (goto-char (line-beginning-position))
-                      (while (re-search-forward ls-regexp nil t)
-                        (replace-match (format "%4s" (match-string 1))
-                                       nil nil nil 1)
-                        (replace-match (format "%9s" (match-string 2))
-                                       nil nil nil 2)
-                        (forward-line 1)))
-                    ;; Find all the complete lines in the unprocessed
-                    ;; output and process it to add text properties.
-                    (goto-char (point-max))
-                    (if (search-backward "\n" (process-mark proc) t)
-                        (progn
-                          (dired-insert-set-properties (process-mark proc)
-                                                       (1+ (point)))
-                          (move-marker (process-mark proc) (1+ (point)))))))))
-          ;; The buffer has been killed.
-          (delete-process proc))))))
-
-(defvar my-find-dired-ignore-dirs '(".hg" "backups" ".git")
-  "Directories to ignore while searching.")
-
-(defvar my-find-dired-ignore-extensions '("aux" "toc" "elc")
-  "File extensions to ignore while searching.")
-
-;; see `find-dired' in find-dired.el
-(defun my-find-dired (dir pattern)
-  (interactive
-   (list
-    (file-truename (ido-read-directory-name
-                    "Find name (directory): "
-                    default-directory default-directory t nil))
-    (read-from-minibuffer "Find name (filename wildcard): ")))
-  (when (not (featurep 'find-dired))
-    (require 'find-dired))
-  (let ((dired-buffers dired-buffers))
-    ;; Expand DIR ("" means default-directory), and make sure it has a
-    ;; trailing slash.
-    (setq dir (file-name-as-directory (expand-file-name dir)))
-    ;; Check that it's really a directory.
-    (or (file-directory-p dir)
-        (error "find-dired needs a directory: %s" dir))
-    (switch-to-buffer (get-buffer-create "*Find*"))
-
-    ;; See if there's still a `find' running, and offer to kill
-    ;; it first, if it is.
-    (let ((find (get-buffer-process (current-buffer))))
-      (when find
-        (if (or (not (eq (process-status find) 'run))
-                (yes-or-no-p "A `find' process is running; kill it? "))
-            (condition-case nil
-                (progn
-                  (interrupt-process find)
-                  (sit-for 1)
-                  (delete-process find))
-              (error nil))
-          (error "Cannot have two processes in `%s' at once" (buffer-name)))))
-
-    (widen)
-    (kill-all-local-variables)
-    (setq buffer-read-only nil)
-    (erase-buffer)
-
-    (setq default-directory dir)
-
-    (let ((cmd (concat
-                ;; "d:/progs/git/bin/bash -c \"cd "
-                ;; dir ";"
-                "\"d:/progs/gnuutils/bin/find\" . \\( "
-                (mapconcat (lambda (d)
-                             (concat "-iname \"" d "\""))
-                           my-find-dired-ignore-dirs " -o ")
-                " \\) -prune -o \\( -type f -iname \"*"
-                pattern "*\" -a -not \\( "
-                (mapconcat (lambda (ex)
-                             (concat "-iname \"*." ex "\""))
-                           my-find-dired-ignore-extensions " -o ")
-                " \\) \\) "
-                (car find-ls-option)
-                " &")))
-      (message "%s" cmd)
-      (shell-command cmd (current-buffer)))
-
-    (dired-mode dir (cdr find-ls-option))
-    (let ((map (make-sparse-keymap)))
-      (set-keymap-parent map (current-local-map))
-      (define-key map "\C-c\C-k" 'kill-find)
-      (use-local-map map))
-    (make-local-variable 'dired-sort-inhibit)
-    (setq dired-sort-inhibit t)
-    (set (make-local-variable 'revert-buffer-function)
-         `(lambda (ignore-auto noconfirm)
-            (my-find-dired ,dir ,pattern)))
-    ;; Set subdir-alist so that Tree Dired will work:
-    (if (fboundp 'dired-simple-subdir-alist)
-        ;; will work even with nested dired format (dired-nstd.el,v 1.15
-        ;; and later)
-        (dired-simple-subdir-alist)
-      ;; else we have an ancient tree dired (or classic dired, where
-      ;; this does no harm)
-      (set (make-local-variable 'dired-subdir-alist)
-           (list (cons default-directory (point-min-marker)))))
-    (set (make-local-variable 'dired-subdir-switches) find-ls-subdir-switches)
-    (setq buffer-read-only nil)
-    ;; Subdir headlerline must come first because the first marker in
-    ;; subdir-alist points there.
-    (insert "  " dir ":\n")
-    ;; Make second line a ``find'' line in analogy to the ``total'' or
-    ;; ``wildcard'' line.
-    (insert "  Results for: " pattern "\n")
-    (setq buffer-read-only t)
-    (let ((proc (get-buffer-process (current-buffer))))
-      (set-process-filter proc (function find-dired-filter))
-      (set-process-sentinel proc (function find-dired-sentinel))
-      ;; Initialize the process marker; it is used by the filter.
-      (move-marker (process-mark proc) 1 (current-buffer)))
-    (setq mode-line-process '(":%s"))))
-
-;;;_. avfs
-(defvar my-avfs-root "~/.avfs")
-(defvar my-avfs-archives '("zip" "rar" "tar"))
-(defvar my-hide-avfs-root t)
-
-(defun my-avfs-archive-filename (filename)
-  (concat my-avfs-root (file-truename filename) "#"))
-
-(defun my-avfs-archive-p (filename)
-  (let ((extensions (concat "\\." (regexp-opt my-avfs-archives) "\\'")))
-    (string-match-p extensions filename)))
-
-(defun my-open-avfs (filename)
-  (find-file (my-avfs-archive-filename filename)))
-
-(defun my-hide-avfs-root ()
-  (save-excursion
-    (when my-hide-avfs-root
-      (goto-char (point-min))
-      (when (search-forward (file-truename my-avfs-root) nil t)
-        (let ((inhibit-read-only t))
-          (put-text-property (match-beginning 0) (match-end 0) 'invisible t))))))
-
-(add-hook 'dired-after-readin-hook 'my-hide-avfs-root)
-
-(defun my-dired-open-avfs ()
-  (interactive)
-  (my-open-avfs (dired-file-name-at-point)))
-
-(defun my-dired-find-file ()
-  "In Dired, visit the file or directory named on this line.
-
-If point is on a file, behaves like `dired-file-file' but handles
-archives via avfs.
-
-If point is on a directory header, open a new dired for the
-directory under point."
-  (interactive)
-  (let ((file (condition-case nil
-                  (dired-get-file-for-visit)
-                (error "")))
-        (find-file-run-dired t))
-    (cond
-     ((my-avfs-archive-p file)
-      (my-open-avfs file))
-     ((dired-get-subdir)
-      (-when-let (end (save-excursion (re-search-forward "[/:]" (line-end-position) t)))
-        (let ((path (buffer-substring-no-properties
-                     (+ 2 (line-beginning-position))
-                     (1- end))))
-          (find-file path))))
-     (t
-      (find-file file)))))
-(define-key dired-mode-map [remap dired-find-file] 'my-dired-find-file)
-
-(defadvice find-file-noselect (before fix-avfs-arguments activate)
-  "If the target is archive that can be handled via avfs,
-automagically change the filename to the location of virtual
-directory representing this archive."
-  (when (my-avfs-archive-p (ad-get-arg 0))
-    (ad-set-arg 0 (my-avfs-archive-filename (ad-get-arg 0)))))
 
 ;;;_. Zip support
 
