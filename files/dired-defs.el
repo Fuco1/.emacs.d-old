@@ -11,12 +11,16 @@
 ;; external dependencies: bash in git d:/progs/git/bin/bash
 ;; we call find from bash to fix stupid windows * expansion
 
-;; loads dired, dired-aux, dired-x
-(require 'image-dired)
-(require 'dired-aux)
-(require 'dired-x)
-(require 'dired+)
-(require 'cl-lib)
+(defconst my-dired-media-files-extensions '("mp3" "mp4" "MP3" "MP4" "avi" "mpg" "flv" "ogg")
+  "Media file extensions that should launch in VLC.
+
+Also used for highlighting.")
+
+(use-package image-dired)
+(use-package dired-aux)
+(use-package dired-x)
+(use-package dired+)
+(use-package cl-lib)
 (use-package dired-details
   :commands dired-details-toggle)
 (use-package w32-browser
@@ -24,11 +28,23 @@
 (use-package dired-avfs)
 (use-package dired-filter)
 (use-package dired-open)
-
-(defconst my-dired-media-files-extensions '("mp3" "mp4" "MP3" "MP4" "avi" "mpg" "flv" "ogg")
-  "Media file extensions that should launch in VLC.
-
-Also used for highlighting.")
+(use-package dired-subtree
+  :init
+  (progn
+    (bind-keys :map dired-mode-map
+               :prefix "C-,"
+               :prefix-map dired-subtree-map
+               :prefix-docstring "Dired subtree map."
+               ("<C-i-key>" . dired-subtree-insert)
+               ("C-k" . dired-subtree-remove)
+               ("C-n" . dired-subtree-next-sibling)
+               ("C-p" . dired-subtree-previous-sibling)
+               ("C-u" . dired-subtree-up)
+               ("C-d" . dired-subtree-down)
+               ("C-a" . dired-subtree-beginning)
+               ("C-e" . dired-subtree-end)
+               ("C-o C-f" . dired-subtree-only-this-file)
+               ("C-o C-d" . dired-subtree-only-this-directory))))
 
 (use-package dired-rainbow
   :init
