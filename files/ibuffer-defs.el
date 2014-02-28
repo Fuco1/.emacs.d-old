@@ -73,23 +73,23 @@
 
 (define-ibuffer-column size-h
   (:name "Size"
-         :inline t
-         :summarizer
-         (lambda (column-strings)
-           (let ((total 0))
-             (dolist (string column-strings)
-               (setq total
-                     ;; like, ewww ...
-                     (+
-                      (let ((number (float (string-to-number string))))
-                        (cond
-                         ((string-match-p "K" string)
-                          (* number 1000))
-                         ((string-match-p "M" string)
-                          (* number 1000000))
-                         (t number)))
-                      total)))
-             (file-size-human-readable total 'si))))
+   :inline t
+   :summarizer
+   (lambda (column-strings)
+     (let ((total 0))
+       (dolist (string column-strings)
+         (setq total
+               ;; like, ewww ...
+               (+
+                (let ((number (float (string-to-number string))))
+                  (cond
+                   ((string-match-p "K" string)
+                    (* number 1000))
+                   ((string-match-p "M" string)
+                    (* number 1000000))
+                   (t number)))
+                total)))
+       (file-size-human-readable total 'si))))
   (file-size-human-readable (buffer-size) 'si))
 
 ;; Modify the default ibuffer-formats
