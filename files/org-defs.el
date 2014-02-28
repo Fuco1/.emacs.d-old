@@ -378,20 +378,21 @@ point and rebuild the agenda view."
                    "Projects"
                    "Waiting and Postponed Tasks"
                    "Reading")))
-    (--each headers
+    (let ((case-fold-search nil))
+      (--each headers
+        (save-excursion
+          (goto-char (point-min))
+          (search-forward it nil t)
+          (unless (save-excursion
+                    (forward-line)
+                    (my-org-agenda-is-task-p))
+            (delete-region (line-beginning-position) (1+ (line-end-position))))))
       (save-excursion
         (goto-char (point-min))
-        (search-forward it nil t)
-        (unless (save-excursion
-                  (forward-line)
-                  (my-org-agenda-is-task-p))
-          (delete-region (line-beginning-position) (1+ (line-end-position))))))
-    (save-excursion
-      (goto-char (point-min))
-      (when (re-search-forward (regexp-opt headers) nil t)
-        (goto-char (match-beginning 0))
-        (backward-char)
-        (insert (propertize (concat "\n" (make-string (/ (window-width) 2) ?─)) 'face 'org-time-grid))))))
+        (when (re-search-forward (regexp-opt headers) nil t)
+          (goto-char (match-beginning 0))
+          (backward-char)
+          (insert (propertize (concat "\n" (make-string (/ (window-width) 2) ?─)) 'face 'org-time-grid)))))))
 
 (add-hook 'org-agenda-finalize-hook 'my-org-agenda-remove-empty-lists)
 
@@ -404,7 +405,12 @@ point and rebuild the agenda view."
     ,@(--mapcat
        `((,(concat prefix (car it)) tags-todo ,(concat "+" (cdr it) "+TODO=\"NEXT\""))
          (,(concat prefix "a" (car it)) tags ,(concat "+" (cdr it)))
-         (,(concat prefix "p" (car it)) tags ,(concat "+" (cdr it) "-TODO=\"DONE\""))
+         (,(concat prefix "p" (car it)) tags ,(concat "+" (cdr it) "-TODO=\"DONE\"")
+          ((org-agenda-skip-function '(let ((next-headline (save-excursion
+                                                             (or (outline-next-heading)
+                                                                 (point-max)))))
+                                        (when (member "BOOKS" (org-get-tags))
+                                          next-headline)))))
          (,(concat prefix "d" (car it)) tags ,(concat "+" (cdr it) "+TODO=\"DONE\"")
           ((org-agenda-cmp-user-defined 'my-org-compare-closed-entries)
            (org-agenda-sorting-strategy '(user-defined-up)))))
