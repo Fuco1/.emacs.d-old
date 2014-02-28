@@ -1,4 +1,6 @@
-(bind-key "M-o" 'elwm-activate-window ibuffer-mode-map)
+(bind-keys :map ibuffer-mode-map
+           ("M-o" . elwm-activate-window)
+           ("U" . (lambda () (interactive) (ibuffer-unmark-all 0))))
 
 ;; filter groups
 (setq ibuffer-saved-filter-groups
