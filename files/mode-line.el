@@ -41,10 +41,14 @@
    (:propertize (:eval
                  (when buffer-file-name
                    (my-abbreviate-file-name default-directory (buffer-name))))
-                face mode-line-secondary)
+    face mode-line-secondary)
 
    ;; buffer name
-   (:propertize "%b" face mode-line-buffer-id)
+   (:propertize (:eval
+                 (if (tramp-tramp-file-p (buffer-name))
+                     (substring (elt (tramp-dissect-file-name (buffer-name)) 3) 1)
+                   (buffer-name)))
+    face mode-line-buffer-id)
 
    ;; activated modes
    "    %[("
@@ -106,13 +110,30 @@
 (defun my-abbreviate-file-name (filename &optional buffer-name)
   "Shorten the FILENAME or directory according to
 `my-abbrev-file-name-alist'. "
-  (dolist (p my-abbrev-file-name-alist)
-    (when (string-match (car p) filename)
-      (setq filename (replace-match (cdr p) nil nil filename))))
-  (s-chop-suffixes
-   (reverse (mapcar
-             (lambda (x) (concat x "/")) (s-split "/" buffer-name)))
-   filename))
+  (let* ((tramp-file-name (and (tramp-tramp-file-p filename)
+                               (tramp-dissect-file-name filename)))
+         (tramp-buffer-name (and (tramp-tramp-file-p buffer-name)
+                                 (tramp-dissect-file-name buffer-name)))
+         (real-buffer-name (or (and tramp-buffer-name
+                                    (elt tramp-buffer-name 3))
+                               buffer-name))
+         (real-filename (or (and tramp-file-name
+                                 (elt tramp-file-name 3))
+                            filename)))
+    (dolist (p my-abbrev-file-name-alist)
+      (when (string-match (car p) real-filename)
+        (setq real-filename (replace-match (cdr p) nil nil real-filename))))
+    (let ((uniquified-name (s-chop-suffixes
+                            (reverse (mapcar
+                                      (lambda (x) (concat x "/")) (s-split "/" real-buffer-name)))
+                            real-filename)))
+      (if tramp-file-name
+          (format "/%s:%s@%s:%s/"
+                  (elt tramp-file-name 0)
+                  (elt tramp-file-name 1)
+                  (elt tramp-file-name 2)
+                  uniquified-name)
+        uniquified-name))))
 
 (defvar minimal-mode-line-background "darkred"
   "Background colour for active mode line face when minimal minor
