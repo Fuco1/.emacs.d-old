@@ -358,12 +358,25 @@ point and rebuild the agenda view."
 
 ;; Tags shortcuts
 (setq org-tag-alist (quote ((:startgroup)
-                            ("@errand" . ?e)
-                            ("@school" . ?o)
-                            ("@home" . ?H)
+                            ("Errand" . ?e)
+                            ("School" . ?s)
+                            ("Home" . ?h)
                             (:endgroup)
-                            ("READING" . ?r)
-                            ("LATIN" . ?l))))
+                            (:startgroup)
+                            ("DE" . ?D)
+                            ("IT" . ?I)
+                            ("LA" . ?L)
+                            ("RU" . ?R)
+                            ("FR" . ?F)
+                            ("ES" . ?E)
+                            ("IL" . ?H)
+                            ("SANSKRIT" . ?S)
+                            ("PL" . ?P)
+                            ("JP" . ?J)
+                            (:endgroup)
+                            ("Reading" . ?r)
+                            ("CS" . ?c)
+                            ("FP" . ?f))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;; AGENDA VIEW
 (defun my-org-agenda-is-task-p ()
@@ -382,14 +395,14 @@ point and rebuild the agenda view."
       (--each headers
         (save-excursion
           (goto-char (point-min))
-          (search-forward it nil t)
+          (re-search-forward (concat "^" (regexp-quote it)) nil t)
           (unless (save-excursion
                     (forward-line)
                     (my-org-agenda-is-task-p))
             (delete-region (line-beginning-position) (1+ (line-end-position))))))
       (save-excursion
         (goto-char (point-min))
-        (when (re-search-forward (regexp-opt headers) nil t)
+        (when (re-search-forward (concat "^" (regexp-opt headers)) nil t)
           (goto-char (match-beginning 0))
           (backward-char)
           (insert (propertize (concat "\n" (make-string (/ (window-width) 2) ?─)) 'face 'org-time-grid)))))))
@@ -451,8 +464,7 @@ point and rebuild the agenda view."
                       (org-agenda-todo-ignore-scheduled 'future)
                       (org-agenda-todo-ignore-deadlines 'future)))
           (tags-todo "Reading"
-                     ((org-agenda-overriding-header "Reading")
-                      (org-tags-match-list-sublevels nil))))
+                     ((org-agenda-overriding-header "Reading"))))
          nil)
         ("h" "Habits" tags-todo "STYLE=\"habit\""
          ((org-agenda-overriding-header "Habits")

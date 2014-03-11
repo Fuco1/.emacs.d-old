@@ -128,11 +128,13 @@
                                       (lambda (x) (concat x "/")) (s-split "/" real-buffer-name)))
                             real-filename)))
       (if tramp-file-name
-          (format "/%s:%s@%s:%s/"
-                  (elt tramp-file-name 0)
-                  (elt tramp-file-name 1)
-                  (elt tramp-file-name 2)
-                  uniquified-name)
+          (let ((fn (format "/%s:%s@%s:%s"
+                            (elt tramp-file-name 0)
+                            (elt tramp-file-name 1)
+                            (elt tramp-file-name 2)
+                            uniquified-name)))
+            (if (s-ends-with-p "/" fn) fn
+              (concat fn "/")))
         uniquified-name))))
 
 (defvar minimal-mode-line-background "darkred"

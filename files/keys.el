@@ -40,6 +40,13 @@
 
 ;; refresh-like
 (bind-key "<f5>" '(lambda () (interactive) (load-file (buffer-file-name))))
+(bind-key "A-u" 'universal-argument)
+(bind-keys :prefix "A-x"
+           :prefix-map alt-x-prefix-map
+           :prefix-docstring "A-x prefix map"
+           ("A-m" . my-find-file-same-mode)
+           ("A-x" . my-find-file-same-ext)
+           ("A-s" . my-find-file-sudo))
 
 ;; Indenting and alignment
 (bind-key "<f8>" 'align-regexp)
@@ -247,19 +254,20 @@
 (bind-key "C-. -" 'macrostep-expand)
 
 (defvar ctl-dot-i-prefix-map)
+(put 'ctl-dot-i-prefix-map 'variable-documentation "Input method map.")
 (define-prefix-command 'ctl-dot-i-prefix-map)
 (bind-key "C-. i" 'ctl-dot-i-prefix-map)
 (bind-key "C-. i m" 'set-input-method)
 (bind-key "C-. i e" 'toggle-input-method)
 (bind-key "<XF86HomePage>" 'toggle-input-method)
-(bind-key "C-. i s" (lambda () (interactive) (set-input-method "slovak-prog-2")))
-(bind-key "C-. i c" (lambda () (interactive) (set-input-method "czech")))
-(bind-key "C-. i r" (lambda () (interactive) (set-input-method "russian-computer")))
-(bind-key "C-. i q" (lambda () (interactive) (set-input-method "cyrillic-translit")))
-(bind-key "C-. i i" (lambda () (interactive) (set-input-method "italian-keyboard")))
-(bind-key "C-. i g" (lambda () (interactive) (set-input-method "german")))
-(bind-key "C-. i t" (lambda () (interactive) (set-input-method "TeX")))
-(bind-key "C-. i l" (lambda () (interactive) (set-input-method "latin-macrons")))
+(bind-key "C-. i s" (lambda () "Toggle on slovak-prog-2 input method." (interactive) (set-input-method "slovak-prog-2")))
+(bind-key "C-. i c" (lambda () "Toggle on czech input method." (interactive) (set-input-method "czech")))
+(bind-key "C-. i r" (lambda () "Toggle on russian-computer input method." (interactive) (set-input-method "russian-computer")))
+(bind-key "C-. i q" (lambda () "Toggle on cyrillic-translit input method." (interactive) (set-input-method "cyrillic-translit")))
+(bind-key "C-. i i" (lambda () "Toggle on italian-keyboard input method." (interactive) (set-input-method "italian-keyboard")))
+(bind-key "C-. i g" (lambda () "Toggle on german input method." (interactive) (set-input-method "german")))
+(bind-key "C-. i t" (lambda () "Toggle on TeX input method." (interactive) (set-input-method "TeX")))
+(bind-key "C-. i l" (lambda () "Toggle on latin-macrons input method." (interactive) (set-input-method "latin-macrons")))
 
 (bind-key "H-u" 'universal-argument)
 (bind-key "H-u" 'universal-argument-more universal-argument-map)
@@ -290,7 +298,7 @@
 (bind-key "C-c m l" 'magit-key-mode-popup-logging)
 (bind-key "C-c m m" 'magit-key-mode-popup-merging)
 (bind-key "C-c m p" 'magit-key-mode-popup-pushing)
-
+(bind-key "C-c m v" 'magit-branch-manager)
 (bind-key "C-c m s" 'magit-status)
 
 ;; zapping
@@ -313,7 +321,7 @@ inserted character."
 ;; M-g map
 (bind-key "M-g RET" 'skeleton-display-abbrev)
 
-;; input methods
+
 (bind-key "C-\\" 'toggle-input-method)
 (bind-key "C-\\" 'my-cycle-language)
 (defvar my-input-method :english)
@@ -386,7 +394,8 @@ inserted character."
        (add-hook ',mode-hook (lambda () (define-key ,mode-map [remap end-of-buffer] ',fname))))))
 
 (my-special-buffer-back-to-top dired
-  (dired-next-line (if dired-omit-mode 2 4)))
+  (while (not (ignore-errors (dired-get-filename)))
+    (dired-next-line 1)))
 (my-special-buffer-jump-to-bottom dired
   (dired-previous-line 1))
 

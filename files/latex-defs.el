@@ -1,3 +1,5 @@
+;; how to setup zathura http://oku.edu.mie-u.ac.jp/~okumura/texwiki/?AUCTeX
+
 (use-package latex
   :defer t
   :config
@@ -23,6 +25,15 @@
       (when (eq action 'insert)
         (newline-and-indent)
         (save-excursion (newline))))
+
+    (defun my-latex-install-package (package)
+      "Install a texlive packag."
+      (interactive (list (word-at-point)))
+      (let ((buf (get-buffer-create "*tlmgr*")))
+        (with-current-buffer buf (erase-buffer))
+        (display-buffer buf)
+        (call-process "tlmgr" nil buf t "install" package)))
+    (bind-key "C-c i" 'my-latex-install-package LaTeX-mode-map)
 
     (defun my-latex-compile ()
       (interactive)

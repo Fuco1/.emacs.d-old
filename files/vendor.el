@@ -80,7 +80,8 @@
          ("<f9> <f10>" . ag-regexp)
          ("<f9> <f8>" . ag-files)
          ("M-<f2>" . ag-project-dired)
-         ("C-<f2>" . ag-dired))
+         ("C-<f2>" . ag-dired)
+         ("A-<f2>" . ag-dired-regexp))
   :config
   (progn
     (require 'wgrep)
@@ -253,9 +254,9 @@ return to regular interpretation of self-insert characters."
   :commands elxiki-mode
   :config
   (progn
-    (with-map-bind-keys elxiki-mode-map
-      ("A-<return>" 'elxiki-command)
-      ("M-<return>" 'elxiki-command-no-filter))))
+    (bind-keys :map elxiki-mode-map
+      ("A-<return>" . elxiki-command)
+      ("M-<return>" . elxiki-command-no-filter))))
 
 (use-package elwm
   :bind (("M-o" . elwm-activate-window)
@@ -514,9 +515,9 @@ The current directory is assumed to be the project's root otherwise."
     (defun my-html-mode-setup ()
       (multi-web-mode 1)
       (emmet-mode 1)
-      (with-map-bind-keys html-mode-map
-        ("C-c C-f" 'sp-html-next-tag)
-        ("C-c C-b" 'sp-html-previous-tag)))
+      (bind-keys :map html-mode-map
+        ("C-c C-f" . sp-html-next-tag)
+        ("C-c C-b" . sp-html-previous-tag)))
     (add-hook 'html-mode-hook 'my-html-mode-setup)))
 
 (use-package skeleton-complete
@@ -535,31 +536,24 @@ The current directory is assumed to be the project's root otherwise."
   :init
   (progn
     (bind-key "M-x" 'beautify-smex)
-    (bind-key "M-X" 'smex-major-mode-commands)
+    (bind-key "M-X" 'beautify-smex-mm)
     ;; This is your old M-x.
     (bind-key "C-c C-c M-x" 'execute-extended-command)
 
     (defun beautify-smex ()
       (interactive)
-      (unwind-protect
-          (progn
-            (setq ido-decorations
-                  '("{" "}" " | " " | ..." "[" "]" " [No match]" " [Matched]" " [Not readable]" " [Too big]" " [Confirm]"))
-            (smex))
-        (setq ido-decorations
-              '("\n-> " "" "\n   " "\n   ..." "[" "]" " [No match]" " [Matched]" " [Not readable]" " [Too big]" " [Confirm]")))))
+      (let ((ido-decorations
+             '("{" "}" " | " " | ..." "[" "]" " [No match]" " [Matched]" " [Not readable]" " [Too big]" " [Confirm]")))
+        (smex)))
+
+    (defun beautify-smex-mm ()
+      (interactive)
+      (let ((ido-decorations
+             '("{" "}" " | " " | ..." "[" "]" " [No match]" " [Matched]" " [Not readable]" " [Too big]" " [Confirm]")))
+        (smex-major-mode-commands))))
   :config
   (progn
-    (defun smex-update-after-load (unused)
-      (when (boundp 'smex-cache)
-        (smex-update)))
-    (add-hook 'after-load-functions 'smex-update-after-load)
-
-    (defun smex-prepare-ido-bindings ()
-      (define-key ido-completion-map (kbd "C-h f") 'smex-describe-function)
-      (define-key ido-completion-map (kbd "C-h w") 'smex-where-is)
-      (define-key ido-completion-map (kbd "M-.") 'smex-find-function)
-      (define-key ido-completion-map (kbd "C-a") 'move-beginning-of-line)
+    (defadvice smex-prepare-ido-bindings (after add-more-bindings activate)
       (define-key ido-completion-map (kbd "=") "-"))))
 
 (use-package sunrise-commander
@@ -606,6 +600,9 @@ The current directory is assumed to be the project's root otherwise."
 
 (use-package wc-mode
   :commands wc-mode)
+
+(use-package whitaker
+  :bind ("A-a" . whitaker-send-word))
 
 (use-package wiktionary-translate
   :bind ("<insert>" . wd-show-translation))

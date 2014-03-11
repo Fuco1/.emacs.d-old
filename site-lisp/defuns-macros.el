@@ -32,11 +32,6 @@ might often be impossible."
                ,@forms)
              (directory-files ,directory)))))
 
-(defmacro with-map-bind-keys (map &rest forms)
-  (declare (indent 1))
-  `(progn
-     ,@(mapcar (lambda (form) (append '(bind-key) form `(,map))) forms)))
-
 (defmacro with-lines (&rest forms)
   (declare (indent 0))
   `(while (not (eobp))
@@ -58,9 +53,9 @@ might often be impossible."
     "save-buffer-list"
     "save-kill-ring"
     "with-files-in-dir"
-    "with-map-bind-keys"
     "with-lines"
     "fix-reset-after-each"
+    "bind-keys"
     ))
 
 (font-lock-add-keywords 'emacs-lisp-mode `((,(concat "(\\<"

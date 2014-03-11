@@ -65,6 +65,9 @@
                     (mode . rcirc-mode)))
                ("Search"
                 (or (mode . ag-mode)))
+               ("Images"
+                (or (mode . di-view-mode)
+                    (mode . di-thumb-mode)))
                ))))
 
 ;; (define-ibuffer-filter in-directory

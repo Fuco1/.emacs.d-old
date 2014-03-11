@@ -165,7 +165,7 @@ is extension of default `tango-dark' face.")
                                            :background ,choc-1
                                            :foreground "black"))))
    `(eshell-prompt ((,class (:foreground ,plum-2 :weight bold))))
-   `(fixed-pitch ((,class (:height 98 :family ,fixed-sys))))
+   `(fixed-pitch ((,class (:height ,fixed-sys-height :family ,fixed-sys))))
    `(hl-line ((,class (:inherit nil :background ,alum-7))))
    `(markdown-pre-face ((,class (:inherit font-lock-constant-face :family ,fixed-sys))))
    `(markdown-inline-code-face ((,class (:inherit markdown-pre-face))))

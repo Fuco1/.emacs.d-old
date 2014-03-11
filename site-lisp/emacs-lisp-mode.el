@@ -3,13 +3,13 @@
   :init
   (progn
     (defun my-emacs-lisp-init ()
-      (with-map-bind-keys emacs-lisp-mode-map
-        ("RET" 'my-emacs-lisp-open-line)
-        ("C-M-;" 'clippy-describe-function)
-        ("C-. ." 'my-describe-thing-in-buffer)
-        ("C-x C-d l" 'my-extract-to-let)
-        ("C-x C-d m" 'my-merge-let-forms)
-        ("C-x C-d c" 'my-lisp-condify-if))
+      (bind-keys :map emacs-lisp-mode-map
+        ("RET" . my-emacs-lisp-open-line)
+        ("C-M-;" . clippy-describe-function)
+        ("C-. ." . my-describe-thing-in-buffer)
+        ("C-x C-d l" . my-extract-to-let)
+        ("C-x C-d m" . my-merge-let-forms)
+        ("C-x C-d c" . my-lisp-condify-if))
 
       (set-input-method "english-prog")
       (eldoc-mode 1)

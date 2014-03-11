@@ -46,7 +46,7 @@ With raw prefix \\[universal-argument] insert newline at point
 and indent next line according to mode."
   (interactive "P")
   (if (or (<= (point) (save-excursion
-                        (my-back-to-indentation)
+                        (my--back-to-indentation)
                         (point)))
           (equal arg '(4)))
       (progn
@@ -200,7 +200,7 @@ move the current line down and yank"
 ;; navigate to beg/end of current line, considering indent and
 ;; comments
 
-(defun point-in-comment ()
+(defun my--point-in-comment ()
   "Determine if the point is inside a comment"
   (interactive)
   (let ((face (plist-get (text-properties-at (point)) 'face)))
@@ -208,11 +208,24 @@ move the current line down and yank"
     (or (memq 'font-lock-comment-face face)
         (memq 'font-lock-comment-delimiter-face face))))
 
-(defun my-back-to-indentation ()
+(defun my--back-to-indentation ()
+  "Move to indentation respecting `visual-line-mode'."
   (if visual-line-mode
       (flet ((beginning-of-line (arg) (beginning-of-visual-line arg)))
         (back-to-indentation))
     (back-to-indentation)))
+
+(defun my--move-beginning-of-line (&optional arg)
+  "Move to beginning of line respecting `visual-line-mode'."
+  (if visual-line-mode
+      (beginning-of-visual-line arg)
+    (move-beginning-of-line arg)))
+
+(defun my--move-end-of-line (&optional arg)
+  "Move to end of line respecting `visual-line-mode'."
+  (if visual-line-mode
+      (end-of-visual-line arg)
+    (move-end-of-line arg)))
 
 (defun my-back-to-indentation-or-beginning (&optional arg)
   "Jump back to indentation of the current line.  If already
@@ -230,22 +243,28 @@ enabled, move according to the visual lines."
       (if (= (point) eob)
           (org-beginning-of-line)
         (goto-char eob))))
+   ((eq major-mode 'dired-mode)
+    (if (= (point) (save-excursion
+                     (dired-move-to-filename)
+                     (point)))
+        (progn
+          (move-beginning-of-line 1)
+          (skip-syntax-forward " "))
+      (dired-move-to-filename)))
    ((eq major-mode 'org-mode)
     (org-beginning-of-line))
    (t
     (if (or (/= arg 1)
             (= (point) (save-excursion
-                         (my-back-to-indentation)
+                         (my--back-to-indentation)
                          (point))))
         (progn
-          (if visual-line-mode
-              (beginning-of-visual-line arg)
-            (move-beginning-of-line arg))
+          (my--move-beginning-of-line arg)
           (when (/= arg 1)
-            (my-back-to-indentation)))
-      (my-back-to-indentation)))))
+            (my--back-to-indentation)))
+      (my--back-to-indentation)))))
 
-(defun my-cua-get-longest-line ()
+(defun my--cua-get-longest-line ()
   (-max (mapcar 'length
                 (split-string
                  (buffer-substring-no-properties (cua--rectangle-top) (cua--rectangle-bot))
@@ -295,7 +314,7 @@ properly."
      (t
       (let ((eoc (save-excursion
                    (end-of-line-lov)
-                   (while (and (point-in-comment)
+                   (while (and (my--point-in-comment)
                                (not (bolp)))
                      (backward-char))
                    (skip-syntax-backward " ")
@@ -309,7 +328,7 @@ properly."
                               (point))
                      (point))))
             ;; end of rectangle in cua-rect mode
-            (eor (when cua--rectangle (my-cua-get-longest-line))))
+            (eor (when cua--rectangle (my--cua-get-longest-line))))
         ;; refactor this: make some "move actions" and call them in
         ;; order until point changes.
         (cond
@@ -322,7 +341,7 @@ properly."
           (if (and cua--rectangle
                    (/= (1+ (aref cua--rectangle 3)) eor))
               (cua-resize-rectangle-right (- eor (current-column) 1))
-            (goto-char eoc)))
+            (goto-char eoc))) ;; asd
          (t (goto-char eoc))))))))
 
 

@@ -18,7 +18,19 @@ Also used for highlighting.")
 
 (use-package image-dired)
 (use-package dired-aux)
-(use-package dired-x)
+(use-package dired-x
+  :config
+  (defun dired-virtual-revert (&optional _arg _noconfirm)
+    "Enable revert for virtual direds."
+    (let ((m (dired-file-name-at-point))
+          (buffer-modified (buffer-modified-p)))
+      (goto-char 1)
+      (dired-next-subdir 1)
+      (dired-do-redisplay nil t)
+      (while (dired-next-subdir 1 t)
+        (dired-do-redisplay nil t))
+      (when m (dired-goto-file m))
+      (set-buffer-modified-p buffer-modified))))
 (use-package dired+)
 (use-package cl-lib)
 (use-package dired-details
@@ -30,21 +42,23 @@ Also used for highlighting.")
 (use-package dired-open)
 (use-package dired-subtree
   :init
-  (progn
-    (bind-keys :map dired-mode-map
-               :prefix "C-,"
-               :prefix-map dired-subtree-map
-               :prefix-docstring "Dired subtree map."
-               ("<C-i-key>" . dired-subtree-insert)
-               ("C-k" . dired-subtree-remove)
-               ("C-n" . dired-subtree-next-sibling)
-               ("C-p" . dired-subtree-previous-sibling)
-               ("C-u" . dired-subtree-up)
-               ("C-d" . dired-subtree-down)
-               ("C-a" . dired-subtree-beginning)
-               ("C-e" . dired-subtree-end)
-               ("C-o C-f" . dired-subtree-only-this-file)
-               ("C-o C-d" . dired-subtree-only-this-directory))))
+  (bind-keys :map dired-mode-map
+             :prefix "C-,"
+             :prefix-map dired-subtree-map
+             :prefix-docstring "Dired subtree map."
+             ("<C-i-key>" . dired-subtree-insert)
+             ("C-/" . dired-subtree-apply-filter)
+             ("C-k" . dired-subtree-remove)
+             ("C-n" . dired-subtree-next-sibling)
+             ("C-p" . dired-subtree-previous-sibling)
+             ("C-u" . dired-subtree-up)
+             ("C-d" . dired-subtree-down)
+             ("C-a" . dired-subtree-beginning)
+             ("C-e" . dired-subtree-end)
+             ("m" . dired-subtree-mark-subtree)
+             ("u" . dired-subtree-unmark-subtree)
+             ("C-o C-f" . dired-subtree-only-this-file)
+             ("C-o C-d" . dired-subtree-only-this-directory)))
 
 (use-package dired-rainbow
   :init
@@ -127,6 +141,13 @@ Also used for highlighting.")
     ("K" . my-dired-kill-subdir)
     ("P" . my-dired-parent-directory)
     ("I" . my-dired-maybe-insert-subdir)
+
+    ("n" . dired-hacks-next-file)
+    ("p" . dired-hacks-previous-file)
+    ("C-d" . (lambda (arg)
+               "Move to next directory line."
+               (interactive "p")
+               (ignore-errors (dired-next-dirline arg))))
 
     ("M-p" . diredp-prev-subdir)
     ("M-n" . diredp-next-subdir)
@@ -298,18 +319,6 @@ Interactive use only useful if `image-dired-track-movement' is nil."
 
 ;;;_. Virtual dired
 ;; these functions depend on the dired plus package
-(defun dired-virtual-revert (&optional _arg _noconfirm)
-  "Enable revert for virtual direds."
-  (let ((m (dired-file-name-at-point))
-        (buffer-modified (buffer-modified-p)))
-    (goto-char 1)
-    (dired-next-subdir 1)
-    (dired-do-redisplay nil t)
-    (while (dired-next-subdir 1 t)
-      (dired-do-redisplay nil t))
-    (when m (dired-goto-file m))
-    (set-buffer-modified-p buffer-modified)))
-
 (defun dired-virtual-save-buffer ()
   (let ((subdirs (nreverse (mapcar 'car dired-subdir-alist)))
         (title (buffer-name))

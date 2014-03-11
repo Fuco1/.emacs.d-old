@@ -17,10 +17,12 @@
         kill-region
         kill-visual-line
         my-back-to-indentation-or-beginning
+        my-capitalize-word
         my-emacs-lisp-open-line
         my-end-of-code-or-line
         my-newline
         my-smart-downcase-word
+        my-smart-upcase-word
         org-beginning-of-line
         org-end-of-line
         smart-tab

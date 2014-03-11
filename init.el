@@ -1,6 +1,7 @@
 (server-start)
 (add-to-list 'load-path "~/.emacs.d/vendor/use-package/")
 (require 'use-package)
+(setq use-package-verbose t)
 
 (defconst emacs-start-time (current-time))
 
