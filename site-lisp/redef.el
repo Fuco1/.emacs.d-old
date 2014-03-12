@@ -44,26 +44,38 @@ it specifies how to indent.  The property value can be:
 
 This function returns either the indentation to use, or nil if the
 Lisp function does not specify a special indentation."
-     (let ((normal-indent (current-column)))
+     (let ((normal-indent (current-column))
+           (orig-point (point)))
        (goto-char (1+ (elt state 1)))
        (parse-partial-sexp (point) calculate-lisp-indent-last-sexp 0 t)
-       (if (and (elt state 2)
-                (or (not (looking-at "\\sw\\|\\s_"))
-                    (looking-at ":")))
-           ;; car of form doesn't seem to be a symbol, or is a keyword
-           (progn
-             (if (not (> (save-excursion (forward-line 1) (point))
-                         calculate-lisp-indent-last-sexp))
-                 (progn (goto-char calculate-lisp-indent-last-sexp)
-                        (beginning-of-line)
-                        (parse-partial-sexp (point)
-                                            calculate-lisp-indent-last-sexp 0 t)))
-             ;; Indent under the list or under the first sexp on the same
-             ;; line as calculate-lisp-indent-last-sexp.  Note that first
-             ;; thing on that line has to be complete sexp since we are
-             ;; inside the innermost containing sexp.
-             (backward-prefix-chars)
-             (current-column))
+       (cond
+        ;; car of form doesn't seem to be a symbol, or is a keyword
+        ((and (elt state 2)
+              (or (not (looking-at "\\sw\\|\\s_"))
+                  (looking-at ":")))
+         (if (not (> (save-excursion (forward-line 1) (point))
+                     calculate-lisp-indent-last-sexp))
+             (progn (goto-char calculate-lisp-indent-last-sexp)
+                    (beginning-of-line)
+                    (parse-partial-sexp (point)
+                                        calculate-lisp-indent-last-sexp 0 t)))
+         ;; Indent under the list or under the first sexp on the same
+         ;; line as calculate-lisp-indent-last-sexp.  Note that first
+         ;; thing on that line has to be complete sexp since we are
+         ;; inside the innermost containing sexp.
+         (backward-prefix-chars)
+         (current-column))
+        ((and (save-excursion
+                (goto-char indent-point)
+                (skip-syntax-forward " ")
+                (not (looking-at ":")))
+              (save-excursion
+                (goto-char orig-point)
+                (looking-at ":")))
+         (save-excursion
+           (goto-char (+ 2 (elt state 1)))
+           (current-column)))
+        (t
          (let ((function (buffer-substring (point)
                                            (progn (forward-sexp 1) (point))))
                method)
@@ -79,4 +91,4 @@ Lisp function does not specify a special indentation."
                   (lisp-indent-specform method state
                                         indent-point normal-indent))
                  (method
-                  (funcall method indent-point state))))))))
+                  (funcall method indent-point state)))))))))
