@@ -57,7 +57,13 @@
   ("C-x n t" . my-org-narrow-to-top-heading)
   ("C-x n P" . my-org-narrow-to-project)
   ("C-x n N" . my-org-narrow-to-subtree)
-  ("C-x n W" . my-org-widen))
+  ("C-x n W" . my-org-widen)
+
+  ("C-c M-`" . org-mark-ring-goto))
+
+;; global keys
+(bind-keys
+ ("C-<f12>" . org-agenda-time-limit))
 
 (defun my-org-open-at-point (&optional arg)
   "Just like `org-open-at-point', but open link in this window."
@@ -410,6 +416,16 @@ point and rebuild the agenda view."
 (add-hook 'org-agenda-finalize-hook 'my-org-agenda-remove-empty-lists)
 
 ;; Custom agenda command definitions
+(defvar my-org-show-media-closed-since (apply 'encode-time (org-parse-time-string "1980-01-01"))
+  "Time since which we show the closed media")
+
+(defun org-agenda-time-limit (time)
+  "Call `org-agenda' with media timestamp limited."
+  (interactive "sTimestamp: ")
+  (let ((my-org-show-media-closed-since
+         (apply 'encode-time (org-parse-time-string time))))
+    (org-agenda)))
+
 (defun my-org-agenda-filter (prefix title &rest args)
   `((,prefix . ,title)
     (,(concat prefix "a") . "All")
@@ -426,7 +442,15 @@ point and rebuild the agenda view."
                                           next-headline)))))
          (,(concat prefix "d" (car it)) tags ,(concat "+" (cdr it) "+TODO=\"DONE\"")
           ((org-agenda-cmp-user-defined 'my-org-compare-closed-entries)
-           (org-agenda-sorting-strategy '(user-defined-up)))))
+           (org-agenda-sorting-strategy '(user-defined-up))
+           (org-agenda-skip-function '(let ((next-headline (save-excursion
+                                                             (or (outline-next-heading)
+                                                                 (point-max)))))
+                                        (let ((closed-at (org-time-string-to-time
+                                                          (org-entry-get (point) "CLOSED"))))
+                                          (when (time-less-p closed-at
+                                                             my-org-show-media-closed-since)
+                                            next-headline)))))))
        args)))
 
 (setq org-agenda-custom-commands
@@ -452,11 +476,11 @@ point and rebuild the agenda view."
                       (org-agenda-todo-ignore-scheduled t)
                       (org-agenda-todo-ignore-deadlines t)
                       (org-agenda-todo-ignore-with-date t)
-                      (org-agenda-sorting-strategy '(category-keep))))
+                      (org-agenda-sorting-strategy '(priority-down category-keep))))
           (tags-todo "-HOLD-CANCELLED/!"
                      ((org-agenda-overriding-header "Projects")
                       (org-agenda-skip-function 'bh/skip-non-projects)
-                      (org-agenda-sorting-strategy '(category-keep))))
+                      (org-agenda-sorting-strategy '(priority-down category-keep))))
           (tags-todo "-CANCELLED+WAITING/!"
                      ((org-agenda-overriding-header "Waiting and Postponed Tasks")
                       (org-agenda-skip-function 'bh/skip-stuck-projects)
