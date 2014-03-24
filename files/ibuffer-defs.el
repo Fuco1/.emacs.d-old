@@ -28,7 +28,8 @@
                ("TeX"
                 (or (mode . tex-mode)
                     (mode . plain-tex-mode)
-                    (mode . latex-mode)))
+                    (mode . latex-mode)
+                    (mode . bibtex-mode)))
                ("Markdown" (or (mode . markdown-mode)
                                (mode . gfm-mode)))
                ("Web"
