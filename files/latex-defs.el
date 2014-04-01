@@ -102,14 +102,31 @@ starting with \\ and followed by a block of text enclosed in {}."
     (bind-key "C-c d" 'my-latex-remove-command LaTeX-mode-map)
     (bind-key "M-RET" 'LaTeX-insert-item LaTeX-mode-map)
 
-    (defun my-LaTeX-preview-math ()
+    (defun my-latex-preview-math ()
       (interactive)
       (let ((b (save-excursion (while (texmathp) (backward-char 1)) (1- (point))))
             (e (save-excursion (while (texmathp) (forward-char 1)) (point))))
         (preview-region b e)))
-    (bind-key "C-<m-key>" 'my-LaTeX-preview-math preview-map)
+    (bind-key "C-<m-key>" 'my-latex-preview-math preview-map)
 
-    (defun my-LaTeX-mode-init ()
+    (defun my-latex-goto-label ()
+      (interactive)
+      (let ((enc (sp-get-enclosing-sexp))
+            label-name)
+        (sp-get enc
+          (when (save-excursion
+                  (goto-char :beg-prf)
+                  (looking-at-p (regexp-opt '("\\cref" "\\eqref" "\\autoref" "\\ref"))))
+            (setq label-name (buffer-substring-no-properties :beg-in :end-in))))
+        (when label-name
+          (push-mark)
+          (goto-char (point-min))
+          (search-forward (concat "\\label{" label-name))
+          (search-backward "{")
+          (forward-char 1))))
+    (bind-key "C-c L" 'my-latex-goto-label LaTeX-mode-map)
+
+    (defun my-latex-mode-init ()
       (setq TeX-auto-save t)
       (setq TeX-parse-self t)
       (TeX-PDF-mode t)
@@ -127,7 +144,7 @@ starting with \\ and followed by a block of text enclosed in {}."
 
       (message "LaTeX mode init complete."))
     ;; ACUTeX replaces latex-mode-hook with LaTeX-mode-hook
-    (add-hook 'LaTeX-mode-hook 'my-LaTeX-mode-init)
+    (add-hook 'LaTeX-mode-hook 'my-latex-mode-init)
 
     (keyadvice-add-advice (kbd "`")
       (if (and (eq major-mode 'latex-mode) (texmathp))
