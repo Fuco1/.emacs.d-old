@@ -33,6 +33,8 @@
              ("N" . my-org-narrow-to-subtree)
              ("W" . my-org-widen)))
 
+(use-package org-protocol)
+
 (defface my-org-bold
   '((t (:weight bold :inherit font-lock-variable-name-face)))
   "The face used to highlight pair overlays.")
@@ -285,8 +287,13 @@ point and rebuild the agenda view."
                "* SOMEDAY %?\n%U\n" :clock-keep t)
               ("n" "note" entry (file "~/org/refile.org")
                "* %? :NOTE:\n%U\n%" :clock-keep t)
-              ("j" "Journal" entry (file+datetree "~/org/diary.org")
-               "* %?\n%U\n" :clock-keep t))))
+              ("j" "journal" entry (file+datetree "~/org/diary.org")
+               "* %?\n%U\n" :clock-keep t)
+              ("w" "water" table-line (file+datetree "~/org/water.org")
+               "|%<%H:%M:%S>|%?|" :table-line-pos "III-1")
+              ("b" "bookmark" entry (file "~/org/bookmarks.org")
+               "* %:description\n- source: %:link\n%(if (not (equal %:initial \"\"))
+                                                        (concat \"- selection:\n  \" %:initial) \"\")"))))
 
 ;; Remove empty LOGBOOK drawers on clock out
 (defun bh/remove-empty-drawer-on-clock-out ()
@@ -376,13 +383,14 @@ point and rebuild the agenda view."
                             ("FR" . ?F)
                             ("ES" . ?E)
                             ("IL" . ?H)
-                            ("SANSKRIT" . ?S)
+                            ("SA" . ?S)
                             ("PL" . ?P)
                             ("JP" . ?J)
                             (:endgroup)
                             ("Reading" . ?r)
                             ("CS" . ?c)
-                            ("FP" . ?f))))
+                            ("FP" . ?f)
+                            ("Langs" . ?l))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;; AGENDA VIEW
 (defun my-org-agenda-is-task-p ()
