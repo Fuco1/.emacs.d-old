@@ -447,7 +447,8 @@ called, percentage usage and the command."
           ("C-c C-x <C-i-key>" . org-clock-in))
   :config
   (progn
-    (load "files/org-defs.el")))
+    (load "files/org-defs.el")
+    (load "vendor/org-velocity/org-velocity.el")))
 
 (use-package popwin
   :commands popwin-mode
@@ -458,6 +459,7 @@ called, percentage usage and the command."
 (use-package projectile
   :defer t
   :diminish projectile-mode
+  :bind (("S-RET" . projectile-switch-to-buffer))
   :config
   (progn
     (defun projectile-project-root ()
@@ -557,6 +559,7 @@ The current directory is assumed to be the project's root otherwise."
       (define-key ido-completion-map (kbd "=") "-"))))
 
 (use-package sunrise-commander
+  :disabled t
   :defer t
   :config
   (progn
@@ -598,11 +601,20 @@ The current directory is assumed to be the project's root otherwise."
   :bind (("C-x u" . undo-tree-visualize))
   :diminish undo-tree-mode)
 
+(use-package visual-regexp
+  :pre-init
+  (bind-keys :prefix "C-c v"
+             :prefix-map ctl-c-v-map
+             :prefix-docstring "Visual regexp map")
+  :bind (("C-c v r" . vr/replace)
+         ("C-c v q" . vr/query-replace)))
+
 (use-package wc-mode
   :commands wc-mode)
 
 (use-package whitaker
-  :bind ("A-a" . whitaker-send-word))
+  :commands whitaker
+  :bind ("A-a" . whitaker-send-input))
 
 (use-package wiktionary-translate
   :bind ("<insert>" . wd-show-translation))
