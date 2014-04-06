@@ -77,7 +77,7 @@
        ))
 
    " (" mode-line-mule-info ")"
-   " " global-mode-string
+   " " mode-line-misc-info
 
    ;; hack to make the modeline refresh after each change in buffer
    (:propertize "%l" face (:foreground "black" :height 0))
