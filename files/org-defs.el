@@ -503,7 +503,7 @@ point and rebuild the agenda view."
                       (org-agenda-todo-ignore-deadlines t)
                       (org-agenda-todo-ignore-with-date t)
                       (org-agenda-sorting-strategy '(priority-down category-keep))))
-          (tags-todo "-HOLD-CANCELLED/!"
+          (tags-todo "-HOLD-CANCELLED-GENERAL/!"
                      ((org-agenda-overriding-header "Projects")
                       (org-agenda-skip-function 'bh/skip-non-projects)
                       (org-agenda-sorting-strategy '(priority-down category-keep))))
