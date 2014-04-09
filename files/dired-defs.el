@@ -11,7 +11,7 @@
 ;; external dependencies: bash in git d:/progs/git/bin/bash
 ;; we call find from bash to fix stupid windows * expansion
 
-(defconst my-dired-media-files-extensions '("mp3" "mp4" "MP3" "MP4" "avi" "mpg" "flv" "ogg")
+(defconst my-dired-media-files-extensions '("mp3" "mp4" "MP3" "MP4" "avi" "mpg" "flv" "ogg" "wmv" "mkv")
   "Media file extensions that should launch in VLC.
 
 Also used for highlighting.")
@@ -46,19 +46,19 @@ Also used for highlighting.")
              :prefix "C-,"
              :prefix-map dired-subtree-map
              :prefix-docstring "Dired subtree map."
-             ("<C-i-key>" . dired-subtree-insert)
-             ("C-/" . dired-subtree-apply-filter)
-             ("C-k" . dired-subtree-remove)
-             ("C-n" . dired-subtree-next-sibling)
-             ("C-p" . dired-subtree-previous-sibling)
-             ("C-u" . dired-subtree-up)
-             ("C-d" . dired-subtree-down)
-             ("C-a" . dired-subtree-beginning)
-             ("C-e" . dired-subtree-end)
-             ("m" . dired-subtree-mark-subtree)
-             ("u" . dired-subtree-unmark-subtree)
-             ("C-o C-f" . dired-subtree-only-this-file)
-             ("C-o C-d" . dired-subtree-only-this-directory)))
+    ("<C-i-key>" . dired-subtree-insert)
+    ("C-/" . dired-subtree-apply-filter)
+    ("C-k" . dired-subtree-remove)
+    ("C-n" . dired-subtree-next-sibling)
+    ("C-p" . dired-subtree-previous-sibling)
+    ("C-u" . dired-subtree-up)
+    ("C-d" . dired-subtree-down)
+    ("C-a" . dired-subtree-beginning)
+    ("C-e" . dired-subtree-end)
+    ("m" . dired-subtree-mark-subtree)
+    ("u" . dired-subtree-unmark-subtree)
+    ("C-o C-f" . dired-subtree-only-this-file)
+    ("C-o C-d" . dired-subtree-only-this-directory)))
 
 (use-package dired-rainbow
   :init
@@ -66,7 +66,7 @@ Also used for highlighting.")
     (dired-rainbow-define html "#4e9a06" ("htm" "html" "xhtml"))
     (dired-rainbow-define xml "DarkGreen" ("xml" "xsd" "xsl" "xslt" "wsdl"))
 
-    (dired-rainbow-define document "#fce94f" ("doc" "docx" "odt" "pdb" "pdf" "ps" "rtf"))
+    (dired-rainbow-define document "#fce94f" ("doc" "docx" "odt" "pdb" "pdf" "ps" "rtf" "djvu"))
     (dired-rainbow-define media "#ce5c00" my-dired-media-files-extensions)
     (dired-rainbow-define image "#ff4b4b" ("jpg" "png" "jpeg" "gif"))
 
@@ -78,7 +78,9 @@ Also used for highlighting.")
     (dired-rainbow-define packaged "#e6a8df" ("deb" "rpm"))
     (dired-rainbow-define encrypted "LightBlue" ("gpg" "pgp"))))
 
-(add-to-list 'dired-guess-shell-alist-user (list (regexp-opt my-dired-media-files-extensions)
+(add-to-list 'dired-guess-shell-alist-user (list (concat "\\."
+                                                         (regexp-opt my-dired-media-files-extensions)
+                                                         "\\'")
                                                  "vlc"))
 
 ;;;_. Key bindings & hooks
