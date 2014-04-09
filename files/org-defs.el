@@ -281,19 +281,37 @@ point and rebuild the agenda view."
 
 ;; Capture templates for: TODO tasks, Notes, appointments, phone calls, and org-protocol
 (setq org-capture-templates
-      (quote (("t" "todo" entry (file "~/org/refile.org")
+      `(("t" "todo" entry (file "~/org/refile.org")
+         "* TODO %?\n%U\n" :clock-keep t)
+        ,@(let ((targets '(("e" "todo-emacs" "emacs" "Emacs config")
+                           ("g" "todo-general" "me" "General")
+                           ("l" "todo-linux" "me" "Linux")
+                           ("h" "todo-home" "home" "General"))))
+            (--map
+             `(,(nth 0 it) ,(nth 1 it) entry (file+headline ,(concat "~/org/" (nth 2 it) ".org") ,(nth 3 it))
                "* TODO %?\n%U\n" :clock-keep t)
-              ("s" "someday" entry (file "~/org/refile.org")
-               "* SOMEDAY %?\n%U\n" :clock-keep t)
-              ("n" "note" entry (file "~/org/refile.org")
-               "* %? :NOTE:\n%U\n%" :clock-keep t)
-              ("j" "journal" entry (file+datetree "~/org/diary.org")
-               "* %?\n%U\n" :clock-keep t)
-              ("w" "water" table-line (file+datetree "~/org/water.org")
-               "|%<%H:%M:%S>|%?|" :table-line-pos "III-1")
-              ("b" "bookmark" entry (file "~/org/bookmarks.org")
-               "* %:description\n- source: %:link\n%(if (not (equal %:initial \"\"))
-                                                        (concat \"- selection:\n  \" %:initial) \"\")"))))
+             targets))
+        ("w" "water" table-line (file+datetree "~/org/water.org")
+         "|%<%H:%M:%S>|%?|" :table-line-pos "III-1")
+        ("b" "bookmark" entry (file+function "~/org/bookmarks.org" my-org-handle-bookmark)
+         "* %:description\n- source: %:link\n%(if (not (equal %:initial \"\"))
+                                                        (concat \"- selection:\n  \" %:initial) \"\")")
+        ("y" "youtube-dl" entry (function org-handle-link-youtube) "")))
+
+(defun my-org-handle-bookmark ()
+  (let ((link (caar org-stored-links)))
+    (cond
+     ;; add handlers for various categories here
+     (t
+      (goto-char (point-max))
+      (newline)))))
+
+(defun org-handle-link-youtube ()
+  (let ((link (caar org-stored-links)))
+    (save-window-excursion
+      (async-shell-command (concat "yd '" link "'"))
+      (message "Youtube download started: %s" link)))
+  (error "Do not capture youtube links"))
 
 ;; Remove empty LOGBOOK drawers on clock out
 (defun bh/remove-empty-drawer-on-clock-out ()
