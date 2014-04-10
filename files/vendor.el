@@ -6,6 +6,9 @@
   (progn
     (setq ace-jump-mode-scope 'window)))
 
+(use-package ace-window
+  :bind ("C-. C-." . ace-window))
+
 (use-package ack-and-a-half
   :disabled t
   :pre-init
@@ -338,6 +341,10 @@ return to regular interpretation of self-insert characters."
 
     (add-hook 'haskell-mode-hook 'my-haskell-init)))
 
+(use-package help-mode
+  :config
+  (ace-link-setup-default))
+
 (use-package ibuffer
   :bind ("<f1> <f1>" . ibuffer)
   :init
@@ -361,6 +368,10 @@ return to regular interpretation of self-insert characters."
   :config
   (progn
     (load "files/ido-defs")))
+
+(use-package info
+  :config
+  (ace-link-setup-default))
 
 (use-package "isearch"
   :bind (("C-s" . isearch-forward-regexp)
@@ -448,7 +459,8 @@ called, percentage usage and the command."
   :config
   (progn
     (load "files/org-defs.el")
-    (load "vendor/org-velocity/org-velocity.el")))
+    (load "vendor/org-velocity/org-velocity.el")
+    (bind-key "C-c s" 'org-velocity org-mode-map)))
 
 (use-package popwin
   :commands popwin-mode
