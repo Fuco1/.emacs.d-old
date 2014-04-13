@@ -42,7 +42,8 @@
     (bind-key "C-M-x" 'my-latex-compile LaTeX-mode-map)
 
     (defvar my-latex-wrap-choices '("emph"
-                                    "textsc"))
+                                    "textsc"
+                                    "underbrace"))
     (defvar my-latex-wrap-history nil)
 
     (defun my-latex-wrap (macro-name)
@@ -59,19 +60,18 @@
           (insert "\\" macro-name "{"))))
     (bind-key "C-c w" 'my-latex-wrap LaTeX-mode-map)
 
-    (defun my-end-of-environment ()
-      (interactive)
-      (LaTeX-mark-environment)
-      (end-of-region))
+    (defun my-latex-beginning-of-defun (&optional arg)
+      "Move to the beginning of ARGth environment after the point."
+      (interactive "p")
+      (when (re-search-forward "^\\\\begin{" nil t (- arg))
+        (back-to-indentation)
+        t))
 
-    (defun my-beginning-of-environment ()
+    (defun my-latex-end-of-defun ()
+      "Move to the end of ARGth environment after the point."
       (interactive)
-      (LaTeX-mark-environment)
-      (beginning-of-region)
-      (deactivate-mark))
-
-    (bind-key "M-n" 'my-end-of-environment LaTeX-mode-map)
-    (bind-key "M-p" 'my-beginning-of-environment LaTeX-mode-map)
+      (when (re-search-forward "^\\\\end{" nil t arg)
+        (forward-line)))
 
     ;; fix italian quote highlight
     (push '("\"<" "\">") font-latex-quote-list)
@@ -133,8 +133,10 @@ starting with \\ and followed by a block of text enclosed in {}."
       (setq reftex-plug-into-AUCTeX t)
       (reftex-mode t)
       (TeX-fold-mode t)
-
       (keyadvice-mode t)
+
+      (set (make-local-variable 'beginning-of-defun-function) 'my-latex-beginning-of-defun)
+      (set (make-local-variable 'end-of-defun-function) 'my-latex-end-of-defun)
 
       (LaTeX-add-environments
        '("derivation" LaTeX-env-label))
