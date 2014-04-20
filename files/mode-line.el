@@ -45,7 +45,8 @@
 
    ;; buffer name
    (:propertize (:eval
-                 (if (tramp-tramp-file-p (buffer-name))
+                 (if (and (featurep 'tramp)
+                          (tramp-tramp-file-p (buffer-name)))
                      (substring (elt (tramp-dissect-file-name (buffer-name)) 3) 1)
                    (buffer-name)))
     face mode-line-buffer-id)
@@ -107,35 +108,48 @@
 (setq cycbuf-file-name-replacements
       (mapcar (lambda (pair) (list (car pair) (cdr pair))) my-abbrev-file-name-alist))
 
+(defun my-abbreviate-file-name-no-tramp (filename &optional buffer-name)
+  "Shorten the FILENAME or directory according to
+ `my-abbrev-file-name-alist'."
+  (dolist (p my-abbrev-file-name-alist)
+    (when (string-match (car p) filename)
+      (setq filename (replace-match (cdr p) nil nil filename))))
+  (s-chop-suffixes
+   (reverse (mapcar
+             (lambda (x) (concat x "/")) (s-split "/" buffer-name)))
+   filename))
+
 (defun my-abbreviate-file-name (filename &optional buffer-name)
   "Shorten the FILENAME or directory according to
-`my-abbrev-file-name-alist'. "
-  (let* ((tramp-file-name (and (tramp-tramp-file-p filename)
-                               (tramp-dissect-file-name filename)))
-         (tramp-buffer-name (and (tramp-tramp-file-p buffer-name)
-                                 (tramp-dissect-file-name buffer-name)))
-         (real-buffer-name (or (and tramp-buffer-name
-                                    (elt tramp-buffer-name 3))
-                               buffer-name))
-         (real-filename (or (and tramp-file-name
-                                 (elt tramp-file-name 3))
-                            filename)))
-    (dolist (p my-abbrev-file-name-alist)
-      (when (string-match (car p) real-filename)
-        (setq real-filename (replace-match (cdr p) nil nil real-filename))))
-    (let ((uniquified-name (s-chop-suffixes
-                            (reverse (mapcar
-                                      (lambda (x) (concat x "/")) (s-split "/" real-buffer-name)))
-                            real-filename)))
-      (if tramp-file-name
-          (let ((fn (format "/%s:%s@%s:%s"
-                            (elt tramp-file-name 0)
-                            (elt tramp-file-name 1)
-                            (elt tramp-file-name 2)
-                            uniquified-name)))
-            (if (s-ends-with-p "/" fn) fn
-              (concat fn "/")))
-        uniquified-name))))
+`my-abbrev-file-name-alist'."
+  (if (not (featurep 'tramp))
+      (my-abbreviate-file-name-no-tramp filename buffer-name)
+    (let* ((tramp-file-name (and (tramp-tramp-file-p filename)
+                                 (tramp-dissect-file-name filename)))
+           (tramp-buffer-name (and (tramp-tramp-file-p buffer-name)
+                                   (tramp-dissect-file-name buffer-name)))
+           (real-buffer-name (or (and tramp-buffer-name
+                                      (elt tramp-buffer-name 3))
+                                 buffer-name))
+           (real-filename (or (and tramp-file-name
+                                   (elt tramp-file-name 3))
+                              filename)))
+      (dolist (p my-abbrev-file-name-alist)
+        (when (string-match (car p) real-filename)
+          (setq real-filename (replace-match (cdr p) nil nil real-filename))))
+      (let ((uniquified-name (s-chop-suffixes
+                              (reverse (mapcar
+                                        (lambda (x) (concat x "/")) (s-split "/" real-buffer-name)))
+                              real-filename)))
+        (if tramp-file-name
+            (let ((fn (format "/%s:%s@%s:%s"
+                              (elt tramp-file-name 0)
+                              (elt tramp-file-name 1)
+                              (elt tramp-file-name 2)
+                              uniquified-name)))
+              (if (s-ends-with-p "/" fn) fn
+                (concat fn "/")))
+          uniquified-name)))))
 
 (defvar minimal-mode-line-background "darkred"
   "Background colour for active mode line face when minimal minor
