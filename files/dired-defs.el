@@ -59,6 +59,7 @@ Also used for highlighting.")
     ("u" . dired-subtree-unmark-subtree)
     ("C-o C-f" . dired-subtree-only-this-file)
     ("C-o C-d" . dired-subtree-only-this-directory)))
+(use-package dired-images)
 
 (use-package dired-rainbow
   :init
@@ -77,6 +78,18 @@ Also used for highlighting.")
     (dired-rainbow-define compressed "#ad7fa8" ("zip" "bz2" "tgz" "txz" "gz" "xz" "z" "Z" "jar" "war" "ear" "rar" "sar" "xpi" "apk" "xz" "tar"))
     (dired-rainbow-define packaged "#e6a8df" ("deb" "rpm"))
     (dired-rainbow-define encrypted "LightBlue" ("gpg" "pgp"))))
+
+(use-package make-it-so
+  :init
+  (bind-keys :map dired-mode-map
+             :prefix ","
+             :prefix-map dired-make-it-so-map
+             :prefix-docstring "Make it so map."
+    ("," . make-it-so)
+    ("f" . mis-finalize)
+    ("a" . mis-abort)
+    ("r" . mis-replace))
+  (bind-key "<f5>" 'mis-save-and-compile makefile-mode-map))
 
 (add-to-list 'dired-guess-shell-alist-user (list (concat "\\."
                                                          (regexp-opt my-dired-media-files-extensions)
