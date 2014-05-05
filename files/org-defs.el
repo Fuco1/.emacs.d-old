@@ -5,7 +5,17 @@
     (bind-keys :map org-mode-map
       ("H-d" . org-drill)
       ("H-r" . org-drill-resume)
-      ("H-a" . org-drill-again)))
+      ("H-a" . org-drill-again))
+
+    (defun my-org-drill-open-drills ()
+      (interactive)
+      (mapc
+       'find-file
+       '("/media/Data/languages/Russian/wordlist/1-500.org"
+         "/media/Data/languages/Russian/wordlist/501-1000.org"
+         "/media/Data/languages/Russian/wordlist/1001-1500.org"
+         "/media/Data/languages/Latin/drill/drill-lat.org"
+         "/media/Data/languages/Russian/drill/drill-rus.org"))))
   :config
   (progn
     (defun org-drill-present-two-sided-card-no-cloze ()
@@ -33,7 +43,23 @@
              ("N" . my-org-narrow-to-subtree)
              ("W" . my-org-widen)))
 
-(use-package org-protocol)
+(use-package org-protocol
+  :init
+  (progn
+
+    (defun my-org-protocol-save-youtube (info)
+      (let* ((parts (org-protocol-split-data info t org-protocol-data-separator))
+             (link (car parts)))
+        (save-window-excursion
+          (async-shell-command (concat "ydown '" link "'"))
+          (message "Youtube download started: %s" link)
+          nil)))
+
+    (push '("save-youtube"
+            :protocol "save-youtube"
+            :function my-org-protocol-save-youtube
+            :kill-client nil)
+           org-protocol-protocol-alist)))
 
 (defface my-org-bold
   '((t (:weight bold :inherit font-lock-variable-name-face)))
@@ -295,8 +321,7 @@ point and rebuild the agenda view."
          "|%<%H:%M:%S>|%?|" :table-line-pos "III-1")
         ("b" "bookmark" entry (file+function "~/org/bookmarks.org" my-org-handle-bookmark)
          "* %:description\n- source: %:link\n%(if (not (equal %:initial \"\"))
-                                                        (concat \"- selection:\n  \" %:initial) \"\")")
-        ("y" "youtube-dl" entry (function org-handle-link-youtube) "")))
+                                                        (concat \"- selection:\n  \" %:initial) \"\")")))
 
 (defun my-org-handle-bookmark ()
   (let ((link (caar org-stored-links)))
@@ -305,13 +330,6 @@ point and rebuild the agenda view."
      (t
       (goto-char (point-max))
       (newline)))))
-
-(defun org-handle-link-youtube ()
-  (let ((link (caar org-stored-links)))
-    (save-window-excursion
-      (async-shell-command (concat "yd '" link "'"))
-      (message "Youtube download started: %s" link)))
-  (error "Do not capture youtube links"))
 
 ;; Remove empty LOGBOOK drawers on clock out
 (defun bh/remove-empty-drawer-on-clock-out ()
@@ -347,9 +365,6 @@ point and rebuild the agenda view."
 
 (setq org-refile-target-verify-function 'bh/verify-refile-target)
 
-(setq org-log-done 'time)
-(setq org-log-done 'note)
-
 ;; english locale
 (setq system-time-locale "C")
 (setq org-completion-use-ido t)
@@ -359,8 +374,6 @@ point and rebuild the agenda view."
 
 ;; fast state selection
 (setq org-use-fast-todo-selection t)
-
-(setq org-agenda-files (quote ("~/org/")))
 
 ;; TODO KEYWORDS SETTINGS
 (setq org-todo-keywords
@@ -548,6 +561,40 @@ Switch projects and subprojects from NEXT back to TODO"
            (bh/is-project-p))
       "TODO"))))
 
+(defun my-org-convert-tab-word-list-to-drill ()
+  (interactive)
+  (goto-char (point-min))
+  (replace-regexp "\\s-*- # [0-9]*" "")
+  (goto-char (point-min))
+  (while (not (eobp))
+    (let ((russian (buffer-substring-no-properties
+                    (point)
+                    (progn
+                      (search-forward "\t" nil t)
+                      (backward-char)
+                      (point))))
+          (english (buffer-substring-no-properties
+                    (progn
+                      (forward-char)
+                      (point))
+                    (line-end-position))))
+      (beginning-of-line)
+      (kill-line 1)
+      (insert
+       (format
+        "* Word                                                                :drill:
+    :PROPERTIES:
+    :DRILL_CARD_TYPE: twosidednocloze
+    :END:
+** Russian
+%s
+** English
+%s
+** Examples
+** Notes
+"
+        russian english)))))
+
 (defun my-org-add-drill-entry ()
   (interactive)
   (insert
@@ -655,3 +702,73 @@ Switch projects and subprojects from NEXT back to TODO"
                                             (1- (length org-mode-line-string))))
            (split-status (split-string status " (")))
       (concat "<fc=#8ae234>" (car split-status) "</fc>")))))
+
+(defun my-org-export-read-books-do-export (buf)
+  "Buf is the buffer into which the export is written."
+  (let ((index 0))
+    (with-current-buffer buf
+      (insert "|-+-+-+-+-+-|\n")
+      (insert "| Index | Language | Title | Published | Author | Original Title |\n")
+      (insert "|-+-+-+-+-+-|\n"))
+    (while (and (= 0 (forward-line))
+                (not (eobp)))
+      (cl-incf index)
+      (org-with-point-at (org-get-at-bol 'org-hd-marker)
+        (let* ((element (cadr (org-element-at-point)))
+               (title (plist-get element :title))
+               (author (plist-get element :AUTHOR))
+               (published (plist-get element :PUBLISHED))
+               (original-title (plist-get element :ORIGINAL_TITLE))
+               (language (cdr (assoc (let* ((tags (org-get-tags-at))
+                                            (language-tag
+                                             (car (-intersection tags '("DE" "IT" "LA" "RU" "FR" "ES" "IL" "SA" "PL" "JP"))))
+                                            (language-prop (plist-get element :LANGUAGE)))
+                                       (or language-prop language-tag "EN"))
+                                     '(("DE" . "German")
+                                       ("IT" . "Italian")
+                                       ("LA" . "Latin")
+                                       ("RU" . "Russian")
+                                       ("FR" . "French")
+                                       ("ES" . "Spanish")
+                                       ("IL" . "Hebrew")
+                                       ("SA" . "Sanskrit")
+                                       ("PL" . "Polish")
+                                       ("JP" . "Japanese")
+                                       ("CS" . "Czech")
+                                       ("SK" . "Slovak")
+                                       ("EN" . "English"))))))
+          (with-current-buffer buf
+            ;; num, lan, title, published, author, orig. title
+            (insert (format "| %d. | %s | %s | %s | %s | %s |\n"
+                            index
+                            language
+                            title
+                            published
+                            author
+                            (or original-title "")))))))
+    (with-current-buffer buf
+      (insert "|-+-+-+-+-+-|\n")
+      (save-excursion
+        (forward-line -1)
+        (org-table-align)))))
+
+(defun my-org-export-read-books ()
+  (interactive)
+  (save-window-excursion
+    (let ((buf (get-buffer-create "*org-books-export*"))
+          (org-agenda-sticky nil))
+      (with-current-buffer buf
+        (erase-buffer)
+        (org-mode))
+      (org-agenda nil "fdb")
+      (goto-char (point-min))
+      (forward-line)
+      (my-org-export-read-books-do-export buf)
+      (org-agenda nil "fb")
+      (goto-char (point-min))
+      (with-current-buffer buf
+        (insert "\n* Reading\n\n"))
+      (my-org-export-read-books-do-export buf)
+      (with-current-buffer buf
+        (org-export-to-file 'html "~/books.html"))
+      (copy-file "~/books.html" "/fuco@dasnet.cz:/home/fuco/books.html" t))))
