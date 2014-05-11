@@ -317,6 +317,10 @@ return to regular interpretation of self-insert characters."
   :mode ("\\.hs\\'" . haskell-mode)
   :config
   (progn
+    (use-package hs-lint
+      :config
+      (progn
+        (bind-key "C-c i" 'hs-lint haskell-mode-map)))
     (require 'haskell-indentation)
     (bind-key "C-c h" 'haskell-hoogle haskell-mode-map)
     (bind-key "C-c C-r" 'my-haskell-reload haskell-mode-map)
@@ -343,7 +347,9 @@ return to regular interpretation of self-insert characters."
 
 (use-package help-mode
   :config
-  (ace-link-setup-default))
+  (progn
+    (ace-link-setup-default)
+    (bind-key "l" 'help-go-back help-mode-map)))
 
 (use-package ibuffer
   :bind ("<f1> <f1>" . ibuffer)
@@ -353,8 +359,8 @@ return to regular interpretation of self-insert characters."
     (defun customize-ibuffer-mode ()
       "Startup function."
       (ibuffer-switch-to-saved-filter-groups "default")
-      (add-to-list 'ibuffer-hidden-filter-groups "Tramp")
-      (add-to-list 'ibuffer-hidden-filter-groups "emacs-elpa")
+      (-map (-partial 'add-to-list 'ibuffer-hidden-filter-groups)
+            '("Tramp" "emacs-elpa" "Org Agenda" "Search" "Dired"))
       (visual-line-mode -1)
       (toggle-truncate-lines 1))
     (add-hook 'ibuffer-mode-hook 'customize-ibuffer-mode))

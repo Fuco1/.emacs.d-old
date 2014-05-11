@@ -56,9 +56,11 @@
                  (mode . c-mode)
                  (mode . cc-mode)
                  (mode . c++-mode)
+                 (mode . js3-mode)
                  (mode . perl-mode)
                  (mode . python-mode)
                  (mode . haskell-mode)
+                 (mode . makefile-gmake-mode)
                  ;; etc
                  ))
                ("IRC"
@@ -66,6 +68,8 @@
                     (mode . rcirc-mode)))
                ("Search"
                 (or (mode . ag-mode)))
+               ("Org Agenda"
+                (or (mode . org-agenda-mode)))
                ("Images"
                 (or (mode . di-view-mode)
                     (mode . di-thumb-mode)))
@@ -106,7 +110,7 @@
               " " (mode 16 16 :left :elide)
 
               " " filename-and-process)
-        (mark " " (name 16 -1)
+        (mark " " (name 30 -1)
               " " filename)))
 
 ;; Switching to ibuffer puts the cursor on the most recent buffer

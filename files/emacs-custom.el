@@ -7,7 +7,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(LaTeX-math-list (quote (("C-k (" "llparenthesis" "" nil) ("C-k )" "rrparenthesis" "" nil) ("C-k k" (lambda nil (interactive) (insert "\\cata{}") (backward-char)) "" nil) (79 "circ" "" nil) (61 "equiv" "" nil))))
+ '(LaTeX-math-list (quote (("C-k (" "llparenthesis" "" nil) ("C-k )" "rrparenthesis" "" nil) ("C-k k" (lambda nil (interactive) (insert "\\cata{}") (backward-char)) "" nil) (79 "circ" "" nil) (61 "equiv" "" nil) ("C-k -" (lambda nil (interactive) (insert "\\bar{}") (backward-char)) "" nil) ("<right>" "Rightarrow" "" nil) ("<left>" "Leftarrow" "" nil) ("<up>" "Leftrightarrow" "" nil) ("<f1>" "ldots" "" nil))))
  '(TeX-PDF-mode t)
  '(TeX-command-list (quote (("TeX" "%(PDF)%(tex) %`%S%(PDFout)%(mode)%' %t" TeX-run-TeX nil (plain-tex-mode texinfo-mode ams-tex-mode) :help "Run plain TeX") ("LaTeX" "%`%l%(mode)%' %t" TeX-run-TeX nil (latex-mode doctex-mode) :help "Run LaTeX") ("Makeinfo" "makeinfo %t" TeX-run-compile nil (texinfo-mode) :help "Run Makeinfo with Info output") ("Makeinfo HTML" "makeinfo --html %t" TeX-run-compile nil (texinfo-mode) :help "Run Makeinfo with HTML output") ("AmSTeX" "%(PDF)amstex %`%S%(PDFout)%(mode)%' %t" TeX-run-TeX nil (ams-tex-mode) :help "Run AMSTeX") ("ConTeXt" "texexec --once --texutil %(execopts)%t" TeX-run-TeX nil (context-mode) :help "Run ConTeXt once") ("ConTeXt Full" "texexec %(execopts)%t" TeX-run-TeX nil (context-mode) :help "Run ConTeXt until completion") ("BibTeX" "bibtex %s" TeX-run-BibTeX nil t :help "Run BibTeX") ("Biber" "biber %s" TeX-run-Biber nil t :help "Run Biber") ("View" "%V" TeX-run-discard-or-function t t :help "Run Viewer") ("Print" "%p" TeX-run-command t t :help "Print the file") ("Queue" "%q" TeX-run-background nil t :help "View the printer queue" :visible TeX-queue-command) ("File" "%(o?)dvips %d -o %f " TeX-run-command t t :help "Generate PostScript file") ("Index" "makeindex %s" TeX-run-command nil t :help "Create index file") ("Check" "lacheck %s" TeX-run-compile nil (latex-mode) :help "Check LaTeX file for correctness") ("Spell" "(TeX-ispell-document \"\")" TeX-run-function nil t :help "Spell-check the document") ("Clean" "TeX-clean" TeX-run-function nil t :help "Delete generated intermediate files") ("Clean All" "(TeX-clean t)" TeX-run-function nil t :help "Delete generated intermediate and output files") ("Other" "" TeX-run-command t t :help "Run an arbitrary command") ("Run Zathura" "zathura --fork -s -x \"emacsclient --no-wait +%%{line} %%{input}\" %s.pdf" TeX-run-command nil t :help "Run Zathura PDF viewer"))))
  '(TeX-output-view-style (quote (("^dvi$" ("^landscape$" "^pstricks$\\|^pst-\\|^psfrag$") "%(o?)dvips -t landscape %d -o && gv %f") ("^dvi$" "^pstricks$\\|^pst-\\|^psfrag$" "%(o?)dvips %d -o && gv %f") ("^dvi$" ("^\\(?:a4\\(?:dutch\\|paper\\|wide\\)\\|sem-a4\\)$" "^landscape$") "%(o?)yap %dS -paper a4r -s 0 %d") ("^dvi$" "^\\(?:a4\\(?:dutch\\|paper\\|wide\\)\\|sem-a4\\)$" "%(o?)yap %dS -paper a4 %d") ("^dvi$" ("^\\(?:a5\\(?:comb\\|paper\\)\\)$" "^landscape$") "%(o?)yap %dS -paper a5r -s 0 %d") ("^dvi$" "^\\(?:a5\\(?:comb\\|paper\\)\\)$" "%(o?)yap %dS -paper a5 %d") ("^dvi$" "^b5paper$" "%(o?)yap %dS -paper b5 %d") ("^dvi$" "^letterpaper$" "%(o?)yap %dS -paper us %d") ("^dvi$" "^legalpaper$" "%(o?)yap %dS -paper legal %d") ("^dvi$" "^executivepaper$" "%(o?)yap %dS -paper 7.25x10.5in %d") ("^dvi$" "." "%(o?)yap %dS %d") ("^pdf$" "." "gsview32 -remote %s -raise %o %(outpage)") ("^html?$" "." "netscape %o"))))
@@ -42,10 +42,11 @@
  '(calendar-view-diary-initially-flag t)
  '(calendar-week-start-day 1)
  '(column-number-mode t)
+ '(completion-ignored-extensions (quote (".cm/" ".o" "~" ".bin" ".lbin" ".so" ".a" ".ln" ".blg" ".bbl" ".elc" ".lof" ".glo" ".idx" ".lot" ".svn/" ".hg/" ".git/" ".bzr/" "CVS/" "_darcs/" "_MTN/" ".fmt" ".tfm" ".class" ".fas" ".lib" ".mem" ".x86f" ".sparcf" ".dfsl" ".pfsl" ".d64fsl" ".p64fsl" ".lx64fsl" ".lx32fsl" ".dx64fsl" ".dx32fsl" ".fx64fsl" ".fx32fsl" ".sx64fsl" ".sx32fsl" ".wx64fsl" ".wx32fsl" ".fasl" ".ufsl" ".fsl" ".dxl" ".lo" ".la" ".gmo" ".mo" ".toc" ".aux" ".cp" ".fn" ".ky" ".pg" ".tp" ".vr" ".cps" ".fns" ".kys" ".pgs" ".tps" ".vrs" ".pyc" ".pyo" ".hi")))
  '(cua-enable-cua-keys nil)
  '(cursor-color "#839496")
  '(custom-enabled-themes (quote (my-tango-dark)))
- '(custom-safe-themes (quote ("d54f9a57580321787112c32311e66379d9a3d2dc7db56b0e5678067cd604b188" "1630f22aec92f5ccfad35ff528b9b9231deca6d775666d7c9fc76876957ee51c" "2094974c6ba3dcac00d364404f11bcc18711750996e3b622c40e2764d4eaae01" "32a0ef08500036a4a96194f01fafe3b62c347e5d7bda218bac50a34ab92eab5b" "5758fad12d32577dfd86f53be523c16ceed5f6ad307e9967ac16fe82eef6e32a" "ac968ca0978459c43a263ce991d6385d8e59ae2242699c6907125daa6f0a0d20" "18b79c737a005b87246232739c5cd21aab19f8c15f3a822d64b8cbb8dbbc8525" "9eb325147f82880372869ae998bd6c93adb34fc80b1b5cb2976744fb4dc73cb7" "32807962da64511b0529913b8fc19d527b7bc1d32e6dc298066e53e5d67de571" default)))
+ '(custom-safe-themes (quote ("c9625a98eea4274e4ce11197658f94ba0525a2053550ce23b5a33acc32789467" "a489662be7dc432d4912d8f8c59f63d6cf8aa283cba3aef2e6440ad563ce885b" "aa08d051adaff4d18f8517738584138d6a5ed17fd2133680f39d9aaadd5da842" "d54f9a57580321787112c32311e66379d9a3d2dc7db56b0e5678067cd604b188" "1630f22aec92f5ccfad35ff528b9b9231deca6d775666d7c9fc76876957ee51c" "2094974c6ba3dcac00d364404f11bcc18711750996e3b622c40e2764d4eaae01" "32a0ef08500036a4a96194f01fafe3b62c347e5d7bda218bac50a34ab92eab5b" "5758fad12d32577dfd86f53be523c16ceed5f6ad307e9967ac16fe82eef6e32a" "ac968ca0978459c43a263ce991d6385d8e59ae2242699c6907125daa6f0a0d20" "18b79c737a005b87246232739c5cd21aab19f8c15f3a822d64b8cbb8dbbc8525" "9eb325147f82880372869ae998bd6c93adb34fc80b1b5cb2976744fb4dc73cb7" "32807962da64511b0529913b8fc19d527b7bc1d32e6dc298066e53e5d67de571" default)))
  '(custom-theme-directory "~/.emacs.d/themes/")
  '(custom-unlispify-remove-prefixes t)
  '(custom-unlispify-tag-names nil)
@@ -57,13 +58,14 @@
  '(desktop-save t)
  '(diary-file "~/org/diary")
  '(dired-dwim-target t)
- '(dired-filter-mark-prefix "c")
+ '(dired-filter-mark-prefix "\\")
  '(dired-filter-prefix "/")
- '(dired-filter-saved-filters (quote (("media" (or (extension . "ogg") (extension . "flv") (extension . "mpg") (extension . "avi") (extension . "mp4") (extension . "mp3"))) ("elisp" (or (extension . "elc") (extension . "el"))))))
- '(dired-guess-shell-alist-user (quote (("\\.pdf\\'" "zathura --fork"))))
+ '(dired-filter-saved-filters (quote (("media" (extension "ogg" "flv" "mpg" "avi" "mp4" "mp3")) ("elisp" (extension "el" "elc")))))
+ '(dired-guess-shell-alist-user (quote (("\\(?:MP[34]\\|avi\\|flv\\|m\\(?:kv\\|p[34g]\\)\\|ogg\\|wmv\\)" "vlc") ("\\.\\(?:djvu\\|p\\(?:df\\|s\\)\\)\\'" "zathura --fork"))))
  '(dired-isearch-filenames t)
  '(dired-listing-switches "-alh")
- '(dired-omit-extensions (quote (".o" "~" ".bin" ".bak" ".obj" ".map" ".ico" ".pif" ".lnk" ".a" ".ln" ".blg" ".bbl" ".dll" ".drv" ".vxd" ".386" ".elc" ".lof" ".glo" ".idx" ".lot" ".svn/" ".hg/" ".git/" ".bzr/" "CVS/" "_darcs/" "_MTN/" ".fmt" ".tfm" ".class" ".fas" ".lib" ".mem" ".x86f" ".sparcf" ".dfsl" ".pfsl" ".d64fsl" ".p64fsl" ".lx64fsl" ".lx32fsl" ".dx64fsl" ".dx32fsl" ".fx64fsl" ".fx32fsl" ".sx64fsl" ".sx32fsl" ".wx64fsl" ".wx32fsl" ".fasl" ".ufsl" ".fsl" ".dxl" ".lo" ".la" ".gmo" ".mo" ".toc" ".aux" ".cp" ".fn" ".ky" ".pg" ".tp" ".vr" ".cps" ".fns" ".kys" ".pgs" ".tps" ".vrs" ".pyc" ".pyo" ".idx" ".lof" ".lot" ".glo" ".blg" ".bbl" ".cp" ".cps" ".fn" ".fns" ".ky" ".kys" ".pg" ".pgs" ".tp" ".tps" ".vr" ".vrs" ".log" ".ilg" ".out" ".ind" ".dsc")))
+ '(dired-omit-extensions (quote (".o" "~" ".bin" ".bak" ".obj" ".map" ".ico" ".pif" ".lnk" ".a" ".ln" ".blg" ".bbl" ".dll" ".drv" ".vxd" ".386" ".elc" ".lof" ".glo" ".idx" ".lot" ".svn/" ".hg/" ".git/" ".bzr/" "CVS/" "_darcs/" "_MTN/" ".fmt" ".tfm" ".class" ".fas" ".lib" ".mem" ".x86f" ".sparcf" ".dfsl" ".pfsl" ".d64fsl" ".p64fsl" ".lx64fsl" ".lx32fsl" ".dx64fsl" ".dx32fsl" ".fx64fsl" ".fx32fsl" ".sx64fsl" ".sx32fsl" ".wx64fsl" ".wx32fsl" ".fasl" ".ufsl" ".fsl" ".dxl" ".lo" ".la" ".gmo" ".mo" ".toc" ".aux" ".cp" ".fn" ".ky" ".pg" ".tp" ".vr" ".cps" ".fns" ".kys" ".pgs" ".tps" ".vrs" ".pyc" ".pyo" ".idx" ".lof" ".lot" ".glo" ".blg" ".bbl" ".cp" ".cps" ".fn" ".fns" ".ky" ".kys" ".pg" ".pgs" ".tp" ".tps" ".vr" ".vrs" ".log" ".ilg" ".out" ".ind" ".dsc" ".hi")))
+ '(dired-open-extensions (quote (("exe" . "wine"))))
  '(dired-open-functions (quote (dired-open-guess-shell-alist dired-open-by-extension dired-open-subdir)))
  '(dired-open-query-before-exit nil)
  '(dired-open-use-nohup t)
@@ -108,6 +110,7 @@
  '(flx-ido-mode t)
  '(font-latex-math-environments (quote ("display" "displaymath" "equation" "eqnarray" "gather" "multline" "align" "alignat" "xalignat" "derivation")))
  '(font-latex-quotes (quote auto))
+ '(font-latex-user-keyword-classes (quote (("refs" (("tindex" "{") ("sindex" "{") ("index" "{{") ("cref" "{")) (:inherit (font-lock-constant-face)) command))))
  '(foreground-color "#839496")
  '(free-keys-ignored-bindings (quote (("s" . "pnPNjkhl1234567890qwerb") ("A" . "1234567890qwer,.[]=c"))))
  '(free-keys-modifiers (quote ("" "C" "M" "C-M" "A" "H" "s")))
@@ -119,7 +122,7 @@
  '(golden-ratio-inhibit-functions (quote (my-golden-ratio-inhibit)))
  '(golden-ratio-mode t)
  '(guide-key-mode t)
- '(guide-key/guide-key-sequence (quote ("C-x r" "C-x 4" "C-x j" "C-x p" "A-x" (calc-mode "V" "k" "a") (dired-mode "/" "*" "C-t" "%" "c") (ibuffer-mode "/" "*" "%"))))
+ '(guide-key/guide-key-sequence (quote ("C-x r" "C-x 4" "C-x j" "C-x p" "C-x n" "A-x" "M-g" "M-s" (calc-mode "V" "k" "a") (dired-mode "/" "*" "C-t" "%" "c" "\\") (ibuffer-mode "/" "*" "%"))))
  '(guide-key/idle-delay 0.6)
  '(guide-key/popup-window-position (quote bottom))
  '(guide-key/recursive-key-sequence-flag t)
@@ -158,6 +161,43 @@
  '(keyfreq-autosave-mode t)
  '(keyfreq-file "~/.emacs.d/.emacs.keyfreq")
  '(keyfreq-mode t)
+ '(legalese-templates (quote ((emacs-lisp-mode (nil ";;; " legalese-file-name " --- " _ "
+" "
+" ";; Copyright (C) " legalese-year " " legalese-copyright "
+" "
+" ";; Author: " legalese-author "
+" ";; Maintainer: " legalese-author "
+" ";; Version: 0.0.1
+" ";; Created: 14th February 2014
+" ";; Package-requires: ((dash \"2.6.0\"))
+" ";; Keywords: " ((legalese-elisp-keyword) str ", ") & -2 "
+" "
+" @ (quote (legalese-license)) @ "
+" ";;; Commentary:
+" "
+" ";;; Code:
+" "
+" "
+" "(provide '" legalese-file ")
+" ";;; " legalese-file-name " ends here
+")) (scheme-mode (nil ";;; " legalese-file-name " --- " _ "
+" "
+" ";; Copyright (C) " legalese-year " " legalese-copyright "
+" "
+" ";; Author: " legalese-author "
+" "
+" @ (quote (legalese-license)) @ "
+" ";;; Commentary:
+" "
+" ";;; Code:
+" "
+")) (default (nil @ legalese-file-name " --- " _ "
+" "
+" "Copyright (C) " legalese-year " " legalese-copyright "
+" "
+" "Author: " legalese-author "
+" "
+" (quote (legalese-license)) @)))))
  '(line-number-mode t)
  '(look-show-subdirs t)
  '(ls-lisp-dirs-first t)
@@ -170,16 +210,22 @@
  '(max-lisp-eval-depth 50000)
  '(max-specpdl-size 10000)
  '(message-log-max 10000)
+ '(mis-bindings-alist nil)
+ '(mis-make-command "make -j2")
+ '(mis-recipes-directory "~/.emacs.d/dev/make-it-so/recipes/")
  '(mouse-highlight nil)
  '(multi-web-global-mode nil nil (multi-web-mode))
  '(mweb-default-major-mode (quote html-mode))
  '(org-M-RET-may-split-line nil)
+ '(org-agenda-clock-consistency-checks (quote (:max-duration "10:00" :min-duration 0 :max-gap "0:20" :gap-ok-around ("4:00") :default-face ((:foreground "Red")) :overlap-face nil :gap-face nil :no-end-time-face nil :long-face nil :short-face nil)))
  '(org-agenda-compact-blocks t)
+ '(org-agenda-files (quote ("~/org/refile.org" "~/org/water.org" "~/org/school.org" "~/org/home.org" "~/org/emacs.org" "~/org/me.org")))
  '(org-agenda-include-diary t)
  '(org-agenda-skip-deadline-if-done t)
  '(org-agenda-skip-scheduled-if-done t)
  '(org-agenda-skip-timestamp-if-done t)
- '(org-agenda-start-with-log-mode nil)
+ '(org-agenda-span (quote day))
+ '(org-agenda-start-with-clockreport-mode nil)
  '(org-agenda-sticky t)
  '(org-agenda-tags-column -140)
  '(org-agenda-window-setup (quote current-window))
@@ -195,14 +241,15 @@
  '(org-clock-persist-query-resume nil)
  '(org-clock-report-include-clocking-task t)
  '(org-cycle-emulate-tab nil)
+ '(org-default-priority 67)
  '(org-drill-add-random-noise-to-intervals-p t)
  '(org-drill-adjust-intervals-for-early-and-late-repetitions-p t)
  '(org-drill-card-type-alist (quote ((nil org-drill-present-simple-card) ("simple" org-drill-present-simple-card) ("twosided" org-drill-present-two-sided-card nil t) ("multisided" org-drill-present-multi-sided-card nil t) ("hide1cloze" org-drill-present-multicloze-hide1) ("hide2cloze" org-drill-present-multicloze-hide2) ("show1cloze" org-drill-present-multicloze-show1) ("show2cloze" org-drill-present-multicloze-show2) ("multicloze" org-drill-present-multicloze-hide1) ("hidefirst" org-drill-present-multicloze-hide-first) ("hidelast" org-drill-present-multicloze-hide-last) ("hide1_firstmore" org-drill-present-multicloze-hide1-firstmore) ("show1_lastmore" org-drill-present-multicloze-show1-lastmore) ("show1_firstless" org-drill-present-multicloze-show1-firstless) ("conjugate" org-drill-present-verb-conjugation org-drill-show-answer-verb-conjugation) ("decline_noun" org-drill-present-noun-declension org-drill-show-answer-noun-declension) ("spanish_verb" org-drill-present-spanish-verb) ("translate_number" org-drill-present-translate-number) ("twosidednocloze" org-drill-present-two-sided-card-no-cloze nil t))))
  '(org-drill-forgetting-index 50)
  '(org-drill-learn-fraction 0.55)
  '(org-drill-maximum-duration nil)
- '(org-drill-maximum-items-per-session 20)
- '(org-drill-optimal-factor-matrix (quote ((6 (1.3800000000000001 . 1.461) (1.1600000000000001 . 1.25)) (5 (2.1799999999999997 . 2.231) (1.76 . 1.827) (1.48 . 1.721) (2.08 . 2.08) (1.1600000000000001 . 1.227) (1.24 . 1.327) (1.6600000000000001 . 1.793) (1.3 . 1.276) (1.8 . 1.865) (1.3800000000000001 . 1.535) (1.52 . 1.596)) (4 (1.3399999999999999 . 1.532) (2.8000000000000003 . 2.804) (2.7 . 2.696) (1.1600000000000001 . 1.227) (2.66 . 2.696) (2.42 . 2.493) (2.56 . 2.596) (1.3 . 1.115) (1.7200000000000002 . 1.788) (1.94 . 1.94) (2.32 . 2.4) (2.6 . 2.596) (2.04 . 2.132) (2.36 . 2.404) (2.5 . 2.5) (1.3800000000000001 . 1.535) (1.24 . 1.327) (1.2 . 1.473) (2.46 . 2.496) (2.1799999999999997 . 2.308) (2.2199999999999998 . 2.311) (1.48 . 1.721) (2.18 . 2.217) (1.52 . 1.596) (2.22 . 2.22) (1.9000000000000001 . 1.961) (1.6600000000000001 . 1.793) (2.08 . 2.135) (1.6199999999999999 . 1.791) (2.3200000000000003 . 2.305) (1.8 . 1.865) (1.76 . 1.971) (1.9400000000000002 . 2.053)) (3 (0.98 . 1.131) (1.1600000000000001 . 1.178) (1.2 . 1.473) (1.3 . 1.225) (1.0599999999999998 . 1.274) (1.24 . 1.327) (2.8000000000000003 . 2.8) (1.3399999999999999 . 1.532) (1.3800000000000001 . 1.535) (2.1799999999999997 . 2.308) (1.86 . 2.047) (1.52 . 1.596) (2.1399999999999997 . 2.305) (2.04 . 2.015) (1.6600000000000001 . 1.793) (1.48 . 1.721) (1.94 . 1.94) (1.6199999999999999 . 1.791) (1.8 . 1.865) (2.18 . 2.217) (2.7 . 2.696) (2.6 . 2.596) (2.56 . 2.592) (1.76 . 1.971) (2.5 . 2.5) (2.3200000000000003 . 2.305) (1.9400000000000002 . 2.053) (2.22 . 2.22) (2.36 . 2.404) (2.32 . 2.4) (2.46 . 2.496) (2.2199999999999998 . 2.311) (1.9000000000000001 . 2.049) (2.08 . 2.135)) (2 (1.1600000000000001 . 1.227) (1.2 . 1.473) (1.26 . 1.65) (1.0599999999999998 . 1.274) (1.3 . 1.276) (0.98 . 1.412) (1.24 . 1.327) (1.1199999999999999 . 1.468) (1.6800000000000002 . 1.964) (2.32 . 2.32) (1.3800000000000001 . 1.535) (1.52 . 1.596) (1.3399999999999999 . 1.532) (1.6600000000000001 . 1.793) (1.94 . 1.94) (2.2800000000000002 . 2.407) (2.3200000000000003 . 2.305) (1.48 . 1.721) (1.6199999999999999 . 1.791) (2.22 . 2.22) (1.8 . 1.865) (1.4 . 1.736) (2.18 . 2.217) (1.9400000000000002 . 2.053) (1.76 . 1.971) (2.08 . 2.135) (1.9000000000000001 . 2.049) (2.7 . 2.696) (2.1799999999999997 . 2.308) (2.5 . 2.5) (2.46 . 2.497) (2.2199999999999998 . 2.311) (2.04 . 2.219) (2.6 . 2.596) (2.36 . 2.404)) (1 (1.1600000000000001 . 3.556) (1.2 . 3.55) (1.3 . 3.698) (1.24 . 3.846) (1.0599999999999998 . 3.692) (1.6800000000000002 . 3.538) (1.3800000000000001 . 3.698) (2.22 . 4.0) (2.32 . 3.846) (1.48 . 3.55) (1.52 . 3.846) (1.3399999999999999 . 3.692) (1.6600000000000001 . 3.698) (1.6199999999999999 . 3.692) (1.8 . 3.846) (1.76 . 3.55) (1.9400000000000002 . 3.698) (1.9000000000000001 . 3.692) (2.08 . 3.846) (2.04 . 3.55) (2.2199999999999998 . 3.698) (2.6 . 4.154) (2.1799999999999997 . 3.692) (2.5 . 4.0) (2.36 . 3.846) (1.7000000000000002 . 3.44) (1.96 . 3.538)))))
+ '(org-drill-maximum-items-per-session 40)
+ '(org-drill-optimal-factor-matrix (quote ((13 (1.26 . 1.346)) (12 (1.4000000000000001 . 1.35)) (11 (1.1600000000000001 . 1.072) (1.3 . 1.16)) (10 (1.3 . 1.115) (1.1600000000000001 . 1.072)) (9 (1.4000000000000001 . 1.158) (1.1600000000000001 . 1.072) (1.3 . 1.115)) (8 (1.1600000000000001 . 1.072) (1.3 . 1.115) (0.98 . 1.2)) (7 (1.4000000000000001 . 1.158) (0.98 . 1.178) (1.24 . 1.327) (1.1600000000000001 . 1.159) (1.3 . 1.205)) (6 (2.2800000000000002 . 2.264) (1.2 . 1.473) (1.8 . 1.865) (1.48 . 1.433) (1.9000000000000001 . 1.869) (1.76 . 1.724) (1.6600000000000001 . 1.793) (0.98 . 1.029) (1.0599999999999998 . 1.274) (1.62 . 1.657) (1.52 . 1.596) (1.38 . 1.38) (1.24 . 1.327) (0.76 . 0.986) (1.3 . 1.115) (1.3800000000000001 . 1.535) (1.1600000000000001 . 1.325)) (5 (2.28 . 2.361) (1.38 . 1.38) (2.66 . 2.693) (1.62 . 1.895) (2.42 . 2.456) (1.4800000000000002 . 1.558) (1.1199999999999999 . 1.468) (2.6 . 2.6) (2.46 . 2.497) (2.36 . 2.404) (1.72 . 1.917) (0.98 . 1.178) (2.2199999999999998 . 2.311) (2.2800000000000002 . 2.302) (2.56 . 2.593) (1.9000000000000001 . 2.05) (2.3200000000000003 . 2.305) (1.58 . 1.654) (1.3399999999999999 . 1.532) (1.54 . 1.84) (2.18 . 2.217) (2.04 . 2.015) (2.22 . 2.22) (2.32 . 2.401) (1.94 . 1.94) (1.6199999999999999 . 1.791) (1.0599999999999998 . 1.274) (1.9400000000000002 . 2.053) (1.2 . 1.473) (2.1799999999999997 . 2.274) (1.76 . 1.971) (1.48 . 1.721) (2.08 . 2.135) (1.1600000000000001 . 1.227) (1.24 . 1.327) (1.6600000000000001 . 1.793) (1.3 . 1.225) (1.8 . 1.865) (1.3800000000000001 . 1.535) (1.52 . 1.596)) (4 (2.52 . 2.588) (2.48 . 2.472) (2.8 . 2.8) (2.1399999999999997 . 2.305) (2.2800000000000002 . 2.396) (1.38 . 1.38) (2.0 . 2.058) (1.62 . 1.895) (1.66 . 1.66) (2.24 . 2.392) (0.98 . 1.029) (2.6599999999999997 . 2.692) (1.26 . 1.65) (2.9 . 2.908) (0.76 . 0.986) (1.9999999999999998 . 2.216) (1.0599999999999998 . 1.274) (1.3399999999999999 . 1.532) (2.8000000000000003 . 2.8) (2.7 . 2.696) (1.1600000000000001 . 1.227) (2.66 . 2.693) (2.42 . 2.493) (2.56 . 2.593) (1.3 . 1.276) (1.7200000000000002 . 1.788) (1.94 . 1.94) (2.32 . 2.401) (2.6 . 2.596) (2.04 . 2.132) (2.36 . 2.404) (2.5 . 2.5) (1.3800000000000001 . 1.535) (1.24 . 1.327) (1.2 . 1.473) (2.46 . 2.497) (2.1799999999999997 . 2.308) (2.2199999999999998 . 2.311) (1.48 . 1.721) (2.18 . 2.217) (1.52 . 1.596) (2.22 . 2.22) (1.9000000000000001 . 2.049) (1.6600000000000001 . 1.793) (2.08 . 2.135) (1.6199999999999999 . 1.791) (2.3200000000000003 . 2.305) (1.8 . 1.865) (1.76 . 1.971) (1.9400000000000002 . 2.053)) (3 (1.66 . 1.66) (1.4000000000000001 . 1.112) (2.52 . 2.588) (1.4800000000000002 . 1.558) (2.38 . 2.368) (2.42 . 2.492) (1.72 . 2.048) (2.14 . 2.304) (2.2800000000000002 . 2.302) (0.98 . 0.989) (1.1600000000000001 . 1.03) (1.2 . 1.473) (1.3 . 1.071) (1.0599999999999998 . 1.274) (1.24 . 1.327) (2.8000000000000003 . 2.8) (1.3399999999999999 . 1.532) (1.3800000000000001 . 1.535) (2.1799999999999997 . 2.308) (1.86 . 1.923) (1.52 . 1.596) (2.1399999999999997 . 2.304) (2.04 . 2.132) (1.6600000000000001 . 1.793) (1.48 . 1.433) (1.94 . 1.94) (1.6199999999999999 . 1.791) (1.8 . 1.865) (2.18 . 2.217) (2.7 . 2.696) (2.6 . 2.596) (2.56 . 2.592) (1.76 . 1.971) (2.5 . 2.5) (2.3200000000000003 . 2.305) (1.9400000000000002 . 2.053) (2.22 . 2.22) (2.36 . 2.404) (2.32 . 2.401) (2.46 . 2.497) (2.2199999999999998 . 2.311) (1.9000000000000001 . 2.049) (2.08 . 2.135)) (2 (1.66 . 1.66) (2.0 . 2.058) (2.42 . 2.409) (1.9599999999999997 . 2.148) (1.86 . 2.046) (2.0999999999999996 . 2.234) (1.62 . 1.895) (1.5799999999999998 . 1.754) (1.8199999999999998 . 2.126) (2.28 . 2.327) (2.56 . 2.592) (1.38 . 1.38) (1.1600000000000001 . 1.227) (1.2 . 1.473) (1.26 . 1.65) (1.0599999999999998 . 1.274) (1.3 . 1.276) (0.98 . 1.178) (1.24 . 1.327) (1.1199999999999999 . 1.468) (1.6800000000000002 . 1.964) (2.32 . 2.32) (1.3800000000000001 . 1.535) (1.52 . 1.596) (1.3399999999999999 . 1.532) (1.6600000000000001 . 1.793) (1.94 . 1.94) (2.2800000000000002 . 2.396) (2.3200000000000003 . 2.305) (1.48 . 1.721) (1.6199999999999999 . 1.791) (2.22 . 2.22) (1.8 . 1.865) (1.4 . 1.736) (2.18 . 2.217) (1.9400000000000002 . 2.053) (1.76 . 1.971) (2.08 . 2.135) (1.9000000000000001 . 2.049) (2.7 . 2.696) (2.1799999999999997 . 2.308) (2.5 . 2.5) (2.46 . 2.497) (2.2199999999999998 . 2.311) (2.04 . 2.219) (2.6 . 2.596) (2.36 . 2.404)) (1 (2.1399999999999997 . 3.556) (2.28 . 3.698) (0.98 . 3.55) (1.8199999999999998 . 3.402) (2.42 . 3.846) (2.46 . 3.994) (1.66 . 4.0) (1.38 . 4.0) (2.3200000000000003 . 4.154) (1.1600000000000001 . 3.556) (1.2 . 3.55) (1.3 . 3.698) (1.24 . 3.846) (1.0599999999999998 . 3.692) (1.6800000000000002 . 3.538) (1.3800000000000001 . 3.698) (2.22 . 4.0) (2.32 . 3.84) (1.48 . 3.55) (1.52 . 3.846) (1.3399999999999999 . 3.692) (1.6600000000000001 . 3.698) (1.6199999999999999 . 3.692) (1.8 . 3.846) (1.76 . 3.55) (1.9400000000000002 . 3.698) (1.9000000000000001 . 3.413) (2.08 . 3.846) (2.04 . 3.55) (2.2199999999999998 . 3.698) (2.6 . 4.154) (2.1799999999999997 . 3.692) (2.5 . 4.0) (2.36 . 3.846) (1.7000000000000002 . 3.44) (1.96 . 3.538)))))
  '(org-drill-save-buffers-after-drill-sessions-p nil)
  '(org-drill-scope (quote directory))
  '(org-emphasis-alist (quote (("*" my-org-bold "<b>" "</b>") ("/" my-org-italic "<i>" "</i>") ("_" underline "<span style=\"text-decoration:underline;\">" "</span>") ("=" my-org-code "<code>" "</code>" verbatim) ("~" my-org-code "<code>" "</code>" verbatim) ("+" (:strike-through t) "<del>" "</del>"))))
@@ -211,8 +258,12 @@
  '(org-habit-following-days 1)
  '(org-habit-graph-column 80)
  '(org-habit-preceding-days 30)
+ '(org-inline-image-resolve-url (quote (org-inline-image--regexp-resolver identity)))
+ '(org-log-done (quote note))
  '(org-log-into-drawer t)
- '(org-modules (quote (org-bbdb org-bibtex org-crypt org-gnus org-id org-info org-jsinfo org-habit org-inlinetask org-irc org-mew org-mhe org-protocol org-rmail org-vm org-wl org-w3m org-drill)))
+ '(org-lowest-priority 69)
+ '(org-modules (quote (org-bbdb org-bibtex org-crypt org-gnus org-habit org-id org-info org-drill)))
+ '(org-priority-start-cycle-with-default nil)
  '(org-refile-use-outline-path (quote file))
  '(org-special-ctrl-a/e t)
  '(org-src-fontify-natively t)
@@ -224,8 +275,7 @@
  '(predictive-auto-add-to-dict t)
  '(predictive-auto-learn t)
  '(predictive-use-auto-learn-cache nil)
- '(preview-gs-command "d:\\progs\\gs9.06\\bin\\gswin64c.exe")
- '(preview-scale-function 1.8)
+ '(preview-scale-function 1.5)
  '(projectile-global-mode t)
  '(projectile-globally-ignored-directories (quote (".idea" ".eunit" ".git" ".hg" ".fslckout" ".bzr" "_darcs" "elpa")))
  '(projectile-project-root-files (quote (".dir-locals.el" ".projectile" ".git" ".hg" ".fslckout" ".bzr" "_darcs" "rebar.config" "project.clj" "pom.xml" "build.sbt" "Gemfile" "Makefile")))
@@ -233,8 +283,8 @@
  '(rcirc-server-alist (quote (("dasnet.cz" :port 7001 :password "polakmajstersveta" nil nil))))
  '(recentf-mode t)
  '(recentf-save-file "~/.emacs.d/.recentf")
- '(reftex-label-alist (quote (("lemma" 101 nil nil t nil))))
- '(safe-local-variable-values (quote ((my-inhibit-buffer-cleanup . t) (eval progn (local-set-key (kbd "C-=") (quote my-org-add-drill-entry)) (local-set-key (kbd "C-<") (quote my-format-russian-verb)) (local-set-key (kbd "C->") (quote my-format-meaning))) (eval progn (local-set-key (kbd "C-=") (quote my-org-add-drill-entry)) (local-set-key (kbd "C->") (quote my-format-meaning))) (eval progn (local-set-key (kbd "C-=") (quote my-org-add-drill-entry)) (local-set-key (kbd "C->") (quote my-format-latin-meaning))) (eval progn (local-set-key (kbd "C-=") (quote my-org-add-drill-entry)) (local-set-key (kbd "C-<") (quote my-format-russian-verb)) (local-set-key (kbd "C->") (quote my-format-russian-meaning))) (eval progn (variable-pitch-mode 1) (text-scale-adjust 2)) (cursor-type . bar) (eval progn (variable-pitch-mode 1) (text-scale-adjust 3)) (my-org-drill-language . "Latin") (eval local-set-key (kbd "C-=") (quote my-org-add-drill-entry)) (eval set-input-method "cyrillic-translit") (my-org-drill-language . "Russian") (my-org-drill-file . t) (my-org-drill-local-language . "Polish") (eval virtual-dired "d:/") (eval font-lock-add-keywords nil (\` (((\, (concat "(" (regexp-opt (quote ("wd-cond")) t) "\\_>")) 1 (quote font-lock-keyword-face))))) (eval push (file-name-directory (buffer-file-name)) load-path) (eval font-lock-add-keywords nil (\` (((\, (concat "(" (regexp-opt (quote ("sp-do-move-op" "sp-do-move-cl" "sp-do-put-op" "sp-do-put-cl" "sp-do-del-op" "sp-do-del-cl")) t) "\\_>")) 1 (quote font-lock-variable-name-face))))) (TeX-master . main) (eval font-lock-add-keywords nil (quote (("(\\(dm-defun\\)\\(?:\\s-\\)+\\(\\_<.*?\\_>\\)" (1 font-lock-keyword-face) (2 font-lock-function-name-face))))) (eval font-lock-add-keywords nil (quote (("defexamples\\| => " (0 (quote font-lock-keyword-face)))))) (reftex-default-bibliography "./bibliography") (eval allout-mode t))))
+ '(reftex-label-alist (quote (("lemma" 32 "lem:" "~\\cref{%s}" nil nil) ("theorem" 32 "th:" "~\\cref{%s}" nil nil))))
+ '(safe-local-variable-values (quote ((org-refile-targets ("~/org/bookmarks.org" :tag . "folder")) (org-tags-exclude-from-inheritance "folder") (org-tags-exclude-from-inheritance . folder) (org-tags-exclude-from-inheritance . "folder") (eval progn (variable-pitch-mode 1) (text-scale-adjust 2) (overlay-put (make-overlay (point-min) (point-max)) (quote face) (quote my-reading-face))) (dired-filter-stack (dot-files) (omit)) (my-inhibit-buffer-cleanup . t) (eval progn (local-set-key (kbd "C-=") (quote my-org-add-drill-entry)) (local-set-key (kbd "C-<") (quote my-format-russian-verb)) (local-set-key (kbd "C->") (quote my-format-meaning))) (eval progn (local-set-key (kbd "C-=") (quote my-org-add-drill-entry)) (local-set-key (kbd "C->") (quote my-format-meaning))) (eval progn (local-set-key (kbd "C-=") (quote my-org-add-drill-entry)) (local-set-key (kbd "C->") (quote my-format-latin-meaning))) (eval progn (local-set-key (kbd "C-=") (quote my-org-add-drill-entry)) (local-set-key (kbd "C-<") (quote my-format-russian-verb)) (local-set-key (kbd "C->") (quote my-format-russian-meaning))) (eval progn (variable-pitch-mode 1) (text-scale-adjust 2)) (cursor-type . bar) (eval progn (variable-pitch-mode 1) (text-scale-adjust 3)) (my-org-drill-language . "Latin") (eval local-set-key (kbd "C-=") (quote my-org-add-drill-entry)) (eval set-input-method "cyrillic-translit") (my-org-drill-language . "Russian") (my-org-drill-file . t) (my-org-drill-local-language . "Polish") (eval virtual-dired "d:/") (eval font-lock-add-keywords nil (\` (((\, (concat "(" (regexp-opt (quote ("wd-cond")) t) "\\_>")) 1 (quote font-lock-keyword-face))))) (eval push (file-name-directory (buffer-file-name)) load-path) (eval font-lock-add-keywords nil (\` (((\, (concat "(" (regexp-opt (quote ("sp-do-move-op" "sp-do-move-cl" "sp-do-put-op" "sp-do-put-cl" "sp-do-del-op" "sp-do-del-cl")) t) "\\_>")) 1 (quote font-lock-variable-name-face))))) (TeX-master . main) (eval font-lock-add-keywords nil (quote (("(\\(dm-defun\\)\\(?:\\s-\\)+\\(\\_<.*?\\_>\\)" (1 font-lock-keyword-face) (2 font-lock-function-name-face))))) (eval font-lock-add-keywords nil (quote (("defexamples\\| => " (0 (quote font-lock-keyword-face)))))) (reftex-default-bibliography "./bibliography") (eval allout-mode t))))
  '(save-place t nil (saveplace))
  '(save-place-file "~/.emacs.d/.emacs-places")
  '(send-mail-function (quote mailclient-send-it))
@@ -249,7 +299,7 @@
  '(sp-autoescape-string-quote-if-empty (quote (python-mode)))
  '(sp-autoinsert-if-followed-by-same 3)
  '(sp-autoinsert-quote-if-followed-by-closing-pair nil)
- '(sp-autoskip-closing-pair (quote ((t . always) ((emacs-lisp-mode)))))
+ '(sp-autoskip-closing-pair (quote always))
  '(sp-autoskip-opening-pair nil)
  '(sp-autowrap-region t)
  '(sp-comment-string (quote (((emacs-lisp-mode) . ";; "))))
@@ -258,7 +308,7 @@
  '(sp-navigate-close-if-unbalanced t)
  '(sp-navigate-comments-as-sexps t)
  '(sp-navigate-consider-sgml-tags (quote (html-mode markdown-mode gfm-mode rst-mode)))
- '(sp-navigate-consider-stringlike-sexp (quote (ruby-mode latex-mode gfm-mode emacs-lisp-mode html-mode org-mode python-mode)))
+ '(sp-navigate-consider-stringlike-sexp (quote (ruby-mode gfm-mode emacs-lisp-mode html-mode org-mode python-mode text-mode)))
  '(sp-navigate-consider-symbols t)
  '(sp-navigate-reindent-after-up (quote ((interactive emacs-lisp-mode))))
  '(sp-navigate-skip-match (quote (((ruby-mode enh-ruby-mode) . sp--ruby-skip-match) ((emacs-lisp-mode inferior-emacs-lisp-mode lisp-interaction-mode scheme-mode inferior-scheme-mode geiser-repl-mode lisp-mode eshell-mode slime-repl-mode cider-repl-mode nrepl-repl-mode clojure-mode common-lisp-mode) . sp--elisp-skip-match))))
@@ -284,13 +334,17 @@
  '(transient-mark-mode t)
  '(truncate-partial-width-windows nil)
  '(uniquify-buffer-name-style (quote forward) nil (uniquify))
+ '(uniquify-strip-common-suffix nil)
  '(use-package-verbose t)
+ '(user-full-name "Matúš Goljer")
+ '(user-mail-address "matus.goljer@gmail.com")
  '(vc-make-backup-files t)
  '(visible-bell nil)
  '(w3m-command nil)
  '(w3m-imagick-convert-program "c:\\cygwin\\bin\\convert.exe")
  '(whitaker-program "(cd /media/Data/languages/Latin/Words/ && wine words.exe)")
- '(winner-mode t))
+ '(winner-mode t)
+ '(x-select-enable-clipboard t))
 
 (put 'narrow-to-region 'disabled nil)
 (put 'narrow-to-page 'disabled nil)
@@ -321,15 +375,15 @@
  '(eldoc-highlight-function-argument ((t (:inherit bold :foreground "#4e9a06"))))
  '(erc-nick-default-face ((t (:inherit erc-default))) t)
  '(eshell-prompt ((t (:foreground "#73d216" :weight normal))))
- '(eyebrowse-mode-line-active ((t (:inherit mode-line))))
- '(eyebrowse-mode-line-inactive ((t (:inherit mode-line-secondary))))
+ '(eyebrowse-mode-line-active ((t (:inherit mode-line))) t)
+ '(eyebrowse-mode-line-inactive ((t (:inherit mode-line-secondary))) t)
  '(fixed-pitch ((t (:family "Inconsolata"))))
  '(font-latex-sedate-face ((t (:inherit font-lock-keyword-face))))
  '(guide-key/key-face ((t (:inherit font-lock-keyword-face))))
  '(header-line ((t (:inherit mode-line))))
  '(italic ((t (:slant italic))))
- '(my-diredp-media-face ((t (:foreground "#ce5c00"))))
- '(my-diredp-sourcefile-face ((t (:foreground "#fcaf3e"))))
+ '(my-diredp-media-face ((t (:foreground "#ce5c00"))) t)
+ '(my-diredp-sourcefile-face ((t (:foreground "#fcaf3e"))) t)
  '(my-hide-prefix ((t (:underline "#888a85"))) t)
  '(my-space-2 ((t (:inherit default :height 0.21))) t)
  '(my-space-px-4 ((t (:inherit default :height 2.0 :width ultra-condensed))) t)
@@ -342,6 +396,6 @@
  '(sp-pair-overlay-face ((t (:background "#004a5d"))))
  '(sp-show-pair-enclosing ((t (:background "#004a5d"))))
  '(variable-pitch ((t (:weight normal :height 144 :family "CMU Bright"))))
- '(w3m-anchor ((t (:foreground "#729fcf"))))
- '(w3m-arrived-anchor ((t (:inherit font-lock-builtin-face))))
+ '(w3m-anchor ((t (:foreground "#729fcf"))) t)
+ '(w3m-arrived-anchor ((t (:inherit font-lock-builtin-face))) t)
  '(wgrep-delete-face ((t (:inherit font-lock-warning-face)))))

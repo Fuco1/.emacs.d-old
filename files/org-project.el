@@ -179,48 +179,50 @@ When not restricted, skip project and sub-project tasks, habits, and project rel
 
 (defun my-org-update-parent-tasks-todo ()
   "Visit each parent task and change NEXT states to TODO"
-  (let ((mystate (nth 2 (org-heading-components)))
-        moved-up)
-    (cond
-     ((equal mystate "NEXT")
-      (save-excursion
-        (while (and (setq moved-up (org-up-heading-safe)) (not (my-org-entry-is-task-p))))
-        (when (and moved-up
-                   (member (org-get-todo-state) (list "NEXT" "DONE")))
-          (org-todo "TODO"))))
-     ((equal mystate "TODO")
-      (save-excursion
-        (while (and (setq moved-up (org-up-heading-safe)) (not (my-org-entry-is-task-p))))
-        (when (and moved-up
-                   (member (org-get-todo-state) (list "DONE")))
-          (org-todo "TODO"))))
-     ((equal mystate "DONE")
-      (save-excursion
-        (while (and (setq moved-up (org-up-heading-safe)) (not (my-org-entry-is-task-p))))
-        (when moved-up
-          (let (all-done)
-            (save-excursion
-              (org-goto-first-child)
-              (setq all-done (if (my-org-entry-is-task-p) (org-entry-is-done-p) t))
-              (while (and all-done (org-goto-sibling))
-                (when (my-org-entry-is-task-p)
-                  (setq all-done (org-entry-is-done-p)))))
-            (when all-done
-              (org-todo "DONE")))))))))
+  (save-excursion
+    (let ((mystate (nth 2 (org-heading-components)))
+          moved-up)
+      (cond
+       ((equal mystate "NEXT")
+        (save-excursion
+          (while (and (setq moved-up (org-up-heading-safe)) (not (my-org-entry-is-task-p))))
+          (when (and moved-up
+                     (member (org-get-todo-state) (list "NEXT" "DONE")))
+            (org-todo "TODO"))))
+       ((equal mystate "TODO")
+        (save-excursion
+          (while (and (setq moved-up (org-up-heading-safe)) (not (my-org-entry-is-task-p))))
+          (when (and moved-up
+                     (member (org-get-todo-state) (list "DONE")))
+            (org-todo "TODO"))))
+       ((equal mystate "DONE")
+        (save-excursion
+          (while (and (setq moved-up (org-up-heading-safe)) (not (my-org-entry-is-task-p))))
+          (when moved-up
+            (let (all-done)
+              (save-excursion
+                (org-goto-first-child)
+                (setq all-done (if (my-org-entry-is-task-p) (org-entry-is-done-p) t))
+                (while (and all-done (org-goto-sibling))
+                  (when (my-org-entry-is-task-p)
+                    (setq all-done (org-entry-is-done-p)))))
+              (when all-done
+                (org-todo "DONE"))))))))))
 
 (defun my-org-update-siblings-tasks-todo ()
-  (let ((mystate (nth 2 (org-heading-components))))
-    (cond
-     ((equal mystate "NEXT")
-      (let ((pos (save-excursion (org-back-to-heading 'invisible-ok) (point))))
-        (when (org-up-heading-safe)
-          (org-goto-first-child)
-          (do ((has-sibling t (org-goto-sibling)))
-              ((not has-sibling))
-            (when (and (member (org-get-todo-state) (list "NEXT"))
-                       (/= (point) pos))
-              (let ((org-after-todo-state-change-hook))
-                (org-todo "TODO"))))))))))
+  (save-excursion
+    (let ((mystate (nth 2 (org-heading-components))))
+      (cond
+       ((equal mystate "NEXT")
+        (let ((pos (save-excursion (org-back-to-heading 'invisible-ok) (point))))
+          (when (org-up-heading-safe)
+            (org-goto-first-child)
+            (do ((has-sibling t (org-goto-sibling)))
+                ((not has-sibling))
+              (when (and (member (org-get-todo-state) (list "NEXT"))
+                         (/= (point) pos))
+                (let ((org-after-todo-state-change-hook))
+                  (org-todo "TODO")))))))))))
 
 
 (add-hook 'org-after-todo-state-change-hook 'my-org-update-parent-tasks-todo 'append)

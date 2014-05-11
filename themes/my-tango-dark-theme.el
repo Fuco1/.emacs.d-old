@@ -171,7 +171,11 @@ is extension of default `tango-dark' face.")
    `(markdown-inline-code-face ((,class (:inherit markdown-pre-face))))
    `(org-table ((,class (:inherit fixed-pitch :foreground ,blue-0))))
    `(paren-face ((,class (:foreground ,alum-4))))
-   `(variable-pitch ((,class (:height 120 :family ,variable-font)))))
+   `(variable-pitch ((,class (:height 120 :family ,variable-font))))
+
+   ;; My special themes
+   `(my-reading-face ((,class (:background "#808000"
+                               :foreground "#000000")))))
 
   (custom-theme-set-variables
    'my-tango-dark

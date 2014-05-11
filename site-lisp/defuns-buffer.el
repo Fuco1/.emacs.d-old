@@ -57,7 +57,9 @@ might be bad."
   (interactive)
   (unless my-inhibit-buffer-cleanup
     (let ((inhibit-read-only t))
-      (unless (memq major-mode '(makefile-gmake-mode))
+      (unless (memq major-mode '(makefile-gmake-mode
+                                 text-mode
+                                 fundamental-mode))
         (untabify-buffer))
       (delete-trailing-whitespace)
       (set-buffer-file-coding-system 'utf-8))))

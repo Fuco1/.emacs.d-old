@@ -32,7 +32,7 @@ might often be impossible."
                ,@forms)
              (directory-files ,directory)))))
 
-(defmacro with-lines (&rest forms)
+(defmacro with-lines-narrow (&rest forms)
   (declare (indent 0))
   `(while (not (eobp))
      (let ((beg (point-at-bol))
@@ -42,6 +42,15 @@ might often be impossible."
            (narrow-to-region beg end)
            ,@forms)))
      (forward-line)))
+
+(defmacro with-every-line (&rest forms)
+  "Execute FORMS on each line following point to the end of file."
+  (declare (indent 0))
+  `(progn
+     (beginning-of-line)
+     (while (not (eobp))
+       ,@forms
+       (forward-line))))
 
 (defmacro fix-reset-after-each (&rest forms)
   (declare (indent 0))
@@ -53,7 +62,8 @@ might often be impossible."
     "save-buffer-list"
     "save-kill-ring"
     "with-files-in-dir"
-    "with-lines"
+    "with-lines-narrow"
+    "with-every-line"
     "fix-reset-after-each"
     "bind-keys"
     ))

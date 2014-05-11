@@ -1,4 +1,5 @@
 syntax: glob
+.cask/*
 auto-save-list/*
 backups/*
 dev/*

@@ -25,6 +25,7 @@
         my-smart-upcase-word
         org-beginning-of-line
         org-end-of-line
+        org-self-insert-command
         smart-tab
         sp--cua-replace-region
         sp--self-insert-command

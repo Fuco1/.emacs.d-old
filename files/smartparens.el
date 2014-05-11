@@ -90,7 +90,7 @@
 
 ;;; org-mode
 (sp-with-modes 'org-mode
-  (sp-local-pair "*" "*" :unless '(sp-point-after-word-p sp-point-at-bol-p) :wrap "C-*" :skip-match 'sp--org-skip-asterisk)
+  (sp-local-pair "*" "*" :actions '(insert wrap) :unless '(sp-point-after-word-p sp-point-at-bol-p) :wrap "C-*" :skip-match 'sp--org-skip-asterisk)
   (sp-local-pair "_" "_" :unless '(sp-point-after-word-p) :wrap "C-_" :skip-match 'sp--org-skip-markup)
   (sp-local-pair "/" "/" :unless '(sp-point-after-word-p) :skip-match 'sp--org-skip-markup)
   (sp-local-pair "~" "~" :unless '(sp-point-after-word-p) :skip-match 'sp--org-skip-code)
@@ -108,7 +108,7 @@
 (defun sp--org-skip-asterisk (ms mb me)
   (or (save-excursion
         (goto-char (line-beginning-position))
-        (save-match-data (looking-at "^\\*+")))
+        (save-match-data (looking-at "^[*]+")))
       (sp--org-skip-markup ms mb me)))
 
 (defun sp--org-skip-code (ms mb me)

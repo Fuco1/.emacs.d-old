@@ -26,7 +26,7 @@
     (replace-regexp "(syn: \\(.*?\\))" "{\\\\footnotesize ($\\\\sigma\\\\!\\\\!:\\\\!$ \\1)}")
     (replace-regexp "\\.\\.\\." "\\\\dots ")
     ;; remove all the divs in front of first tab
-    (with-lines
+    (with-lines-narrow
       (goto-char (point-min))
       (save-excursion
         (save-restriction

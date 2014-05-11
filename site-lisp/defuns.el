@@ -170,3 +170,142 @@ This is the opposite of fill-paragraph."
                           default-directory))))
   (let ((auto-mode-alist nil))
     (find-file filename)))
+
+(defun my-opera-bookmarks-extract-property (prop beg end)
+  (save-excursion
+    (goto-char beg)
+    (when (and (re-search-forward prop end t)
+               (looking-at "="))
+      (forward-char)
+      (buffer-substring-no-properties (point) (line-end-position)))))
+
+(defun my-opera-bookmarks-to-org (buffer)
+  (with-current-buffer buffer
+    (erase-buffer))
+  (let ((depth 0))
+    (while (re-search-forward (concat "^-$\\|" (regexp-opt '("#FOLDER" "#URL"))) nil t)
+      (cond
+       ((equal (match-string 0) "#FOLDER")
+        (cl-incf depth)
+        (forward-line)
+        (let ((beg (point)))
+          (re-search-forward "^$" nil t)
+          (let* ((end (point))
+                 (name (my-opera-bookmarks-extract-property "NAME" beg end))
+                 (created (my-opera-bookmarks-extract-property "CREATED" beg end)))
+            (with-current-buffer buffer
+              (insert
+               (format "%s %s                                                                :folder:
+    :PROPERTIES:
+    :CREATED:  %s
+    :END:
+
+" (make-string depth ?*) name created))))))
+       ((equal (match-string 0) "#URL")
+        (forward-line)
+        (let ((beg (point)))
+          (re-search-forward "^$" nil t)
+          (let* ((end (point))
+                 (name (my-opera-bookmarks-extract-property "NAME" beg end))
+                 (url (my-opera-bookmarks-extract-property "URL" beg end))
+                 (desc (my-opera-bookmarks-extract-property "DESCRIPTION" beg end))
+                 (created (my-opera-bookmarks-extract-property "CREATED" beg end))
+                 (visited (my-opera-bookmarks-extract-property "VISITED" beg end)))
+            (with-current-buffer buffer
+              (insert
+               (format "%s %s
+    :PROPERTIES:
+    :CREATED:  %s
+    :VISITED:  %s
+    :END:
+- source: %s
+" (make-string (1+ depth) ?*) name created visited url)
+               (if desc (format "- description: %s\n" desc) "")
+               "\n")))))
+       ((equal (match-string 0) "-")
+        (cl-decf depth))))))
+
+(defun my-dired-insert-git-ls-files (path)
+  (let* ((full-path (file-truename (concat path "/")))
+         (default-directory full-path)
+         (buf (with-current-buffer (get-buffer-create " git-ls-files")
+                (erase-buffer)
+                (current-buffer))))
+    (call-process "git"
+                  nil
+                  buf
+                  nil
+                  "ls-files")
+    (let* ((data (with-current-buffer buf
+                   (goto-char (point-min))
+                   (when (> (point-max) 0)
+                     (insert "\"")
+                     (end-of-line)
+                     (insert "\"")
+                     (while (and (= 0 (forward-line))
+                                 (not (eobp)))
+                       (insert "\"")
+                       (end-of-line)
+                       (insert "\"")))
+                   (goto-char (point-min))
+                   (replace-regexp "\n" " ")
+                   (goto-char (point-min))
+                   (insert "(")
+                   (goto-char (point-max))
+                   (insert ")")
+                   (buffer-substring-no-properties (point-min) (point-max))))
+           (list (read data)))
+      (message "%S" list)
+      (--map (insert-directory it "-la") list))))
+
+(defun my-extract-buffer-substring (end-pattern)
+  "Extract buffer substring between current point and END-PATTERN.
+
+END-PATTERN should be a regular expression delimiting the
+substring.  The match is extracted up until the beginning of the
+first match.
+
+The point is moved to the end of the match."
+  (save-match-data
+    (buffer-substring-no-properties
+     (point)
+     (when (re-search-forward end-pattern nil t)
+       (match-beginning 0)))))
+
+(defun my-fix-german-anki-deck-get-plural ()
+  (when (and (search-forward "German\n---" nil t)
+             (search-forward "noun[" nil t))
+    (search-forward "," nil t 2)
+    (when (looking-at "gen2")
+      (search-forward "," nil t))
+    (my-extract-buffer-substring "[],]")))
+
+(defun my-fix-german-anki-deck-get-gender ()
+  (when (and (search-forward "German\n---" nil t)
+             (search-forward "noun[" nil t))
+    (my-extract-buffer-substring ",")))
+
+(defun my-fix-german-anki-deck ()
+  (let ((case-fold-search nil)
+        (curbuf (current-buffer)))
+    (with-every-line
+      (when (and (looking-at "[A-Z]")
+                 (progn
+                   (forward-word)
+                   (looking-at "\t")))
+        (save-window-excursion
+          (call-interactively 'wd-show-translation)
+          (with-current-buffer (get-buffer-create "*Wiktionary*")
+            (let ((gender (save-excursion (my-fix-german-anki-deck-get-gender)))
+                  (plural (save-excursion (my-fix-german-anki-deck-get-plural))))
+              (with-current-buffer curbuf
+                (beginning-of-line)
+                (when gender
+                  (insert (cond
+                           ((equal gender "m") "der ")
+                           ((equal gender "f") "die ")
+                           ((equal gender "n") "das "))))
+                (when plural
+                  (search-forward "\t" nil t)
+                  (backward-char)
+                  (insert ", " plural))))))))))

@@ -31,9 +31,10 @@
 
 ;; Find stuff
 (bind-key "<f2>" 'occur)
-(bind-key "n" 'occur-next occur-mode-map)
-(bind-key "p" 'occur-prev occur-mode-map)
-(bind-key "o" 'occur-mode-display-occurrence occur-mode-map)
+(bind-keys :map occur-mode-map
+  ("n" . occur-next)
+  ("p" . occur-prev)
+  ("o" . occur-mode-display-occurrence))
 
 ;; is this safe binding?
 (bind-key "C-'" 'repeat)
@@ -53,27 +54,21 @@
 (bind-key "C-<f8>" 'indent-buffer)
 (bind-key "C-<tab>" 'indent-defun)
 
-(defvar f1-prefix-map)
-(define-prefix-command 'f1-prefix-map)
-(bind-key "<f1>" 'f1-prefix-map)
-(bind-key "<f1> <f2>" (lambda () (interactive) (find-file "~/.emacs.d/init.el")))
-(bind-key "<f1> <f3>" 'view-echo-area-messages)
-(bind-key "<f1> <f4>" 'ffap)
-(bind-key "<f1> <f5>" (lambda () (interactive) (let ((default-directory "~")) (ido-find-file))))
-(bind-key "<f1> <f12>" 'my-switch-to-scratch)
+(bind-keys :prefix "<f1>"
+           :prefix-map f1-prefix-map
+           :prefix-docstring "F1 prefix map (navigation)"
+  ("<f2>" . (lambda () (interactive) (find-file "~/.emacs.d/init.el")))
+  ("<f3>" . view-echo-area-messages)
+  ("<f4>" . ffap)
+  ("<f5>" . (lambda () (interactive) (let ((default-directory "~")) (ido-find-file))))
+  ("<f12>" . my-switch-to-scratch))
 
 ;; ibuffer > list-buffers
 (bind-key "C-x C-b" 'ibuffer)
 (bind-key "C-<m-key>" 'ido-switch-buffer)
-(bind-key "C-x C-k" 'kill-buffer-and-window)
 
 ;; buffer cleanup
 (bind-key "C-c u" 'cleanup-buffer)
-
-;; buffer switching using cycbuf
-(bind-key "<right>" 'cycbuf-switch-to-next-buffer)
-(bind-key "<left>" 'cycbuf-switch-to-previous-buffer)
-(bind-key "<down>" 'cycbuf-discard-status-window)
 
 ;; Window navigation
 (windmove-default-keybindings 'meta)
@@ -81,6 +76,7 @@
 ;; Easier buffer killing
 (bind-key "M-k" 'my-kill-this-buffer)
 (bind-key "M-K" (lambda () (interactive) (kill-buffer (window-buffer (next-window)))))
+(bind-key "C-x C-k" 'kill-buffer-and-window)
 
 ;; imenu
 (bind-key "M-," 'find-function)
@@ -200,12 +196,12 @@
 (global-set-key [remap exchange-point-and-mark] 'exchange-point-and-mark-no-activate)
 
 ;; customize
-(defvar customize-map)
-(define-prefix-command 'customize-map)
-(bind-key "C-c c" 'customize-map)
-(bind-key "C-c c v" 'customize-variable)
-(bind-key "C-c c f" 'customize-face)
-(bind-key "C-c c g" 'customize-group)
+(bind-keys :prefix "C-c c"
+           :prefix-map ctl-c-c-map
+           :prefix-docstring "Customize map"
+  ("v" . customize-variable)
+  ("f" . customize-face)
+  ("g" . customize-group))
 
 ;; calc settings
 (bind-key "<pause>" 'calc-dispatch)
@@ -218,18 +214,18 @@
      (bind-key "C-. n" 'calc-standard-normal calc-mode-map)
      (bind-key "C-<tab>" 'calc-roll-up calc-mode-map)))
 
-(defvar lisp-find-map)
-(define-prefix-command 'lisp-find-map)
-(bind-key "C-h e" 'lisp-find-map)
-(bind-key "C-h e b" 'free-keys)
-(bind-key "C-h e d" 'info-lookup-symbol)
-(bind-key "C-h e f" 'find-function)
-(bind-key "C-h e F" 'find-face-definition)
-(bind-key "C-h e i" 'info-apropos)
-(bind-key "C-h e k" 'find-function-on-key)
-(bind-key "C-h e l" 'find-library)
-(bind-key "C-h e v" 'find-variable)
-(bind-key "C-h e V" 'apropos-value)
+(bind-keys :prefix "C-h e"
+           :prefix-map ctl-h-e-map
+           :prefix-docstring "List find/help map"
+  ("b" . free-keys)
+  ("d" . info-lookup-symbol)
+  ("f" . find-function)
+  ("F" . find-face-definition)
+  ("i" . info-apropos)
+  ("k" . find-function-on-key)
+  ("l" . find-library)
+  ("v" . find-variable)
+  ("V" . apropos-value))
 (bind-key "C-h D" 'describe-personal-keybindings)
 
 (defvar ctl-dot-prefix-map)
@@ -253,21 +249,21 @@
 
 (bind-key "C-. -" 'macrostep-expand)
 
-(defvar ctl-dot-i-prefix-map)
-(put 'ctl-dot-i-prefix-map 'variable-documentation "Input method map.")
-(define-prefix-command 'ctl-dot-i-prefix-map)
-(bind-key "C-. i" 'ctl-dot-i-prefix-map)
-(bind-key "C-. i m" 'set-input-method)
-(bind-key "C-. i e" 'toggle-input-method)
 (bind-key "<XF86HomePage>" 'toggle-input-method)
-(bind-key "C-. i s" (lambda () "Toggle on slovak-prog-2 input method." (interactive) (set-input-method "slovak-prog-2")))
-(bind-key "C-. i c" (lambda () "Toggle on czech input method." (interactive) (set-input-method "czech")))
-(bind-key "C-. i r" (lambda () "Toggle on russian-computer input method." (interactive) (set-input-method "russian-computer")))
-(bind-key "C-. i q" (lambda () "Toggle on cyrillic-translit input method." (interactive) (set-input-method "cyrillic-translit")))
-(bind-key "C-. i i" (lambda () "Toggle on italian-keyboard input method." (interactive) (set-input-method "italian-keyboard")))
-(bind-key "C-. i g" (lambda () "Toggle on german input method." (interactive) (set-input-method "german")))
-(bind-key "C-. i t" (lambda () "Toggle on TeX input method." (interactive) (set-input-method "TeX")))
-(bind-key "C-. i l" (lambda () "Toggle on latin-macrons input method." (interactive) (set-input-method "latin-macrons")))
+(bind-keys :prefix "C-. i"
+           :prefix-map ctl-dot-i-prefix-map
+           :prefix-docstring "Input method map."
+  ("m" . set-input-method)
+  ("e" . toggle-input-method)
+  ("s" . (lambda () "Toggle on slovak-prog-2 input method." (interactive) (set-input-method "slovak-prog-2")))
+  ("c" . (lambda () "Toggle on czech input method." (interactive) (set-input-method "czech")))
+  ("r" . (lambda () "Toggle on russian-computer input method." (interactive) (set-input-method "russian-computer")))
+  ("q" . (lambda () "Toggle on cyrillic-translit input method." (interactive) (set-input-method "cyrillic-translit")))
+  ("i" . (lambda () "Toggle on italian-keyboard input method." (interactive) (set-input-method "italian-keyboard")))
+  ("g" . (lambda () "Toggle on german input method." (interactive) (set-input-method "german")))
+  ("t" . (lambda () "Toggle on TeX input method." (interactive) (set-input-method "TeX")))
+  ("l" . (lambda () "Toggle on latin-macrons input method." (interactive) (set-input-method "latin-macrons")))
+  ("f" . (lambda () "Toggle on french-keyboard input method." (interactive) (set-input-method "french-keyboard"))))
 
 (bind-key "H-u" 'universal-argument)
 (bind-key "H-u" 'universal-argument-more universal-argument-map)
@@ -283,23 +279,22 @@
 (bind-key "H-9" 'digit-argument)
 (bind-key "H--" 'negative-argument)
 
-(defvar ctl-c-s-map)
-(define-prefix-command 'ctl-c-s-map)
-(bind-key "C-c s" 'ctl-c-s-map)
+(bind-keys :prefix "C-c s"
+           :prefix-map ctl-c-s-map)
 
-(defvar ctl-c-m-map)
-(define-prefix-command 'ctl-c-m-map)
-(bind-key "C-c m" 'ctl-c-m-map)
-(bind-key "C-c m b" 'magit-key-mode-popup-branching)
-(bind-key "C-c m c" 'magit-key-mode-popup-committing)
-(bind-key "C-c m d" 'magit-key-mode-popup-dispatch)
-(bind-key "C-c m f" 'magit-key-mode-popup-fetching)
-(bind-key "C-c m i" 'magit-key-mode-popup-diff-options)
-(bind-key "C-c m l" 'magit-key-mode-popup-logging)
-(bind-key "C-c m m" 'magit-key-mode-popup-merging)
-(bind-key "C-c m p" 'magit-key-mode-popup-pushing)
-(bind-key "C-c m v" 'magit-branch-manager)
-(bind-key "C-c m s" 'magit-status)
+(bind-keys :prefix "C-c m"
+           :prefix-map ctl-c-m-map
+           :prefix-docstring "Magit map"
+  ("b" . magit-key-mode-popup-branching)
+  ("c" . magit-key-mode-popup-committing)
+  ("d" . magit-key-mode-popup-dispatch)
+  ("f" . magit-key-mode-popup-fetching)
+  ("i" . magit-key-mode-popup-diff-options)
+  ("l" . magit-key-mode-popup-logging)
+  ("m" . magit-key-mode-popup-merging)
+  ("p" . magit-key-mode-popup-pushing)
+  ("v" . magit-branch-manager)
+  ("s" . magit-status))
 
 ;; zapping
 (bind-key "M-z" 'zap-up-to-char)
@@ -321,39 +316,6 @@ inserted character."
 ;; M-g map
 (bind-key "M-g RET" 'skeleton-display-abbrev)
 
-
-(bind-key "C-\\" 'toggle-input-method)
-(bind-key "C-\\" 'my-cycle-language)
-(defvar my-input-method :english)
-
-(defun my-cycle-language ()
-  (interactive)
-  (case my-input-method
-    (:slovak  (setq my-input-method :german)
-              (my-toggle-input-method "german"))
-    (:german  (setq my-input-method :english)
-              (my-toggle-input-method nil))
-    (:english (setq my-input-method :slovak)
-              (my-toggle-input-method "slovak"))))
-
-(defun my-toggle-input-method (new-input-method)
-  (interactive)
-  (if toggle-input-method-active
-      (error "Recursive use of `toggle-input-method'"))
-  (if (and current-input-method (not new-input-method))
-      (inactivate-input-method)
-    (let ((toggle-input-method-active t)
-          (default (or (car input-method-history) default-input-method)))
-      (if (and default (equal current-input-method default)
-               (> (length input-method-history) 1))
-          (setq default (nth 1 input-method-history)))
-      (activate-input-method new-input-method))
-    (unless default-input-method
-      (prog1
-          (setq default-input-method current-input-method)
-        (when new-input-method
-          (customize-mark-as-set 'default-input-method))))))
-
 ;; emms
 ;; (bind-key "<A-XF86AudioPlay>" 'emms-pause)
 ;; (require 'emms-setup)
@@ -362,6 +324,7 @@ inserted character."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Jump to "logical" top/bottom of buffer in listing buffers
+;; TODO: turn this into a package
 
 (defmacro my-special-buffer-back-to-top (mode &rest forms)
   (declare (indent 1))
