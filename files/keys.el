@@ -204,7 +204,6 @@
   ("g" . customize-group))
 
 ;; calc settings
-(bind-key "<pause>" 'calc-dispatch)
 (bind-key "<home>" 'calc-same-interface)
 (fset 'calc-one-minus [?1 return ?- ?n])
 (fset 'calc-standard-normal [?0 return tab ?1 return tab ?k ?N ?1 return ?- ?n])
