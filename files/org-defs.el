@@ -46,7 +46,6 @@
 (use-package org-protocol
   :init
   (progn
-
     (defun my-org-protocol-save-youtube (info)
       (let* ((parts (org-protocol-split-data info t org-protocol-data-separator))
              (link (car parts)))
@@ -59,7 +58,7 @@
             :protocol "save-youtube"
             :function my-org-protocol-save-youtube
             :kill-client nil)
-           org-protocol-protocol-alist)))
+          org-protocol-protocol-alist)))
 
 (defface my-org-bold
   '((t (:weight bold :inherit font-lock-variable-name-face)))
@@ -472,14 +471,14 @@ point and rebuild the agenda view."
     (,(concat prefix "d") . "Done")
     ,@(--mapcat
        `((,(concat prefix (car it)) tags-todo ,(concat "+" (cdr it) "+TODO=\"NEXT\""))
-         (,(concat prefix "a" (car it)) tags ,(concat "+" (cdr it)))
-         (,(concat prefix "p" (car it)) tags ,(concat "+" (cdr it) "-TODO=\"DONE\"")
+         (,(concat prefix "a" (car it)) tags ,(concat "+" (cdr it) "-folder"))
+         (,(concat prefix "p" (car it)) tags ,(concat "+" (cdr it) "-folder-TODO=\"DONE\"")
           ((org-agenda-skip-function '(let ((next-headline (save-excursion
                                                              (or (outline-next-heading)
                                                                  (point-max)))))
                                         (when (member "BOOKS" (org-get-tags))
                                           next-headline)))))
-         (,(concat prefix "d" (car it)) tags ,(concat "+" (cdr it) "+TODO=\"DONE\"")
+         (,(concat prefix "d" (car it)) tags ,(concat "+" (cdr it) "-folder+TODO=\"DONE\"")
           ((org-agenda-cmp-user-defined 'my-org-compare-closed-entries)
            (org-agenda-sorting-strategy '(user-defined-up))
            (org-agenda-skip-function '(let ((next-headline (save-excursion
