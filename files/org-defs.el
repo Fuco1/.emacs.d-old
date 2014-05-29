@@ -46,11 +46,12 @@
 (use-package org-protocol
   :init
   (progn
+    (use-package async)
     (defun my-org-protocol-save-youtube (info)
       (let* ((parts (org-protocol-split-data info t org-protocol-data-separator))
              (link (car parts)))
         (save-window-excursion
-          (async-shell-command (concat "ydown '" link "'"))
+          (async-start-process "ydown" "ydown" nil link)
           (message "Youtube download started: %s" link)
           nil)))
 

@@ -632,7 +632,8 @@ The current directory is assumed to be the project's root otherwise."
 
 (use-package whitaker
   :commands whitaker
-  :bind ("A-a" . whitaker-send-input))
+  :bind (("A-a" . whitaker-send-input)
+         ("A-s" . whitaker-ace-jump)))
 
 (use-package wiktionary-translate
   :bind ("<insert>" . wd-show-translation))
