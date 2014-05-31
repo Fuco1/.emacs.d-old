@@ -157,6 +157,8 @@ Also used for highlighting.")
     ("P" . my-dired-parent-directory)
     ("I" . my-dired-maybe-insert-subdir)
 
+    ("e" . diredp-marked)
+
     ("n" . dired-hacks-next-file)
     ("p" . dired-hacks-previous-file)
     ("C-d" . (lambda (arg)
