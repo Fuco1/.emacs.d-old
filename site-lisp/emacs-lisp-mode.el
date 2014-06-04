@@ -18,6 +18,7 @@
   :config
   (progn
     (require 'thingatpt)
+    (use-package eldoc :diminish eldoc-mode)
 
     (defvar my-emacs-lisp-open-line-list '(
                                            if
