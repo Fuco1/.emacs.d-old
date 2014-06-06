@@ -76,7 +76,6 @@
 ;; diminish useless modeline clutter
 (require 'diminish)
 (diminish 'visual-line-mode)
-(eval-after-load "eldoc" '(diminish 'eldoc-mode " δ"))
 (eval-after-load "face-remap" '(diminish 'buffer-face-mode))
 
 ;; Customize

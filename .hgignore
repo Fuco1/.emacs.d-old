@@ -38,3 +38,4 @@ tramp
 .org-id-locations
 .recentf
 .smex-items
+.litable-lists.el

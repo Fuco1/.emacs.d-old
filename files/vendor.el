@@ -1,6 +1,7 @@
 (require 'bookmark+-autoloads)
 
 (use-package ace-jump-mode
+  :disabled t
   :bind (("C-\\" . ace-jump-mode))
   :config
   (progn
@@ -142,6 +143,26 @@ return to regular interpretation of self-insert characters."
 
     (setq ac-use-menu-map t)
     (bind-key "RET" 'popup-isearch-done popup-isearch-keymap)))
+
+(use-package better-jump
+  :bind (("C-\\" . bjump-word-jump)
+         ("A-l" . bjump-word-jump-line)
+         ("A-;" . bjump-word-jump-paragraph))
+  :config
+  (progn
+    (define-key Info-mode-map "o" 'bjump-info-link-jump)
+    (define-key help-mode-map "o" 'bjump-help-link-jump)))
+
+(use-package calc
+  :bind ("<home>" . calc-same-interface)
+  :config
+  (progn
+    (fset 'calc-one-minus [?1 return ?- ?n])
+    (fset 'calc-vector-normalize [return ?A ?/])
+    (bind-key "C-. m" 'calc-one-minus calc-mode-map)
+    (bind-key "C-. n" 'calc-vector-normalize calc-mode-map)
+    (bind-key "C-<tab>" 'calc-roll-up calc-mode-map)
+    (setq calc-display-trail nil)))
 
 (use-package calendar
   :defer t
@@ -348,7 +369,7 @@ return to regular interpretation of self-insert characters."
 (use-package help-mode
   :config
   (progn
-    (ace-link-setup-default)
+    (use-package better-jump)
     (bind-key "l" 'help-go-back help-mode-map)))
 
 (use-package ibuffer
@@ -377,7 +398,7 @@ return to regular interpretation of self-insert characters."
 
 (use-package info
   :config
-  (ace-link-setup-default))
+  (use-package better-jump))
 
 (use-package "isearch"
   :bind (("C-s" . isearch-forward-regexp)
@@ -633,7 +654,7 @@ The current directory is assumed to be the project's root otherwise."
 (use-package whitaker
   :commands whitaker
   :bind (("A-a" . whitaker-send-input)
-         ("A-s" . whitaker-ace-jump)))
+         ("A-s" . whitaker-jump)))
 
 (use-package wiktionary-translate
   :bind ("<insert>" . wd-show-translation))

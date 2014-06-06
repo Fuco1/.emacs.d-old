@@ -13,7 +13,10 @@
         eval-expression
         forward-sexp
         haskell-indentation-delete-char
+        jump-char-forward
+        jump-char-process-char
         keyboard-escape-quit
+        kill-rectangle
         kill-region
         kill-visual-line
         my-back-to-indentation-or-beginning
@@ -36,6 +39,7 @@
         sp-backward-up-sexp
         sp-cua-replace-region
         sp-delete-char
+        sp-down-sexp
         sp-emit-sexp
         sp-forward-barf-sexp
         sp-forward-sexp

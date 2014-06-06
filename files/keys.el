@@ -42,9 +42,9 @@
 ;; refresh-like
 (bind-key "<f5>" '(lambda () (interactive) (load-file (buffer-file-name))))
 (bind-key "A-u" 'universal-argument)
-(bind-keys :prefix "A-x"
-           :prefix-map alt-x-prefix-map
-           :prefix-docstring "A-x prefix map"
+(bind-keys :prefix "A-v"
+           :prefix-map alt-v-prefix-map
+           :prefix-docstring "A-v prefix map"
            ("A-m" . my-find-file-same-mode)
            ("A-x" . my-find-file-same-ext)
            ("A-s" . my-find-file-sudo))
@@ -202,16 +202,6 @@
   ("v" . customize-variable)
   ("f" . customize-face)
   ("g" . customize-group))
-
-;; calc settings
-(bind-key "<home>" 'calc-same-interface)
-(fset 'calc-one-minus [?1 return ?- ?n])
-(fset 'calc-standard-normal [?0 return tab ?1 return tab ?k ?N ?1 return ?- ?n])
-(eval-after-load "calc"
-  '(progn
-     (bind-key "C-. m" 'calc-one-minus calc-mode-map)
-     (bind-key "C-. n" 'calc-standard-normal calc-mode-map)
-     (bind-key "C-<tab>" 'calc-roll-up calc-mode-map)))
 
 (bind-keys :prefix "C-h e"
            :prefix-map ctl-h-e-map
