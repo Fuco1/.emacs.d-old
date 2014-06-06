@@ -62,21 +62,6 @@
    ;; version control
    (vc-mode vc-mode)
 
-   ;; see ~/.emacs.d/vendor/wc-mode/wc-mode.el
-   (wc-mode
-    (6 (" (wc:" (:eval (if (use-region-p)
-                           (format "%d,%d,%d"
-                                   (abs (- (point) (mark)))
-                                   (count-words-region (point) (mark))
-                                   (abs (- (line-number-at-pos (point))
-                                           (line-number-at-pos (mark)))))
-                         (format "%d,%d,%d"
-                                 (point-max)
-                                 (count-words-region (point-min) (point-max))
-                                 (line-number-at-pos (point-max)))))
-        ")")
-       ))
-
    " (" mode-line-mule-info ")"
    " " mode-line-misc-info
 
