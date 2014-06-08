@@ -45,6 +45,9 @@
                                     (looking-at "\\_>"))))
     (cond
      ((and (eq major-mode 'org-mode)
+           (looking-back "^<\\sw")
+           (org-cycle)))
+     ((and (eq major-mode 'org-mode)
            (not (smart-tab-must-expand prefix))
            (org-cycle)))
      ((cond
