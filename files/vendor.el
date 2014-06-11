@@ -154,7 +154,7 @@ return to regular interpretation of self-insert characters."
     (define-key help-mode-map "o" 'bjump-help-link-jump)))
 
 (use-package calc
-  :bind ("<home>" . calc-same-interface)
+  :bind ("<f5>" . calc-same-interface)
   :config
   (progn
     (fset 'calc-one-minus [?1 return ?- ?n])
