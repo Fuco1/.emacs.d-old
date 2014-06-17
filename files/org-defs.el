@@ -87,7 +87,9 @@
   ("C-x n N" . my-org-narrow-to-subtree)
   ("C-x n W" . my-org-widen)
 
-  ("C-c M-`" . org-mark-ring-goto))
+  ("C-c M-`" . org-mark-ring-goto)
+
+  ("C-c C-N" . my-org-add-sibling))
 
 ;; global keys
 (bind-keys
@@ -756,13 +758,14 @@ Switch projects and subprojects from NEXT back to TODO"
   (interactive)
   (save-window-excursion
     (let ((buf (get-buffer-create "*org-books-export*"))
+          (my-org-show-media-closed-since
+           (apply 'encode-time (org-parse-time-string "2014-01-01")))
           (org-agenda-sticky nil))
       (with-current-buffer buf
         (erase-buffer)
         (org-mode))
       (org-agenda nil "fdb")
       (goto-char (point-min))
-      (forward-line)
       (my-org-export-read-books-do-export buf)
       (org-agenda nil "fb")
       (goto-char (point-min))
@@ -772,3 +775,50 @@ Switch projects and subprojects from NEXT back to TODO"
       (with-current-buffer buf
         (org-export-to-file 'html "~/books.html"))
       (copy-file "~/books.html" "/fuco@dasnet.cz:/home/fuco/books.html" t))))
+
+
+;; navigation & header manipulation
+
+(defun my-org-next-parent-sibling ()
+  (condition-case err
+      (progn
+        (outline-up-heading 1)
+        (outline-get-next-sibling))
+    (error
+     (goto-char (point-max)))))
+
+(defun my-org-add-sibling (&optional arg)
+  "Add new sibling depending on context.
+
+If the point is inside a header and:
+
+- if next header is deeper, skip headers until point is at the same
+level and add a sibling there.  With prefix argument
+\\[universal-argument], add a sibling before the next header that
+is less deep than current.
+
+- if the next header is the same depth, skip until the first less
+deep header and add a sibling before it.  With prefix argument
+\\[universal-argument], add a sibling after the current one.
+
+- if the next header is less deep than the current one, insert a
+sibling before the next header."
+  (interactive "P")
+  (org-back-to-heading)
+  (let ((cdepth (plist-get (cadr (org-element-at-point)) :level))
+        (ndepth (save-excursion
+                  (outline-next-heading)
+                  (plist-get (cadr (org-element-at-point)) :level))))
+    (cond
+     ((and (< cdepth ndepth) arg)
+      (my-org-next-parent-sibling))
+     ((< cdepth ndepth)
+      (outline-get-next-sibling))
+     ((and (= cdepth ndepth) arg)
+      (outline-next-heading))
+     ((= cdepth ndepth)
+      (my-org-next-parent-sibling))
+     ((> cdepth ndepth)
+      (outline-next-heading)))
+    (if (= (point) (point-max)) (newline) (open-line 1))
+    (insert (make-string cdepth ?*) " ")))
