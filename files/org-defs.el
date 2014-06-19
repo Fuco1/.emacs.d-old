@@ -73,6 +73,14 @@
   '((t (:family "Consolas" :inherit font-lock-constant-face)))
   "The face used to highlight pair overlays.")
 
+(defface my-org-math
+  '((t (:foreground "burlywood")))
+  "Face used to highlight math.")
+
+(font-lock-add-keywords 'org-mode
+                        `(("[[:space:]]+\\(\\$[^[:space:]].*?\\$\\)[[:space:]]+"
+                           1 'my-org-math)))
+
 (bind-keys :map org-mode-map
   ("TAB" . smart-tab)
   ("C-e" . my-end-of-code-or-line)
