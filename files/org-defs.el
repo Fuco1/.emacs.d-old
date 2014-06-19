@@ -78,7 +78,7 @@
   "Face used to highlight math.")
 
 (font-lock-add-keywords 'org-mode
-                        `(("[[:space:]]+\\(\\$[^[:space:]].*?\\$\\)[[:space:]]+"
+                        `(("[[:space:]]+\\(\\$[^[:space:]].*?\\$\\)[^[:word:]]+"
                            1 'my-org-math)))
 
 (bind-keys :map org-mode-map
