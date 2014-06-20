@@ -187,6 +187,33 @@ return to regular interpretation of self-insert characters."
       (emmet-mode 1))
     (add-hook 'css-mode-hook 'my-css-mode-setup)))
 
+(use-package custom
+  :config
+  (progn
+    (defun my-custom-jump-to-state ()
+      (interactive)
+      (goto-char (point-min))
+      (re-search-forward "State :")
+      (backward-char 7))
+
+    (defun my-custom-jump-to-toggle ()
+      (interactive)
+      (goto-char (point-min))
+      (re-search-forward "Toggle")
+      (backward-char 6))
+
+    (defun my-custom-jump-to-last-insert ()
+      (interactive)
+      (goto-char (point-max))
+      (let ((case-fold-search nil)) (re-search-backward "INS")))
+
+    (bind-keys :prefix "C-,"
+               :prefix-map custom-custom-map
+               :prefix-docstring "Custom custom map."
+      ("s" . my-custom-jump-to-state)
+      ("t" . my-custom-jump-to-toggle)
+      ("i" . my-custom-jump-to-last-insert))))
+
 ;; see commentary in dired-defs.el
 (use-package dired
   :mode ("\\.wdired\\'" . my-virtual-dired-mode)
