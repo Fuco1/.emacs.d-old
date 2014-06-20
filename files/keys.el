@@ -40,7 +40,7 @@
 (bind-key "C-'" 'repeat)
 
 ;; refresh-like
-(bind-key "<f5>" '(lambda () (interactive) (load-file (buffer-file-name))))
+(bind-key "M-<f5>" '(lambda () (interactive) (load-file (buffer-file-name))))
 (bind-key "A-u" 'universal-argument)
 (bind-keys :prefix "A-v"
            :prefix-map alt-v-prefix-map
@@ -208,13 +208,18 @@
            :prefix-docstring "List find/help map"
   ("b" . free-keys)
   ("d" . info-lookup-symbol)
-  ("f" . find-function)
-  ("F" . find-face-definition)
+  ("f" . find-face-definition)
   ("i" . info-apropos)
   ("k" . find-function-on-key)
   ("l" . find-library)
   ("v" . find-variable)
   ("V" . apropos-value))
+;; help-command seems to be some sort of hack, so we have to
+;; `define-key' it instead.
+(define-key 'help-command (kbd "C-v") 'find-variable-at-point)
+(define-key 'help-command (kbd "C-f") 'find-function-at-point)
+(define-key 'help-command (kbd "C-k") 'find-function-on-key)
+
 (bind-key "C-h D" 'describe-personal-keybindings)
 
 (defvar ctl-dot-prefix-map)
