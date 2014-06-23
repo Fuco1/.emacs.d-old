@@ -1,5 +1,3 @@
-(require 'bookmark+-autoloads)
-
 (use-package ace-jump-mode
   :disabled t
   :bind (("C-\\" . ace-jump-mode))
@@ -152,6 +150,14 @@ return to regular interpretation of self-insert characters."
   (progn
     (define-key Info-mode-map "o" 'bjump-info-link-jump)
     (define-key help-mode-map "o" 'bjump-help-link-jump)))
+
+(use-package bookmark+
+  :init
+  (progn
+    (require 'bookmark+-autoloads))
+  :config
+  (progn
+    (bind-key "M-o" 'elwm-activate-window bookmark-bmenu-mode-map)))
 
 (use-package calc
   :bind ("<f5>" . calc-same-interface)
