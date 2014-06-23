@@ -152,6 +152,7 @@ return to regular interpretation of self-insert characters."
     (define-key help-mode-map "o" 'bjump-help-link-jump)))
 
 (use-package bookmark+
+  :defer t
   :init
   (progn
     (require 'bookmark+-autoloads))
@@ -194,6 +195,7 @@ return to regular interpretation of self-insert characters."
     (add-hook 'css-mode-hook 'my-css-mode-setup)))
 
 (use-package custom
+  :defer t
   :config
   (progn
     (defun my-custom-jump-to-state ()
@@ -400,6 +402,7 @@ return to regular interpretation of self-insert characters."
     (add-hook 'haskell-mode-hook 'my-haskell-init)))
 
 (use-package help-mode
+  :defer t
   :config
   (progn
     (use-package better-jump)
@@ -430,6 +433,7 @@ return to regular interpretation of self-insert characters."
     (load "files/ido-defs")))
 
 (use-package info
+  :defer t
   :config
   (use-package better-jump))
 
