@@ -280,7 +280,7 @@ and rebuild the agenda view."
   "Narrow to project at point and also set agenda restriction."
   (widen)
   (save-excursion
-    (bh/find-project-task)
+    (my-org-find-project-task)
     (my-org--narrow-to-subtree)))
 
 (defun my-org-narrow-to-project ()
@@ -309,9 +309,6 @@ point and rebuild the agenda view."
     (org-agenda-remove-restriction-lock)))
 
 ;;;_. Capture
-(setq org-directory "~/org")
-(setq org-default-notes-file "~/org/refile.org")
-
 ;; I use C-M-r to start capture mode
 (bind-key "C-M-r" 'org-capture)
 
@@ -342,48 +339,19 @@ point and rebuild the agenda view."
       (newline)))))
 
 ;; Remove empty LOGBOOK drawers on clock out
-(defun bh/remove-empty-drawer-on-clock-out ()
+(defun my-org-remove-empty-drawer-on-clock-out ()
   (interactive)
   (save-excursion
     (beginning-of-line 0)
     (org-remove-empty-drawer-at "LOGBOOK" (point))))
 
-(add-hook 'org-clock-out-hook 'bh/remove-empty-drawer-on-clock-out 'append)
-
-;;;;;;;;;;;;;;;;; REFILING
-;; Targets include this file and any file contributing to the agenda - up to 9 levels deep
-(setq org-refile-targets (quote ((nil :maxlevel . 9)
-                                 (org-agenda-files :maxlevel . 9))))
-
-;; Use full outline paths for refile targets - we file directly with IDO
-(setq org-refile-use-outline-path t)
-
-;; Targets complete directly with IDO
-(setq org-outline-path-complete-in-steps nil)
-
-;; Allow refile to create parent tasks with confirmation
-(setq org-refile-allow-creating-parent-nodes (quote confirm))
-
-;; Use IDO for both buffer and file completion and ido-everywhere to t
-(setq org-completion-use-ido t)
+(add-hook 'org-clock-out-hook 'my-org-remove-empty-drawer-on-clock-out 'append)
 
 ;;;; Refile settings
 ;; Exclude DONE state tasks from refile targets
-(defun bh/verify-refile-target ()
+(defun my-org-verify-refile-target ()
   "Exclude todo keywords with a done state from refile targets"
   (not (member (nth 2 (org-heading-components)) org-done-keywords)))
-
-(setq org-refile-target-verify-function 'bh/verify-refile-target)
-
-;; english locale
-(setq system-time-locale "C")
-(setq org-completion-use-ido t)
-
-;; support selecting with shift+arrows
-(setq org-support-shift-select t)
-
-;; fast state selection
-(setq org-use-fast-todo-selection t)
 
 ;; TODO KEYWORDS SETTINGS
 (setq org-todo-keywords
@@ -440,6 +408,7 @@ point and rebuild the agenda view."
 
 (defun my-org-agenda-remove-empty-lists ()
   (let ((headers '("Tasks to Refile"
+                   "Bugs"
                    "Stuck Projects"
                    "Next Tasks"
                    "Tasks"
@@ -508,12 +477,15 @@ point and rebuild the agenda view."
           (tags "REFILE"
                 ((org-agenda-overriding-header "Tasks to Refile")
                  (org-tags-match-list-sublevels nil)))
+          (tags-todo "BUG/!NEXT"
+                     ((org-agenda-overriding-header "Bugs")
+                      (org-tags-match-list-sublevels nil)))
           (tags-todo "-CANCELLED/!"
                      ((org-agenda-overriding-header "Stuck Projects")
-                      (org-agenda-skip-function 'bh/skip-non-stuck-projects)))
-          (tags-todo "-WAITING-CANCELLED-BOOKS/!NEXT"
+                      (org-agenda-skip-function 'my-org-skip-non-stuck-projects)))
+          (tags-todo "-WAITING-CANCELLED-BOOKS-BUG/!NEXT"
                      ((org-agenda-overriding-header "Next Tasks")
-                      (org-agenda-skip-function 'bh/skip-projects-and-habits-and-single-tasks)
+                      (org-agenda-skip-function 'my-org-skip-projects-and-habits-and-single-tasks)
                       (org-agenda-todo-ignore-scheduled t)
                       (org-agenda-todo-ignore-deadlines t)
                       (org-agenda-todo-ignore-with-date t)
@@ -521,18 +493,18 @@ point and rebuild the agenda view."
                       (org-agenda-sorting-strategy '(priority-down todo-state-down effort-up category-keep))))
           (tags-todo "-REFILE-CANCELLED-Reading/!-HOLD-WAITING-SOMEDAY"
                      ((org-agenda-overriding-header "Tasks")
-                      (org-agenda-skip-function 'bh/skip-project-tasks-maybe)
+                      (org-agenda-skip-function 'my-org-skip-project-tasks-maybe)
                       (org-agenda-todo-ignore-scheduled t)
                       (org-agenda-todo-ignore-deadlines t)
                       (org-agenda-todo-ignore-with-date t)
                       (org-agenda-sorting-strategy '(priority-down category-keep))))
           (tags-todo "-HOLD-CANCELLED-GENERAL/!"
                      ((org-agenda-overriding-header "Projects")
-                      (org-agenda-skip-function 'bh/skip-non-projects)
+                      (org-agenda-skip-function 'my-org-skip-non-projects)
                       (org-agenda-sorting-strategy '(priority-down category-keep))))
           (tags-todo "-CANCELLED+WAITING/!"
                      ((org-agenda-overriding-header "Waiting and Postponed Tasks")
-                      (org-agenda-skip-function 'bh/skip-stuck-projects)
+                      (org-agenda-skip-function 'my-org-skip-stuck-projects)
                       (org-tags-match-list-sublevels nil)
                       (org-agenda-todo-ignore-scheduled 'future)
                       (org-agenda-todo-ignore-deadlines 'future)))
@@ -557,18 +529,18 @@ point and rebuild the agenda view."
 (org-clock-persistence-insinuate)
 
 ;; this is added to the clock-in hook
-(defun bh/clock-in-to-next (kw)
+(defun my-org-clock-in-to-next (kw)
   "Switch a task from TODO to NEXT when clocking in.
 Skips capture tasks, projects, and subprojects.
 Switch projects and subprojects from NEXT back to TODO"
   (when (not (and (boundp 'org-capture-mode) org-capture-mode))
     (cond
      ((and (member (org-get-todo-state) (list "TODO"))
-           (bh/is-task-p)
+           (my-org-is-task-p)
            (not (org-is-habit-p)))
       "NEXT")
      ((and (member (org-get-todo-state) (list "NEXT"))
-           (bh/is-project-p))
+           (my-org-is-project-p))
       "TODO"))))
 
 (defun my-org-convert-tab-word-list-to-drill ()

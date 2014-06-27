@@ -13,6 +13,8 @@
         eval-expression
         forward-sexp
         haskell-indentation-delete-char
+        isearch-forward-regexp
+        isearch-quote-char
         jump-char-forward
         jump-char-process-char
         keyboard-escape-quit
@@ -67,5 +69,6 @@
         kill-this-buffer
         mc/mark-all-like-this-dwim
         typopunct-insert-mp
+        wdired-finish-edit
         winner-undo
         ))

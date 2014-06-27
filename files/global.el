@@ -4,10 +4,6 @@
 ;; Small fringes
 (set-fringe-mode '(1 . 1))
 
-;; Don't truncate lines
-(setq truncate-lines t)
-(setq truncate-partial-width-windows nil)
-
 ;; Trailing whitespace is unnecessary
 (add-hook 'before-save-hook 'cleanup-buffer-safe)
 (add-hook 'before-save-hook 'my-create-directory-on-save)

@@ -77,7 +77,21 @@ Also used for highlighting.")
     (dired-rainbow-define executable "#8cc4ff" ("exe" "msi"))
     (dired-rainbow-define compressed "#ad7fa8" ("zip" "bz2" "tgz" "txz" "gz" "xz" "z" "Z" "jar" "war" "ear" "rar" "sar" "xpi" "apk" "xz" "tar"))
     (dired-rainbow-define packaged "#e6a8df" ("deb" "rpm"))
-    (dired-rainbow-define encrypted "LightBlue" ("gpg" "pgp"))))
+    (dired-rainbow-define encrypted "LightBlue" ("gpg" "pgp"))
+
+    (dired-rainbow-define-chmod executable-unix "Green" "-.*x.*")
+    ))
+
+(use-package dired-ranger
+  :init
+  (progn
+    (bind-keys :map dired-mode-map
+               :prefix "c"
+               :prefix-map dired-ranger-map
+               :prefix-docstring "Map for ranger operations."
+      ("c" . dired-ranger-copy)
+      ("p" . dired-ranger-paste)
+      ("m" . dired-ranger-move))))
 
 (use-package make-it-so
   :init
@@ -177,7 +191,8 @@ Also used for highlighting.")
     ("(" . dired-details-toggle)
     ("M-<f5>" . dired-arc-pack-files)
     ("M-<f6>" . dired-arc-unpack-file)
-    ;; ("l" 'dired-arc-list-archive)
+
+    ("* r" . diredp-mark-region-files)
     )
 
   (dired-filter-mode t)

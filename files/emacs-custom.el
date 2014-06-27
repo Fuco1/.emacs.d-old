@@ -29,6 +29,7 @@
  '(backup-directory-alist (quote (("." . "~/.emacs.d/backups"))))
  '(bind-key-column-widths (quote (20 . 70)))
  '(bind-key-describe-special-forms t)
+ '(bjump-dired-open-command (quote dired-open-file))
  '(bjump-window-jump-after-action-hook (quote (golden-ratio)))
  '(blink-cursor-mode nil)
  '(blink-matching-paren nil)
@@ -66,7 +67,7 @@
  '(dired-filter-mark-prefix "\\")
  '(dired-filter-prefix "/")
  '(dired-filter-saved-filters (quote (("media" (extension "ogg" "flv" "mpg" "avi" "mp4" "mp3")) ("elisp" (extension "el" "elc")))))
- '(dired-guess-shell-alist-user (quote (("\\(?:MP[34]\\|avi\\|flv\\|m\\(?:kv\\|p[34g]\\)\\|ogg\\|wmv\\)" "vlc") ("\\.\\(?:djvu\\|p\\(?:df\\|s\\)\\)\\'" "zathura --fork"))))
+ '(dired-guess-shell-alist-user (quote (("\\.\\(?:djvu\\|p\\(?:df\\|s\\)\\)\\'" "zathura --fork") ("\\.fb2" "fbreader"))))
  '(dired-isearch-filenames t)
  '(dired-listing-switches "-alh")
  '(dired-omit-extensions (quote (".o" "~" ".bin" ".bak" ".obj" ".map" ".ico" ".pif" ".lnk" ".a" ".ln" ".blg" ".bbl" ".dll" ".drv" ".vxd" ".386" ".elc" ".lof" ".glo" ".idx" ".lot" ".svn/" ".hg/" ".git/" ".bzr/" "CVS/" "_darcs/" "_MTN/" ".fmt" ".tfm" ".class" ".fas" ".lib" ".mem" ".x86f" ".sparcf" ".dfsl" ".pfsl" ".d64fsl" ".p64fsl" ".lx64fsl" ".lx32fsl" ".dx64fsl" ".dx32fsl" ".fx64fsl" ".fx32fsl" ".sx64fsl" ".sx32fsl" ".wx64fsl" ".wx32fsl" ".fasl" ".ufsl" ".fsl" ".dxl" ".lo" ".la" ".gmo" ".mo" ".toc" ".aux" ".cp" ".fn" ".ky" ".pg" ".tp" ".vr" ".cps" ".fns" ".kys" ".pgs" ".tps" ".vrs" ".pyc" ".pyo" ".idx" ".lof" ".lot" ".glo" ".blg" ".bbl" ".cp" ".cps" ".fn" ".fns" ".ky" ".kys" ".pg" ".pgs" ".tp" ".tps" ".vr" ".vrs" ".log" ".ilg" ".out" ".ind" ".dsc" ".hi" ".synctex.gz")))
@@ -83,6 +84,8 @@
  '(ediff-window-setup-function (quote ediff-setup-windows-plain))
  '(eldoc-eval-preferred-function (quote pp-eval-expression))
  '(eldoc-in-minibuffer-mode t)
+ '(elfeed-db-directory "~/.emacs.d/elfeed")
+ '(elfeed-max-connections 5)
  '(emmet-indentation 2)
  '(emmet-preview-default nil)
  '(emms-player-list nil)
@@ -124,11 +127,12 @@
  '(global-flex-isearch-mode t)
  '(global-undo-tree-mode t)
  '(golden-ratio-exclude-buffer-names (quote ("*helm kill-ring*" "*Ediff Control Panel*" " *guide-key*")))
- '(golden-ratio-extra-commands (quote (windmove-left windmove-right windmove-down windmove-up elwm-transpose-window elwm-activate-window)))
+ '(golden-ratio-extra-commands (quote (elwm-transpose-window elwm-activate-window)))
  '(golden-ratio-inhibit-functions (quote (my-golden-ratio-inhibit)))
  '(golden-ratio-mode t)
+ '(golden-ratio-recenter t)
  '(guide-key-mode t)
- '(guide-key/guide-key-sequence (quote ("C-x r" "C-x 4" "C-x j" "C-x p" "C-x n" "A-x" "M-g" "M-s" (calc-mode "V" "v" "k" "a" "u") (dired-mode "/" "*" "C-t" "%" "c" "\\") (ibuffer-mode "/" "*" "%"))))
+ '(guide-key/guide-key-sequence (quote ("C-x r" "C-x 4" "C-x j" "C-x p" "C-x n" "A-x" "M-g" "M-s" (calc-mode "V" "v" "k" "a" "u" "j") (dired-mode "/" "*" "C-t" "%" "c" "\\") (ibuffer-mode "/" "*" "%"))))
  '(guide-key/idle-delay 0.6)
  '(guide-key/popup-window-position (quote bottom))
  '(guide-key/recursive-key-sequence-flag t)
@@ -216,6 +220,7 @@
  '(markdown-link-space-sub-char "-")
  '(max-lisp-eval-depth 50000)
  '(max-specpdl-size 10000)
+ '(message-kill-buffer-on-exit t)
  '(message-log-max 10000)
  '(mis-bindings-alist nil)
  '(mis-make-command "make -j2")
@@ -247,8 +252,10 @@
  '(org-clock-persist t)
  '(org-clock-persist-query-resume nil)
  '(org-clock-report-include-clocking-task t)
+ '(org-completion-use-ido t)
  '(org-cycle-emulate-tab nil)
  '(org-deadline-warning-days 30)
+ '(org-default-notes-file "~/org/refile.org")
  '(org-default-priority 67)
  '(org-drill-add-random-noise-to-intervals-p t)
  '(org-drill-adjust-intervals-for-early-and-late-repetitions-p t)
@@ -257,12 +264,14 @@
  '(org-drill-learn-fraction 0.55)
  '(org-drill-maximum-duration nil)
  '(org-drill-maximum-items-per-session 40)
- '(org-drill-optimal-factor-matrix (quote ((15 (1.3 . 1.3)) (14 (1.1600000000000001 . 1.211) (1.3 . 1.26)) (13 (1.3 . 1.115) (1.26 . 1.346)) (12 (1.1600000000000001 . 1.072) (1.3 . 1.115) (1.4000000000000001 . 1.35)) (11 (1.4000000000000001 . 1.158) (0.98 . 1.029) (1.1600000000000001 . 1.072) (1.3 . 1.115)) (10 (1.4 . 1.4) (1.26 . 1.346) (1.3 . 1.205) (1.1600000000000001 . 1.159)) (9 (0.98 . 1.029) (1.5 . 1.454) (1.4000000000000001 . 1.158) (1.1600000000000001 . 1.072) (1.3 . 1.115)) (8 (1.4 . 1.4) (1.1600000000000001 . 1.072) (1.3 . 1.211) (0.98 . 1.2)) (7 (1.52 . 1.596) (1.26 . 1.346) (1.3800000000000001 . 1.535) (1.4800000000000002 . 1.558) (1.38 . 1.38) (1.4000000000000001 . 1.158) (0.98 . 1.178) (1.24 . 1.327) (1.1600000000000001 . 1.227) (1.3 . 1.276)) (6 (1.34 . 1.378) (1.9400000000000002 . 2.053) (2.08 . 2.135) (1.3399999999999999 . 1.532) (2.14 . 2.119) (1.94 . 1.94) (1.4400000000000002 . 1.519) (1.66 . 1.66) (1.4000000000000001 . 1.158) (2.2800000000000002 . 2.264) (1.2 . 1.473) (1.8 . 1.865) (1.48 . 1.433) (1.9000000000000001 . 1.961) (1.76 . 1.724) (1.6600000000000001 . 1.793) (0.98 . 1.029) (1.0599999999999998 . 1.274) (1.62 . 1.657) (1.52 . 1.596) (1.38 . 1.38) (1.24 . 1.327) (0.76 . 0.986) (1.3 . 1.276) (1.3800000000000001 . 1.535) (1.1600000000000001 . 1.072)) (5 (1.4000000000000001 . 1.158) (1.9999999999999998 . 2.216) (2.7 . 2.7) (1.7200000000000002 . 1.825) (1.02 . 1.237) (1.86 . 1.923) (2.52 . 2.592) (2.8000000000000003 . 2.804) (2.28 . 2.4) (1.38 . 1.38) (2.66 . 2.696) (1.62 . 1.757) (2.42 . 2.493) (1.4800000000000002 . 1.558) (1.1199999999999999 . 1.468) (2.6 . 2.6) (2.46 . 2.5) (2.36 . 2.404) (1.72 . 1.917) (0.98 . 1.112) (2.2199999999999998 . 2.311) (2.2800000000000002 . 2.302) (2.56 . 2.596) (1.9000000000000001 . 2.05) (2.3200000000000003 . 2.305) (1.58 . 1.654) (1.3399999999999999 . 1.532) (1.54 . 1.84) (2.18 . 2.217) (2.04 . 2.132) (2.22 . 2.22) (2.32 . 2.401) (1.94 . 1.94) (1.6199999999999999 . 1.791) (1.0599999999999998 . 1.274) (1.9400000000000002 . 2.053) (1.2 . 1.473) (2.1799999999999997 . 2.309) (1.76 . 1.971) (1.48 . 1.721) (2.08 . 2.135) (1.1600000000000001 . 1.072) (1.24 . 1.327) (1.6600000000000001 . 1.793) (1.3 . 1.115) (1.8 . 1.865) (1.3800000000000001 . 1.535) (1.52 . 1.596)) (4 (1.2000000000000002 . 1.591) (1.54 . 1.717) (2.2 . 2.389) (1.34 . 1.655) (2.52 . 2.588) (2.48 . 2.472) (2.8 . 2.8) (2.1399999999999997 . 2.304) (2.2800000000000002 . 2.396) (1.38 . 1.38) (2.0 . 1.973) (1.62 . 1.895) (1.66 . 1.66) (2.24 . 2.392) (0.98 . 1.029) (2.6599999999999997 . 2.692) (1.26 . 1.346) (2.9 . 2.908) (0.76 . 0.986) (1.9999999999999998 . 2.215) (1.0599999999999998 . 1.274) (1.3399999999999999 . 1.532) (2.8000000000000003 . 2.8) (2.7 . 2.696) (1.1600000000000001 . 1.072) (2.66 . 2.692) (2.42 . 2.492) (2.56 . 2.592) (1.3 . 1.071) (1.7200000000000002 . 1.788) (1.94 . 1.94) (2.32 . 2.4) (2.6 . 2.596) (2.04 . 2.132) (2.36 . 2.404) (2.5 . 2.5) (1.3800000000000001 . 1.535) (1.24 . 1.327) (1.2 . 1.473) (2.46 . 2.496) (2.1799999999999997 . 2.308) (2.2199999999999998 . 2.311) (1.48 . 1.721) (2.18 . 2.217) (1.52 . 1.596) (2.22 . 2.22) (1.9000000000000001 . 2.049) (1.6600000000000001 . 1.793) (2.08 . 2.135) (1.6199999999999999 . 1.791) (2.3200000000000003 . 2.305) (1.8 . 1.865) (1.76 . 1.971) (1.9400000000000002 . 2.053)) (3 (1.2000000000000002 . 1.325) (1.62 . 1.62) (1.44 . 1.819) (1.34 . 1.378) (2.66 . 2.692) (1.66 . 1.66) (1.4000000000000001 . 1.112) (2.52 . 2.588) (1.4800000000000002 . 1.558) (2.38 . 2.368) (2.42 . 2.492) (1.72 . 2.048) (2.14 . 2.304) (2.2800000000000002 . 2.302) (0.98 . 0.989) (1.1600000000000001 . 1.227) (1.2 . 1.473) (1.3 . 1.276) (1.0599999999999998 . 1.274) (1.24 . 1.327) (2.8000000000000003 . 2.8) (1.3399999999999999 . 1.532) (1.3800000000000001 . 1.535) (2.1799999999999997 . 2.308) (1.86 . 1.923) (1.52 . 1.596) (2.1399999999999997 . 2.304) (2.04 . 2.219) (1.6600000000000001 . 1.793) (1.48 . 1.721) (1.94 . 1.94) (1.6199999999999999 . 1.791) (1.8 . 1.865) (2.18 . 2.217) (2.7 . 2.696) (2.6 . 2.596) (2.56 . 2.593) (1.76 . 1.971) (2.5 . 2.5) (2.3200000000000003 . 2.305) (1.9400000000000002 . 2.053) (2.22 . 2.22) (2.36 . 2.404) (2.32 . 2.401) (2.46 . 2.497) (2.2199999999999998 . 2.311) (1.9000000000000001 . 2.049) (2.08 . 2.135)) (2 (1.9999999999999998 . 2.141) (1.58 . 1.654) (1.34 . 1.655) (2.2399999999999998 . 2.288) (1.66 . 1.66) (2.0 . 2.058) (2.42 . 2.409) (1.9599999999999997 . 2.148) (1.86 . 2.046) (2.0999999999999996 . 2.234) (1.62 . 1.657) (1.5799999999999998 . 1.754) (1.8199999999999998 . 2.126) (2.28 . 2.327) (2.56 . 2.592) (1.38 . 1.38) (1.1600000000000001 . 1.072) (1.2 . 1.473) (1.26 . 1.65) (1.0599999999999998 . 1.274) (1.3 . 1.115) (0.98 . 1.178) (1.24 . 1.327) (1.1199999999999999 . 1.468) (1.6800000000000002 . 1.964) (2.32 . 2.32) (1.3800000000000001 . 1.535) (1.52 . 1.596) (1.3399999999999999 . 1.532) (1.6600000000000001 . 1.793) (1.94 . 1.94) (2.2800000000000002 . 2.302) (2.3200000000000003 . 2.305) (1.48 . 1.721) (1.6199999999999999 . 1.791) (2.22 . 2.22) (1.8 . 1.865) (1.4 . 1.736) (2.18 . 2.217) (1.9400000000000002 . 2.053) (1.76 . 1.971) (2.08 . 2.135) (1.9000000000000001 . 2.049) (2.7 . 2.696) (2.1799999999999997 . 2.231) (2.5 . 2.5) (2.46 . 2.497) (2.2199999999999998 . 2.311) (2.04 . 2.219) (2.6 . 2.596) (2.36 . 2.404)) (1 (1.7200000000000002 . 3.846) (1.2000000000000002 . 3.846) (1.4800000000000002 . 3.282) (2.38 . 3.846) (1.62 . 3.413) (1.94 . 4.0) (2.1399999999999997 . 3.556) (2.28 . 3.698) (0.98 . 3.55) (1.8199999999999998 . 3.402) (2.42 . 3.846) (2.46 . 3.994) (1.66 . 4.0) (1.38 . 4.0) (2.3200000000000003 . 4.154) (1.1600000000000001 . 3.698) (1.2 . 3.55) (1.3 . 3.846) (1.24 . 3.846) (1.0599999999999998 . 3.692) (1.6800000000000002 . 3.538) (1.3800000000000001 . 3.698) (2.22 . 4.0) (2.32 . 3.84) (1.48 . 3.55) (1.52 . 3.846) (1.3399999999999999 . 3.692) (1.6600000000000001 . 3.698) (1.6199999999999999 . 3.692) (1.8 . 3.846) (1.76 . 3.55) (1.9400000000000002 . 3.698) (1.9000000000000001 . 3.692) (2.08 . 3.846) (2.04 . 3.846) (2.2199999999999998 . 3.698) (2.6 . 4.154) (2.1799999999999997 . 3.692) (2.5 . 4.0) (2.36 . 3.846) (1.7000000000000002 . 3.44) (1.96 . 3.538)))))
+ '(org-drill-optimal-factor-matrix (quote ((16 (1.1600000000000001 . 1.25) (1.3 . 1.071)) (15 (1.1600000000000001 . 1.072) (1.3 . 1.115)) (14 (1.1600000000000001 . 1.211) (1.3 . 1.26)) (13 (1.1600000000000001 . 1.072) (0.98 . 1.029) (1.3 . 1.115) (1.26 . 1.346)) (12 (1.5 . 1.454) (1.1600000000000001 . 1.072) (1.3 . 1.115) (1.4000000000000001 . 1.158)) (11 (1.26 . 1.346) (1.4000000000000001 . 1.158) (0.98 . 1.029) (1.1600000000000001 . 1.164) (1.3 . 1.115)) (10 (1.4 . 1.4) (1.26 . 1.346) (1.3 . 1.115) (1.1600000000000001 . 1.03)) (9 (0.76 . 0.986) (0.98 . 1.029) (1.5 . 1.454) (1.4000000000000001 . 1.158) (1.1600000000000001 . 1.115) (1.3 . 1.16)) (8 (1.4000000000000001 . 1.251) (1.4 . 1.4) (1.1600000000000001 . 1.072) (1.3 . 1.115) (0.98 . 1.029)) (7 (1.48 . 1.433) (1.34 . 1.423) (1.52 . 1.596) (1.26 . 1.346) (1.3800000000000001 . 1.535) (1.4800000000000002 . 1.558) (1.38 . 1.38) (1.4000000000000001 . 1.378) (0.98 . 1.178) (1.24 . 1.327) (1.1600000000000001 . 1.344) (1.3 . 1.398)) (6 (2.32 . 2.32) (1.5799999999999998 . 1.754) (1.26 . 1.346) (2.04 . 2.015) (1.34 . 1.378) (1.9400000000000002 . 2.053) (2.08 . 2.135) (1.3399999999999999 . 1.532) (2.14 . 2.119) (1.94 . 1.94) (1.4400000000000002 . 1.519) (1.66 . 1.66) (1.4000000000000001 . 1.158) (2.2800000000000002 . 2.264) (1.2 . 1.473) (1.8 . 1.865) (1.48 . 1.721) (1.9000000000000001 . 1.937) (1.76 . 1.724) (1.6600000000000001 . 1.793) (0.98 . 1.029) (1.0599999999999998 . 1.274) (1.62 . 1.657) (1.52 . 1.596) (1.38 . 1.38) (1.24 . 1.327) (0.76 . 0.986) (1.3 . 1.115) (1.3800000000000001 . 1.535) (1.1600000000000001 . 1.159)) (5 (1.4 . 1.716) (2.76 . 2.788) (2.0 . 2.129) (2.1399999999999997 . 2.308) (1.26 . 1.346) (2.14 . 2.214) (2.7600000000000002 . 2.797) (2.6599999999999997 . 2.692) (1.4000000000000001 . 1.158) (1.9999999999999998 . 2.216) (2.7 . 2.7) (1.7200000000000002 . 1.825) (1.02 . 1.237) (1.86 . 2.047) (2.52 . 2.592) (2.8000000000000003 . 2.804) (2.28 . 2.4) (1.38 . 1.38) (2.66 . 2.693) (1.62 . 1.757) (2.42 . 2.496) (1.4800000000000002 . 1.558) (1.1199999999999999 . 1.468) (2.6 . 2.596) (2.46 . 2.496) (2.36 . 2.404) (1.72 . 1.917) (0.98 . 1.029) (2.2199999999999998 . 2.311) (2.2800000000000002 . 2.302) (2.56 . 2.596) (1.9000000000000001 . 2.049) (2.3200000000000003 . 2.305) (1.58 . 1.654) (1.3399999999999999 . 1.532) (1.54 . 1.84) (2.18 . 2.217) (2.04 . 2.132) (2.22 . 2.22) (2.32 . 2.4) (1.94 . 1.94) (1.6199999999999999 . 1.791) (1.0599999999999998 . 1.274) (1.9400000000000002 . 2.053) (1.2 . 1.473) (2.1799999999999997 . 2.308) (1.76 . 1.971) (1.48 . 1.721) (2.08 . 2.135) (1.1600000000000001 . 1.227) (1.24 . 1.327) (1.6600000000000001 . 1.793) (1.3 . 1.276) (1.8 . 1.865) (1.3800000000000001 . 1.535) (1.52 . 1.596)) (4 (1.9 . 1.9) (1.5 . 1.454) (2.28 . 2.397) (2.4799999999999995 . 2.584) (1.4800000000000002 . 1.593) (1.4000000000000001 . 1.112) (1.2000000000000002 . 1.591) (1.54 . 1.717) (2.2 . 2.389) (1.34 . 1.655) (2.52 . 2.588) (2.48 . 2.472) (2.8 . 2.8) (2.1399999999999997 . 2.304) (2.2800000000000002 . 2.302) (1.38 . 1.38) (2.0 . 1.973) (1.62 . 1.657) (1.66 . 1.66) (2.24 . 2.392) (0.98 . 1.307) (2.6599999999999997 . 2.692) (1.26 . 1.346) (2.9 . 2.908) (0.76 . 0.986) (1.9999999999999998 . 2.215) (1.0599999999999998 . 1.274) (1.3399999999999999 . 1.532) (2.8000000000000003 . 2.8) (2.7 . 2.696) (1.1600000000000001 . 1.072) (2.66 . 2.693) (2.42 . 2.493) (2.56 . 2.592) (1.3 . 1.115) (1.7200000000000002 . 1.788) (1.94 . 1.94) (2.32 . 2.401) (2.6 . 2.596) (2.04 . 2.015) (2.36 . 2.404) (2.5 . 2.5) (1.3800000000000001 . 1.535) (1.24 . 1.327) (1.2 . 1.473) (2.46 . 2.497) (2.1799999999999997 . 2.309) (2.2199999999999998 . 2.311) (1.48 . 1.721) (2.18 . 2.217) (1.52 . 1.596) (2.22 . 2.22) (1.9000000000000001 . 2.049) (1.6600000000000001 . 1.793) (2.08 . 2.135) (1.6199999999999999 . 1.791) (2.3200000000000003 . 2.305) (1.8 . 1.865) (1.76 . 1.827) (1.9400000000000002 . 2.053)) (3 (2.0 . 1.973) (1.7200000000000002 . 1.721) (1.4 . 1.4) (2.3400000000000003 . 2.326) (1.4400000000000002 . 1.519) (1.2000000000000002 . 1.325) (1.62 . 1.657) (1.44 . 1.819) (1.34 . 1.378) (2.66 . 2.692) (1.66 . 1.66) (1.4000000000000001 . 1.325) (2.52 . 2.588) (1.4800000000000002 . 1.558) (2.38 . 2.368) (2.42 . 2.492) (1.72 . 2.048) (2.14 . 2.304) (2.2800000000000002 . 2.302) (0.98 . 1.029) (1.1600000000000001 . 1.072) (1.2 . 1.473) (1.3 . 1.205) (1.0599999999999998 . 1.274) (1.24 . 1.327) (2.8000000000000003 . 2.8) (1.3399999999999999 . 1.532) (1.3800000000000001 . 1.535) (2.1799999999999997 . 2.309) (1.86 . 1.923) (1.52 . 1.596) (2.1399999999999997 . 2.192) (2.04 . 2.015) (1.6600000000000001 . 1.793) (1.48 . 1.721) (1.94 . 1.94) (1.6199999999999999 . 1.791) (1.8 . 1.865) (2.18 . 2.217) (2.7 . 2.696) (2.6 . 2.596) (2.56 . 2.592) (1.76 . 1.827) (2.5 . 2.5) (2.3200000000000003 . 2.305) (1.9400000000000002 . 2.053) (2.22 . 2.22) (2.36 . 2.404) (2.32 . 2.4) (2.46 . 2.496) (2.2199999999999998 . 2.311) (1.9000000000000001 . 2.049) (2.08 . 2.135)) (2 (2.7600000000000002 . 2.762) (1.4000000000000001 . 1.158) (1.72 . 2.048) (1.9999999999999998 . 2.141) (1.58 . 1.654) (1.34 . 1.655) (2.2399999999999998 . 2.288) (1.66 . 1.66) (2.0 . 2.058) (2.42 . 2.409) (1.9599999999999997 . 2.148) (1.86 . 2.046) (2.0999999999999996 . 2.234) (1.62 . 1.757) (1.5799999999999998 . 1.754) (1.8199999999999998 . 2.126) (2.28 . 2.327) (2.56 . 2.592) (1.38 . 1.38) (1.1600000000000001 . 1.159) (1.2 . 1.473) (1.26 . 1.669) (1.0599999999999998 . 1.274) (1.3 . 1.205) (0.98 . 1.178) (1.24 . 1.327) (1.1199999999999999 . 1.468) (1.6800000000000002 . 1.964) (2.32 . 2.4) (1.3800000000000001 . 1.535) (1.52 . 1.596) (1.3399999999999999 . 1.532) (1.6600000000000001 . 1.793) (1.94 . 1.94) (2.2800000000000002 . 2.396) (2.3200000000000003 . 2.305) (1.48 . 1.721) (1.6199999999999999 . 1.791) (2.22 . 2.22) (1.8 . 1.865) (1.4 . 1.736) (2.18 . 2.217) (1.9400000000000002 . 2.053) (1.76 . 1.971) (2.08 . 2.135) (1.9000000000000001 . 1.937) (2.7 . 2.696) (2.1799999999999997 . 2.308) (2.5 . 2.5) (2.46 . 2.496) (2.2199999999999998 . 2.311) (2.04 . 2.015) (2.6 . 2.596) (2.36 . 2.404)) (1 (1.4000000000000001 . 3.994) (2.6599999999999997 . 3.846) (1.7200000000000002 . 3.846) (1.2000000000000002 . 3.846) (1.4800000000000002 . 3.282) (2.38 . 3.846) (1.62 . 3.413) (1.94 . 4.0) (2.1399999999999997 . 3.556) (2.28 . 3.698) (0.98 . 3.55) (1.8199999999999998 . 3.402) (2.42 . 3.846) (2.46 . 3.994) (1.66 . 4.0) (1.38 . 4.0) (2.3200000000000003 . 4.154) (1.1600000000000001 . 3.698) (1.2 . 3.55) (1.3 . 3.846) (1.24 . 3.846) (1.0599999999999998 . 3.692) (1.6800000000000002 . 3.538) (1.3800000000000001 . 3.698) (2.22 . 4.0) (2.32 . 3.84) (1.48 . 3.55) (1.52 . 3.846) (1.3399999999999999 . 3.692) (1.6600000000000001 . 3.698) (1.6199999999999999 . 3.692) (1.8 . 3.846) (1.76 . 4.154) (1.9400000000000002 . 3.698) (1.9000000000000001 . 3.994) (2.08 . 3.846) (2.04 . 3.55) (2.2199999999999998 . 3.698) (2.6 . 4.154) (2.1799999999999997 . 3.692) (2.5 . 4.0) (2.36 . 3.846) (1.7000000000000002 . 3.44) (1.96 . 3.538)))))
  '(org-drill-save-buffers-after-drill-sessions-p nil)
  '(org-drill-scope (quote directory))
- '(org-emphasis-alist (quote (("*" my-org-bold "<b>" "</b>") ("/" my-org-italic "<i>" "</i>") ("_" underline "<span style=\"text-decoration:underline;\">" "</span>") ("=" my-org-code "<code>" "</code>" verbatim) ("~" my-org-code "<code>" "</code>" verbatim) ("+" (:strike-through t) "<del>" "</del>"))))
+ '(org-emphasis-alist (quote (("*" my-org-bold) ("/" my-org-italic) ("_" underline) ("=" my-org-code verbatim) ("~" my-org-code verbatim) ("+" (:strike-through t)))))
  '(org-fast-tag-selection-single-key (quote expert))
  '(org-file-apps (quote ((auto-mode . emacs) ("\\.mm\\'" . default) ("\\.x?html?\\'" . default) ("\\.pdf\\'" . "zathura --fork %s"))))
+ '(org-footnote-auto-label (quote random))
+ '(org-footnote-define-inline t)
  '(org-habit-following-days 1)
  '(org-habit-graph-column 80)
  '(org-habit-preceding-days 30)
@@ -271,11 +280,53 @@
  '(org-log-into-drawer t)
  '(org-lowest-priority 69)
  '(org-modules (quote (org-bbdb org-bibtex org-crypt org-gnus org-habit org-id org-info org-drill)))
+ '(org-outline-path-complete-in-steps nil)
  '(org-priority-start-cycle-with-default nil)
- '(org-refile-use-outline-path (quote file))
+ '(org-refile-allow-creating-parent-nodes (quote confirm))
+ '(org-refile-target-verify-function (quote my-org-verify-refile-target))
+ '(org-refile-targets (quote ((nil :maxlevel . 9) (org-agenda-files :maxlevel . 9))))
+ '(org-refile-use-outline-path t)
  '(org-special-ctrl-a/e t)
  '(org-src-fontify-natively t)
+ '(org-structure-template-alist (quote (("s" "#+BEGIN_SRC ?
+
+#+END_SRC" "<src lang=\"?\">
+
+</src>") ("e" "#+BEGIN_EXAMPLE
+?
+#+END_EXAMPLE" "<example>
+?
+</example>") ("q" "#+BEGIN_QUOTE
+?
+#+END_QUOTE" "<quote>
+?
+</quote>") ("v" "#+BEGIN_VERSE
+?
+#+END_VERSE" "<verse>
+?
+</verse>") ("V" "#+BEGIN_VERBATIM
+?
+#+END_VERBATIM" "<verbatim>
+?
+</verbatim>") ("c" "#+BEGIN_CENTER
+?
+#+END_CENTER" "<center>
+?
+</center>") ("l" "#+BEGIN_LaTeX
+?
+#+END_LaTeX" "<literal style=\"latex\">
+?
+</literal>") ("L" "#+LaTeX: " "<literal style=\"latex\">?</literal>") ("h" "#+BEGIN_HTML
+?
+#+END_HTML" "<literal style=\"html\">
+?
+</literal>") ("H" "#+HTML: " "<literal style=\"html\">?</literal>") ("a" "#+BEGIN_ASCII
+?
+#+END_ASCII" "") ("A" "#+ASCII: " "") ("i" "#+INDEX: ?" "#+INDEX: ?") ("I" "#+INCLUDE: %file ?" "<include file=%file markup=\"?\">") ("b" "#+BEGIN: ?
+
+#+END" "<pre>?</pre>"))))
  '(org-stuck-projects (quote ("" nil nil "")))
+ '(org-support-shift-select t)
  '(org-tags-exclude-from-inheritance (quote ("folder")))
  '(org-time-clocksum-format (quote (:hours "%d" :require-hours t :minutes ":%02d" :require-minutes t)))
  '(pj-line-width 1100)
@@ -292,15 +343,16 @@
  '(recentf-mode t)
  '(recentf-save-file "~/.emacs.d/.recentf")
  '(reftex-label-alist (quote (("lemma" 32 "lem:" "~\\cref{%s}" nil nil) ("theorem" 32 "th:" "~\\cref{%s}" nil nil))))
- '(safe-local-variable-values (quote ((eval font-lock-add-keywords nil (quote (("defexamples\\|def-example-group\\| => " (0 (quote font-lock-keyword-face))) ("(defexamples[[:blank:]]+\\(.*\\)" (1 (quote font-lock-function-name-face)))))) (eval font-lock-add-keywords nil (quote (("defexamples\\|def-example-group\\| => " (0 (quote font-lock-keyword-face))) ("(defexamples[[:blank:]]+\\(.*?\\)" (1 (quote font-lock-function-name-face)))))) (eval font-lock-add-keywords nil (quote (("defexamples\\|def-example-group\\| => " (0 (quote font-lock-keyword-face))) ("(defexamples[:blank:]+\\(.*?\\)" (1 (quote font-lock-function-name-face)))))) (eval font-lock-add-keywords nil (quote (("defexamples\\|def-example-group\\| => " (0 (quote font-lock-keyword-face))) ("(defexamples[ ]+\\(.*?\\)" (1 (quote font-lock-function-name-face)))))) (eval font-lock-add-keywords nil (quote (("defexamples\\|def-example-group\\| => " (0 (quote font-lock-keyword-face))) ("(defexamples +\\(.*?\\)" (1 (quote font-lock-function-name-face)))))) (eval font-lock-add-keywords nil (quote (("defexamples\\|def-example-group\\| => " (0 (quote font-lock-keyword-face)))))) (org-refile-targets ("~/org/bookmarks.org" :tag . "folder")) (org-tags-exclude-from-inheritance "folder") (org-tags-exclude-from-inheritance . folder) (org-tags-exclude-from-inheritance . "folder") (eval progn (variable-pitch-mode 1) (text-scale-adjust 2) (overlay-put (make-overlay (point-min) (point-max)) (quote face) (quote my-reading-face))) (dired-filter-stack (dot-files) (omit)) (my-inhibit-buffer-cleanup . t) (eval progn (local-set-key (kbd "C-=") (quote my-org-add-drill-entry)) (local-set-key (kbd "C-<") (quote my-format-russian-verb)) (local-set-key (kbd "C->") (quote my-format-meaning))) (eval progn (local-set-key (kbd "C-=") (quote my-org-add-drill-entry)) (local-set-key (kbd "C->") (quote my-format-meaning))) (eval progn (local-set-key (kbd "C-=") (quote my-org-add-drill-entry)) (local-set-key (kbd "C->") (quote my-format-latin-meaning))) (eval progn (local-set-key (kbd "C-=") (quote my-org-add-drill-entry)) (local-set-key (kbd "C-<") (quote my-format-russian-verb)) (local-set-key (kbd "C->") (quote my-format-russian-meaning))) (eval progn (variable-pitch-mode 1) (text-scale-adjust 2)) (cursor-type . bar) (eval progn (variable-pitch-mode 1) (text-scale-adjust 3)) (my-org-drill-language . "Latin") (eval local-set-key (kbd "C-=") (quote my-org-add-drill-entry)) (eval set-input-method "cyrillic-translit") (my-org-drill-language . "Russian") (my-org-drill-file . t) (my-org-drill-local-language . "Polish") (eval virtual-dired "d:/") (eval font-lock-add-keywords nil (\` (((\, (concat "(" (regexp-opt (quote ("wd-cond")) t) "\\_>")) 1 (quote font-lock-keyword-face))))) (eval push (file-name-directory (buffer-file-name)) load-path) (eval font-lock-add-keywords nil (\` (((\, (concat "(" (regexp-opt (quote ("sp-do-move-op" "sp-do-move-cl" "sp-do-put-op" "sp-do-put-cl" "sp-do-del-op" "sp-do-del-cl")) t) "\\_>")) 1 (quote font-lock-variable-name-face))))) (TeX-master . main) (eval font-lock-add-keywords nil (quote (("(\\(dm-defun\\)\\(?:\\s-\\)+\\(\\_<.*?\\_>\\)" (1 font-lock-keyword-face) (2 font-lock-function-name-face))))) (eval font-lock-add-keywords nil (quote (("defexamples\\| => " (0 (quote font-lock-keyword-face)))))) (reftex-default-bibliography "./bibliography") (eval allout-mode t))))
+ '(safe-local-variable-values (quote ((eval font-lock-add-keywords nil (quote (("(\\(dired-filter-define\\)[[:blank:]]+\\(.+\\)" (1 (quote font-lock-keyword-face)) (2 (quote font-lock-function-name-face)))))) (eval font-lock-add-keywords nil (quote (("defexamples\\|def-example-group\\| => " (0 (quote font-lock-keyword-face))) ("(defexamples[[:blank:]]+\\(.*\\)" (1 (quote font-lock-function-name-face)))))) (eval font-lock-add-keywords nil (quote (("defexamples\\|def-example-group\\| => " (0 (quote font-lock-keyword-face))) ("(defexamples[[:blank:]]+\\(.*?\\)" (1 (quote font-lock-function-name-face)))))) (eval font-lock-add-keywords nil (quote (("defexamples\\|def-example-group\\| => " (0 (quote font-lock-keyword-face))) ("(defexamples[:blank:]+\\(.*?\\)" (1 (quote font-lock-function-name-face)))))) (eval font-lock-add-keywords nil (quote (("defexamples\\|def-example-group\\| => " (0 (quote font-lock-keyword-face))) ("(defexamples[ ]+\\(.*?\\)" (1 (quote font-lock-function-name-face)))))) (eval font-lock-add-keywords nil (quote (("defexamples\\|def-example-group\\| => " (0 (quote font-lock-keyword-face))) ("(defexamples +\\(.*?\\)" (1 (quote font-lock-function-name-face)))))) (eval font-lock-add-keywords nil (quote (("defexamples\\|def-example-group\\| => " (0 (quote font-lock-keyword-face)))))) (org-refile-targets ("~/org/bookmarks.org" :tag . "folder")) (org-tags-exclude-from-inheritance "folder") (org-tags-exclude-from-inheritance . folder) (org-tags-exclude-from-inheritance . "folder") (eval progn (variable-pitch-mode 1) (text-scale-adjust 2) (overlay-put (make-overlay (point-min) (point-max)) (quote face) (quote my-reading-face))) (dired-filter-stack (dot-files) (omit)) (my-inhibit-buffer-cleanup . t) (eval progn (local-set-key (kbd "C-=") (quote my-org-add-drill-entry)) (local-set-key (kbd "C-<") (quote my-format-russian-verb)) (local-set-key (kbd "C->") (quote my-format-meaning))) (eval progn (local-set-key (kbd "C-=") (quote my-org-add-drill-entry)) (local-set-key (kbd "C->") (quote my-format-meaning))) (eval progn (local-set-key (kbd "C-=") (quote my-org-add-drill-entry)) (local-set-key (kbd "C->") (quote my-format-latin-meaning))) (eval progn (local-set-key (kbd "C-=") (quote my-org-add-drill-entry)) (local-set-key (kbd "C-<") (quote my-format-russian-verb)) (local-set-key (kbd "C->") (quote my-format-russian-meaning))) (eval progn (variable-pitch-mode 1) (text-scale-adjust 2)) (cursor-type . bar) (eval progn (variable-pitch-mode 1) (text-scale-adjust 3)) (my-org-drill-language . "Latin") (eval local-set-key (kbd "C-=") (quote my-org-add-drill-entry)) (eval set-input-method "cyrillic-translit") (my-org-drill-language . "Russian") (my-org-drill-file . t) (my-org-drill-local-language . "Polish") (eval virtual-dired "d:/") (eval font-lock-add-keywords nil (\` (((\, (concat "(" (regexp-opt (quote ("wd-cond")) t) "\\_>")) 1 (quote font-lock-keyword-face))))) (eval push (file-name-directory (buffer-file-name)) load-path) (eval font-lock-add-keywords nil (\` (((\, (concat "(" (regexp-opt (quote ("sp-do-move-op" "sp-do-move-cl" "sp-do-put-op" "sp-do-put-cl" "sp-do-del-op" "sp-do-del-cl")) t) "\\_>")) 1 (quote font-lock-variable-name-face))))) (TeX-master . main) (eval font-lock-add-keywords nil (quote (("(\\(dm-defun\\)\\(?:\\s-\\)+\\(\\_<.*?\\_>\\)" (1 font-lock-keyword-face) (2 font-lock-function-name-face))))) (eval font-lock-add-keywords nil (quote (("defexamples\\| => " (0 (quote font-lock-keyword-face)))))) (reftex-default-bibliography "./bibliography") (eval allout-mode t))))
  '(save-place t nil (saveplace))
  '(save-place-file "~/.emacs.d/.emacs-places")
- '(send-mail-function (quote mailclient-send-it))
+ '(send-mail-function (quote sendmail-send-it))
  '(shell-pop-autocd-to-working-dir t)
  '(shell-pop-shell-type (quote ("eshell" "*eshell*" (lambda nil (eshell)))))
  '(shell-pop-universal-key "<f11>")
  '(shell-pop-window-height 50)
  '(show-smartparens-global-mode t)
+ '(shr-max-image-proportion 0.9)
  '(smartparens-global-mode t)
  '(smartparens-global-strict-mode t)
  '(smex-save-file "~/.emacs.d/.smex-items")
@@ -312,7 +364,7 @@
  '(sp-autowrap-region t)
  '(sp-comment-string (quote (((emacs-lisp-mode) . ";; "))))
  '(sp-hybrid-kill-excessive-whitespace nil)
- '(sp-ignore-modes-list (quote (image-dired-display-image-mode image-dired-thumbnail-mode ediff-mode recentf-dialog-mode google-maps-static-mode ibuffer-mode org-agenda-mode dired-mode)))
+ '(sp-ignore-modes-list (quote (image-dired-display-image-mode image-dired-thumbnail-mode ediff-mode recentf-dialog-mode google-maps-static-mode ibuffer-mode org-agenda-mode dired-mode elfeed-search-mode elfeed-show-mode)))
  '(sp-navigate-close-if-unbalanced t)
  '(sp-navigate-comments-as-sexps t)
  '(sp-navigate-consider-sgml-tags (quote (html-mode markdown-mode gfm-mode rst-mode)))
@@ -337,6 +389,7 @@
  '(sr-tabs-max-tabsize 18)
  '(sr-traditional-other-window nil)
  '(sr-windows-locked nil)
+ '(system-time-locale "C" t)
  '(texmathp-tex-commands (quote (("derivation" env-on))))
  '(text-mode-hook (quote (text-mode-hook-identify)))
  '(transient-mark-mode t)
@@ -382,7 +435,7 @@
  '(diredp-write-priv ((t nil)))
  '(eldoc-highlight-function-argument ((t (:inherit bold :foreground "#4e9a06"))))
  '(erc-nick-default-face ((t (:inherit erc-default))) t)
- '(eshell-prompt ((t (:foreground "#73d216" :weight normal))) t)
+ '(eshell-prompt ((t (:foreground "#73d216" :weight normal))))
  '(eyebrowse-mode-line-active ((t (:inherit mode-line))) t)
  '(eyebrowse-mode-line-inactive ((t (:inherit mode-line-secondary))) t)
  '(fixed-pitch ((t (:family "Inconsolata"))))
@@ -404,6 +457,6 @@
  '(sp-pair-overlay-face ((t (:background "#004a5d"))))
  '(sp-show-pair-enclosing ((t (:background "#004a5d"))))
  '(variable-pitch ((t (:weight normal :height 144 :family "CMU Bright"))))
- '(w3m-anchor ((t (:foreground "#729fcf"))) t)
- '(w3m-arrived-anchor ((t (:inherit font-lock-builtin-face))) t)
+ '(w3m-anchor ((t (:foreground "#729fcf"))))
+ '(w3m-arrived-anchor ((t (:inherit font-lock-builtin-face))))
  '(wgrep-delete-face ((t (:inherit font-lock-warning-face)))))

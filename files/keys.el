@@ -1,4 +1,6 @@
 ;;; Global key bindigns
+;; TODO: move keys to apropriate packages in vendor.el, only keep the
+;; bare minimum here.
 
 ;; setting the PC keyboard's various keys to
 ;; Super or Hyper, or emacs running on Windows.
@@ -41,7 +43,10 @@
 
 ;; refresh-like
 (bind-key "M-<f5>" '(lambda () (interactive) (load-file (buffer-file-name))))
+;; TODO: gather all `universal-argument' bindings somewhere on one place
 (bind-key "A-u" 'universal-argument)
+;; TODO: find better prefix for this, too close to A-c which kills the
+;; frame
 (bind-keys :prefix "A-v"
            :prefix-map alt-v-prefix-map
            :prefix-docstring "A-v prefix map"

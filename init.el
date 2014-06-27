@@ -11,6 +11,7 @@
 (tool-bar-mode -1)
 (tooltip-mode -1)
 
+;; TODO: this is useless now on xmonad
 ;; maximize window at startup
 (defun maximize-frame ()
   "Maximizes the active frame in Windows"
@@ -29,6 +30,7 @@
 
 (use-package-with-elapsed-timer "Initializing packages"
   (package-initialize)
+  ;; TODO: get rid of autoinstall, rewrite it using something nicer
   (load "~/.emacs.d/autoinstall")
 
   (require 'parenface)
@@ -40,12 +42,14 @@
 ;; add load paths
 (add-to-list 'load-path "~/.emacs.d/")
 (mapc (apply-partially 'add-to-list 'load-path) (f-directories "~/.emacs.d/vendor"))
+(mapc (apply-partially 'add-to-list 'load-path) (f-directories "~/.emacs.d/projects"))
 
 ;; autoloads
 (autoload 'calc-same-interface "calc" nil t)
 (autoload 'zap-up-to-char "misc"
   "Kill up to, but not including ARGth occurrence of CHAR." t)
 
+;; TODO: go through this and sort out useless crap, package the useful bits
 (use-package-with-elapsed-timer "Loading site lisp"
   ;; load site lisp
   (load "site-lisp/advices")
@@ -72,6 +76,9 @@
 ;; load config files
 (use-package-with-elapsed-timer "Loading vendor"
   (load "files/vendor"))
+
+(use-package-with-elapsed-timer "Loading personal"
+  (load "files/personal"))
 
 ;; diminish useless modeline clutter
 (require 'diminish)

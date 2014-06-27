@@ -74,6 +74,7 @@ With \\[universal-argument], visit current file via sudo."
                            (confirm-nonexistent-file-or-buffer)))))
   (find-file (concat "/sudo::" filename)))
 
+;; TODO: add support for w3m linky/image
 (defun my-find-url (url)
   "Download URL and insert into current buffer at point."
   (interactive "sULR: ")
