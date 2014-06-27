@@ -127,21 +127,6 @@ return to regular interpretation of self-insert characters."
                  (eq (point)(allout-current-bullet-pos)))
             (allout-hotspot-key-handler))))))
 
-(use-package auto-complete-config
-  :commands auto-complete-mode
-  :config
-  (progn
-    (ac-config-default)
-    (setq-default ac-sources
-                  (append '(
-                            ac-source-filename
-                            ac-source-yasnippet
-                            )
-                          ac-sources))
-
-    (setq ac-use-menu-map t)
-    (bind-key "RET" 'popup-isearch-done popup-isearch-keymap)))
-
 (use-package better-jump
   :bind (("C-\\" . bjump-word-jump)
          ("A-l" . bjump-word-jump-line)
