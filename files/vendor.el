@@ -308,6 +308,14 @@ return to regular interpretation of self-insert characters."
     (add-hook 'ediff-after-setup-windows-hook 'my-ediff-after-setup 'append)
     (add-hook 'ediff-quit-hook 'my-ediff-quit)))
 
+(use-package elfeed
+  :bind (("C-. f" . elfeed))
+  :config
+  (progn
+    (bind-keys :map elfeed-show-mode-map
+      ("M-n" . shr-next-link)
+      ("M-p" . shr-previous-link))))
+
 (use-package elxiki
   :defer t
   :commands elxiki-mode
