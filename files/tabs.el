@@ -22,6 +22,7 @@
         try-expand-dabbrev
         try-expand-dabbrev-all-buffers
         try-expand-dabbrev-from-kill
+        try-complete-file-name-partially
         try-complete-file-name
         try-complete-lisp-symbol))
 
@@ -51,8 +52,6 @@
            (not (smart-tab-must-expand prefix))
            (org-cycle)))
      ((cond
-       ((minibufferp)
-        (minibuffer-complete))
        ((smart-tab-must-expand prefix)
         (hippie-expand prefix))
        ((smart-indent)))))))
@@ -67,3 +66,5 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (bind-key "TAB" 'smart-tab)
+(bind-key "TAB" 'smart-tab minibuffer-local-map)
+(bind-key "TAB" 'smart-tab read-expression-map)
