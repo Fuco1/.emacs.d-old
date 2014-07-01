@@ -39,3 +39,7 @@ tramp
 .recentf
 .smex-items
 .litable-lists.el
+.gitignore
+projects/*
+elfeed/*
+.git/*
