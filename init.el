@@ -11,17 +11,6 @@
 (tool-bar-mode -1)
 (tooltip-mode -1)
 
-;; TODO: this is useless now on xmonad
-;; maximize window at startup
-(defun maximize-frame ()
-  "Maximizes the active frame in Windows"
-  (interactive)
-  ;; Send a `WM_SYSCOMMAND' message to the active frame with the
-  ;; `SC_MAXIMIZE' parameter.
-  (when (eq system-type 'windows-nt)
-    (w32-send-sys-command 61488)))
-(add-hook 'window-setup-hook 'maximize-frame t)
-
 ;; add repos
 (setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
                          ("marmalade" . "http://marmalade-repo.org/packages/")
