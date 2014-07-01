@@ -315,12 +315,6 @@ inserted character."
 ;; M-g map
 (bind-key "M-g RET" 'skeleton-display-abbrev)
 
-;; emms
-;; (bind-key "<A-XF86AudioPlay>" 'emms-pause)
-;; (require 'emms-setup)
-;; (emms-standard)
-;; (emms-default-players)
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Jump to "logical" top/bottom of buffer in listing buffers
 ;; TODO: turn this into a package
