@@ -553,7 +553,7 @@ called, percentage usage and the command."
   :config
   (progn
     (load "files/org-defs.el")
-    (load "vendor/org-velocity/org-velocity.el")
+    (load "projects/org-velocity/org-velocity.el")
     (bind-key "C-c s" 'org-velocity org-mode-map)))
 
 (use-package popwin
