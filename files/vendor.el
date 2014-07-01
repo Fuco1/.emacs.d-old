@@ -137,12 +137,22 @@ return to regular interpretation of self-insert characters."
     (define-key help-mode-map "o" 'bjump-help-link-jump)))
 
 (use-package bookmark+
-  :defer t
+  :bind ("C-x j t t" . my-tag-jump)
   :init
   (progn
     (require 'bookmark+-autoloads))
   :config
   (progn
+    (defun my-tag-jump (tag)
+      "Jump to bookmark that has TAG.
+
+This is like `bmkp-some-tags-jump' but reads only one tag."
+      (bookmark-maybe-load-default-file)
+      (interactive (list (completing-read "Tag: " bmkp-tags-alist nil t)))
+      (let* ((alist (bmkp-some-tags-alist-only (list tag))))
+        (unless alist (error "No bookmarks have any of the specified tags"))
+        (bookmark-jump
+         (bookmark-completing-read "Bookmark" (bmkp-default-bookmark-name alist) alist))))
     (bind-key "M-o" 'elwm-activate-window bookmark-bmenu-mode-map)))
 
 (use-package calc
@@ -323,13 +333,6 @@ return to regular interpretation of self-insert characters."
   :defer t
   :diminish emmet-mode)
 
-(use-package erc
-  :defer t
-  :config
-  (progn
-    (erc-track-mode 1)
-    (erc-track-minor-mode 1)))
-
 (use-package eshell
   :commands eshell
   :config
@@ -452,7 +455,7 @@ return to regular interpretation of self-insert characters."
 
 (use-package keyadvice
   :defer t
-  :init (progn (load "vendor/keyadvice.el/autoloads.el")))
+  :init (progn (load "projects/keyadvice.el/autoloads.el")))
 
 (use-package keyfreq
   :bind ("C-. C-k" . keyfreq-show)
@@ -505,6 +508,40 @@ called, percentage usage and the command."
                       (javascript-mode "<script +\\(type=\"text/javascript\"\\|language=\"javascript\"\\)[^>]*>" "</script>")
                       (css-mode "<style +type=\"text/css\"[^>]*>" "</style>")))
     (setq mweb-filename-extensions '("php" "htm" "html" "ctp" "phtml" "php4" "php5"))))
+
+(use-package notmuch
+  :defer t
+  :config
+  (progn
+    ;; REDEFINED FROM notmuch-unread-mode
+    ;; Don't show anything if there's no unread mail
+    (defun notmuch-unread-update-handler ()
+      "Update the mode line."
+      (let ((count (notmuch-unread-count)))
+        (if (> count 0)
+            (setq notmuch-unread-mode-line-string
+                  (format " [✉ %d]" count))
+          (setq notmuch-unread-mode-line-string "")))
+      (force-mode-line-update))
+
+    (defun my-notmuch-update-mail ()
+      (start-process "mail-update" nil "/bin/bash" "/home/matus/bin/run-getmail"))
+
+    (defvar my-notmuch-update-mail-timer
+      (run-with-timer 10 400 'my-notmuch-update-mail)
+      "Mail update timer.")
+
+    (defun my-notmuch-delete-mail (&optional beg end)
+      (interactive (if (use-region-p)
+                       (list (region-beginning) (region-end))
+                     (list nil nil)))
+      (let ((change '("+deleted" "-unread" "-inbox")))
+        (if (eq major-mode 'notmuch-search-mode)
+            (notmuch-search-tag change beg end)
+          (notmuch-show-tag change))))
+
+    (bind-key "d" 'my-notmuch-delete-mail notmuch-show-mode-map)
+    (bind-key "d" 'my-notmuch-delete-mail notmuch-search-mode-map)))
 
 (use-package org
   :mode ("\\.org\\'" . org-mode)
