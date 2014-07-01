@@ -675,16 +675,6 @@ Switch projects and subprojects from NEXT back to TODO"
   (org-show-subtree)
   (org-cycle-hide-drawers t))
 
-(defun my-org-status ()
-  (cond
-   ((not (marker-buffer org-clock-marker))
-    "<fc=#d3d7cf>-:--</fc>")
-   (t
-    (let* ((status (substring-no-properties org-mode-line-string 1
-                                            (1- (length org-mode-line-string))))
-           (split-status (split-string status " (")))
-      (concat "<fc=#8ae234>" (car split-status) "</fc>")))))
-
 (defun my-org-export-read-books-do-export (buf)
   "Buf is the buffer into which the export is written."
   (let ((index 0))

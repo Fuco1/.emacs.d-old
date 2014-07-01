@@ -310,3 +310,16 @@ The point is moved to the end of the match."
                   (search-forward "\t" nil t)
                   (backward-char)
                   (insert ", " plural))))))))))
+
+(defun my-emacs-status ()
+  (let ((org-active-task (cond
+                          ((not (marker-buffer org-clock-marker))
+                           "<fc=#d3d7cf>-:--</fc>")
+                          (t
+                           (let* ((status (substring-no-properties org-mode-line-string 1
+                                                                   (1- (length org-mode-line-string))))
+                                  (split-status (split-string status " (")))
+                             (concat "<fc=#8ae234>" (car split-status) "</fc>")))))
+        (unread-mail-count (let ((count (notmuch-unread-count)))
+                             (if (> count 0) (format "<fc=#ef2929>[✉ %d]</fc>" count) ""))))
+    (concat unread-mail-count org-active-task)))
