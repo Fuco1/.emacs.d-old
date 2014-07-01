@@ -35,7 +35,8 @@
 
   (require 'parenface)
   (require 'uniquify)
-  (require 'dash)
+  (load "dev/dash.el/dash.el")
+  (load "dev/dash.el/dash-functional.el")
   (require 'f)
   (require 's))
 
