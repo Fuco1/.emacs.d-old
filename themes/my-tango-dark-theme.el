@@ -20,16 +20,16 @@ is extension of default `tango-dark' face.")
       (red-0 "#ff4b4b")  (alum-5.5 "#41423f") (alum-7 "#212526")
       (fixed-sys (if (eq system-type 'windows-nt) "Consolas" "Inconsolata"))
       (fixed-sys-height (if (eq system-type 'windows-nt) 100 120))
-      (variable-font (if (eq system-type 'windows-nt) "Verdana" "Liberation Sans")))
+      (variable-font (if (eq system-type 'windows-nt) "Verdana" "Droid Sans")))
 
   (custom-theme-set-faces
    'my-tango-dark
    ;; Ensure sufficient contrast on low-color terminals.
    `(default ((,class (:foreground ,alum-1
-                                   :background ,alum-6
-                                   :family ,fixed-sys
-                                   :foundry "outline"
-                                   :height ,fixed-sys-height))))
+                       :background ,alum-6
+                       :family ,fixed-sys
+                       :foundry "outline"
+                       :height ,fixed-sys-height))))
    `(cursor ((,class (:background ,butter-1))))
    ;; Highlighting faces
    `(fringe ((,class (:background ,alum-7))))
@@ -44,15 +44,15 @@ is extension of default `tango-dark' face.")
    ;; Mode line faces
    `(mode-line ((,class
                  (:background "black"
-                              :foreground ,alum-2
-                              :box (:line-width -1 :color ,alum-6 :style released-button)))))
+                  :foreground ,alum-2
+                  :box (:line-width -1 :color ,alum-6 :style released-button)))))
    `(mode-line-buffer-id ((,class (:foreground ,orange-1 :weight bold))))
    `(mode-line-inactive ((,class
                           (:inherit mode-line
-                                    :background ,alum-6
-                                    :foreground ,alum-5
-                                    :box (:line-width -1 :color "black" :style released-button)
-                                    :weight light))))
+                           :background ,alum-6
+                           :foreground ,alum-5
+                           :box (:line-width -1 :color "black" :style released-button)
+                           :weight light))))
    ;; Escape and prompt faces
    `(comint-highlight-input ((,class (:foreground ,blue-0))))
    `(comint-highlight-prompt ((,class (:foreground ,blue-0))))
@@ -151,6 +151,17 @@ is extension of default `tango-dark' face.")
    `(sr-active-path-face ((,class (:background ,alum-6 :foreground ,blue-1))))
    `(sr-passive-path-face ((,class (:background ,alum-6 :foreground ,alum-4))))
    `(sr-editing-path-face ((,class (:background "red" :foreground "yellow")))) ;; what is this?
+   '(diredp-dir-priv ((t (:inherit dired-directory))))
+   '(diredp-exec-priv ((t nil)))
+   '(diredp-file-name ((t (:inherit default))))
+   '(diredp-ignored-file-name ((t (:inherit shadow))))
+   '(diredp-link-priv ((t nil)))
+   '(diredp-no-priv ((t nil)))
+   '(diredp-number ((t (:inherit default))))
+   '(diredp-other-priv ((t nil)))
+   '(diredp-rare-priv ((t nil)))
+   '(diredp-read-priv ((t nil)))
+   '(diredp-write-priv ((t nil)))
    ;; hilight current directory path at the top
    `(sr-highlight-path-face ((,class (:background ,alum-7 :foreground ,blue-1))))
    `(sr-mirror-path-face ((,class (:background "blue" :foreground "yellow")))) ;; what is this?
@@ -160,18 +171,25 @@ is extension of default `tango-dark' face.")
    `(ido-first-match ((,class :foreground ,choc-1 :weight bold)))
    `(ido-only-match ((,class :foreground ,cham-2)))
    `(ido-subdir ((,class :foreground ,cham-2 :weight bold)))
+   ;; org-mode
+   `(org-table ((,class (:inherit fixed-pitch :foreground ,blue-0))))
+   '(org-block ((t (:inherit (shadow fixed-sys)))))
+   '(org-block-background ((t (:inherit fixed-pitch :background "#232a2b"))))
+   '(org-formula ((t (:inherit fixed-pitch :foreground "chocolate1"))))
+   '(org-mode-line-clock ((t nil)) t)
+   '(org-table ((t (:inherit fixed-pitch :foreground "#8cc4ff"))))
+   '(org-verbatim ((t (:inherit org-code))))
    ;; Random faces
    `(dropdown-list-face ((,class (:inherit default
-                                           :background ,choc-1
-                                           :foreground "black"))))
+                                  :background ,choc-1
+                                  :foreground "black"))))
    `(eshell-prompt ((,class (:foreground ,plum-2 :weight bold))))
    `(fixed-pitch ((,class (:height ,fixed-sys-height :family ,fixed-sys))))
    `(hl-line ((,class (:inherit nil :background ,alum-7))))
    `(markdown-pre-face ((,class (:inherit font-lock-constant-face :family ,fixed-sys))))
    `(markdown-inline-code-face ((,class (:inherit markdown-pre-face))))
-   `(org-table ((,class (:inherit fixed-pitch :foreground ,blue-0))))
    `(paren-face ((,class (:foreground ,alum-4))))
-   `(variable-pitch ((,class (:height 120 :family ,variable-font))))
+   `(variable-pitch ((,class (:height 144 :family ,variable-font))))
 
    ;; My special themes
    `(my-reading-face ((,class (:background "#808000"
