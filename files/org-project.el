@@ -5,9 +5,22 @@
   "Tasks with these tags should be ignored when determining if a
 task is a subtask in a project.")
 
+(defun my-org-restricted-p ()
+  "Return non-nil if org is restricted to a subtree."
+  (marker-buffer org-agenda-restrict-begin))
+
 (defun my-org-entry-is-task-p ()
   "Return non-nil if header at point has any keyword."
   (member (org-get-todo-state) org-todo-keywords-1))
+
+(defun my-org-is-standalone-task-p ()
+  "Any task which is not a project and is not a subtask in a project."
+  (and (not (my-org-is-project-p))
+       (= (save-excursion (my-org-find-project-task))
+          ;; TODO: make a version of this where we don't have to pass
+          ;; an argument.  We always want all headings when doing
+          ;; "logic".  Also, make it return point
+          (save-excursion (org-back-to-heading 'invisible-ok) (point)))))
 
 (defun my-org-is-project-p ()
   "Any task with a todo keyword subtask.
@@ -74,21 +87,19 @@ Callers of this function already widen the buffer view."
               (setq has-subtask t)))))
       (not has-subtask))))
 
-(defun my-org-list-sublevels-for-projects-indented ()
-  "Set org-tags-match-list-sublevels so when restricted to a subtree we list all subtasks.
-  This is normally used by skipping functions where this variable is already local to the agenda."
-  (if (marker-buffer org-agenda-restrict-begin)
-      (setq org-tags-match-list-sublevels 'indented)
-    (setq org-tags-match-list-sublevels nil))
-  nil)
+(defun my-org-skip-projects ()
+  "Skip trees that are projects"
+  (save-restriction
+    (widen)
+    (let ((next-headline (save-excursion (or (outline-next-heading) (point-max)))))
+      (if (my-org-is-project-p) next-headline nil))))
 
-(defun my-org-list-sublevels-for-projects ()
-  "Set org-tags-match-list-sublevels so when restricted to a subtree we list all subtasks.
-  This is normally used by skipping functions where this variable is already local to the agenda."
-  (if (marker-buffer org-agenda-restrict-begin)
-      (setq org-tags-match-list-sublevels t)
-    (setq org-tags-match-list-sublevels nil))
-  nil)
+(defun my-org-skip-non-projects ()
+  "Skip trees that are not projects"
+  (save-restriction
+    (widen)
+    (let ((next-headline (save-excursion (or (outline-next-heading) (point-max)))))
+      (if (my-org-is-project-p) nil next-headline))))
 
 (defun my-org-skip-stuck-projects ()
   "Skip trees that are stuck projects"
@@ -101,14 +112,13 @@ Callers of this function already widen the buffer view."
             (save-excursion
               (forward-line 1)
               (while (and (not has-next) (< (point) subtree-end) (re-search-forward "^\\*+ NEXT " subtree-end t))
-                (unless (member "WAITING" (org-get-tags-at))
+                (unless (member "WAIT" (org-get-tags-at))
                   (setq has-next t))))
             (if has-next nil next-headline)) ; a stuck project, has subtasks but no next task
         nil))))
 
 (defun my-org-skip-non-stuck-projects ()
   "Skip trees that are not stuck projects"
-  (my-org-list-sublevels-for-projects-indented)
   (save-restriction
     (widen)
     (let ((next-headline (save-excursion (or (outline-next-heading) (point-max)))))
@@ -118,29 +128,10 @@ Callers of this function already widen the buffer view."
             (save-excursion
               (forward-line 1)
               (while (and (not has-next) (< (point) subtree-end) (re-search-forward "^\\*+ NEXT " subtree-end t))
-                (unless (member "WAITING" (org-get-tags-at))
+                (unless (member "WAIT" (org-get-tags-at))
                   (setq has-next t))))
             (if has-next next-headline nil)) ; a stuck project, has subtasks but no next task
         next-headline))))
-
-(defun my-org-skip-non-projects ()
-  "Skip trees that are not projects"
-  (my-org-list-sublevels-for-projects-indented)
-  (if (save-excursion (my-org-skip-non-stuck-projects))
-      (save-restriction
-        (widen)
-        (let ((subtree-end (save-excursion (org-end-of-subtree t))))
-          (cond
-           ((and (my-org-is-project-p)
-                 (marker-buffer org-agenda-restrict-begin))
-            nil)
-           ((and (my-org-is-project-p)
-                 (not (marker-buffer org-agenda-restrict-begin))
-                 (not (my-org-is-project-subtree-p)))
-            nil)
-           (t
-            subtree-end))))
-    (save-excursion (org-end-of-subtree t))))
 
 (defun my-org-skip-projects-and-habits-and-single-tasks ()
   "Skip trees that are projects, tasks that are habits, single non-project tasks"
@@ -161,7 +152,7 @@ When not restricted, skip project and sub-project tasks, habits, and project rel
     (widen)
     (let* ((subtree-end (save-excursion (org-end-of-subtree t)))
            (next-headline (save-excursion (or (outline-next-heading) (point-max))))
-           (limit-to-project (marker-buffer org-agenda-restrict-begin)))
+           (limit-to-project (my-org-restricted-p)))
       (cond
        ((my-org-is-project-p)
         next-headline)

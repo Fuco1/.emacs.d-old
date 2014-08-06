@@ -20,21 +20,35 @@ Also used for highlighting.")
 (use-package dired-aux)
 (use-package dired-x
   :config
-  (defun dired-virtual-revert (&optional _arg _noconfirm)
-    "Enable revert for virtual direds."
-    (let ((m (dired-file-name-at-point))
-          (buffer-modified (buffer-modified-p)))
-      (goto-char 1)
-      (dired-next-subdir 1)
-      (dired-do-redisplay nil t)
-      (while (dired-next-subdir 1 t)
-        (dired-do-redisplay nil t))
-      (when m (dired-goto-file m))
-      (set-buffer-modified-p buffer-modified))))
+  (progn
+    (defun dired-virtual-revert (&optional _arg _noconfirm)
+      "Enable revert for virtual direds."
+      (let ((m (dired-file-name-at-point))
+            (buffer-modified (buffer-modified-p)))
+        (goto-char 1)
+        (dired-next-subdir 1)
+        (dired-do-redisplay nil t)
+        (while (dired-next-subdir 1 t)
+          (dired-do-redisplay nil t))
+        (when m (dired-goto-file m))
+        (set-buffer-modified-p buffer-modified)))
+
+    (add-to-list 'dired-guess-shell-alist-user
+                 (list (concat "\\."
+                               (regexp-opt my-dired-media-files-extensions)
+                               "\\'")
+                       "vlc"))))
 (use-package dired+)
 (use-package cl-lib)
 (use-package dired-details
-  :commands dired-details-toggle)
+  :init
+  (progn
+    (add-hook 'dired-after-readin-hook 'dired-details-activate)
+
+    (bind-key "(" 'dired-details-toggle dired-mode-map)
+
+    (defadvice dired-revert (before remember-the-details activate)
+      (dired-details-delete-overlays))))
 (use-package w32-browser
   :commands dired-w32-browser)
 (use-package dired-avfs)
@@ -59,7 +73,9 @@ Also used for highlighting.")
     ("u" . dired-subtree-unmark-subtree)
     ("C-o C-f" . dired-subtree-only-this-file)
     ("C-o C-d" . dired-subtree-only-this-directory)))
-;; (use-package dired-images)
+
+;; we should just hijack C-t map from image-dired which is crap anyway
+(use-package dired-images)
 
 (use-package dired-rainbow
   :init
@@ -91,7 +107,26 @@ Also used for highlighting.")
                :prefix-docstring "Map for ranger operations."
       ("c" . dired-ranger-copy)
       ("p" . dired-ranger-paste)
-      ("m" . dired-ranger-move))))
+      ("m" . dired-ranger-move))
+
+    (bind-keys :map dired-mode-map
+      ("'" . dired-ranger-bookmark)
+      ("`" . dired-ranger-bookmark-visit))))
+
+(use-package dired-narrow
+  :commands dired-narrow
+  :init
+  (bind-key "s" 'dired-narrow dired-mode-map))
+
+(use-package dired-tagsistant
+  :init
+  (progn
+    (bind-keys :map dired-mode-map
+               :prefix "M-t"
+               :prefix-map dired-tagsistant-map
+               :prefix-docstring "Dired tagsistant map."
+      ("t" . dired-tagsistant-tag)
+      ("s" . dired-tagsistant-tag-symlink))))
 
 (use-package make-it-so
   :init
@@ -104,11 +139,6 @@ Also used for highlighting.")
     ("a" . mis-abort)
     ("r" . mis-replace))
   (bind-key "<f5>" 'mis-save-and-compile makefile-mode-map))
-
-(add-to-list 'dired-guess-shell-alist-user (list (concat "\\."
-                                                         (regexp-opt my-dired-media-files-extensions)
-                                                         "\\'")
-                                                 "vlc"))
 
 ;;;_. Key bindings & hooks
 (defun my-image-dired-thumbnail-mode-init ()
@@ -164,6 +194,10 @@ Also used for highlighting.")
   ;; (define-prefix-command 'slash-dired-prefix-map)
 
   (bind-keys :map dired-mode-map
+    ;; clean bullshit bindings so C-h e b shows us real info
+    ("A") ("G") ("P") ("Q") ("X") ("Z") ("#") (".")
+    ("~") ("e") ("f") ("l") ("v") ("^") ("?")
+
     ("C-x C-f" . my-dired-ido-find-file)
     ("k" . my-dired-do-kill-lines)
 
@@ -188,12 +222,11 @@ Also used for highlighting.")
     ("<delete>" . dired-unmark-backward)
     ("<backspace>" . dired-up-directory)
     ("C-o" . dired-filter-mode)
-    ("(" . dired-details-toggle)
     ("M-<f5>" . dired-arc-pack-files)
     ("M-<f6>" . dired-arc-unpack-file)
 
     ("* r" . diredp-mark-region-files)
-    )
+    ("E" . my-dired-encrypt-file))
 
   (dired-filter-mode t)
   (visual-line-mode -1)
@@ -715,6 +748,23 @@ With \\[universal-argument] present user with list of possible methods to unpack
         (goto-char 1)
         (replace-string "\\" "/")
         (dired-mode "/")))))
+
+;;;_. gpg stuff
+;; gpg --output passwords.gpg --symmetric passwords.txt
+(defun my-dired-encrypt-file ()
+  (interactive)
+  (require 'epa)
+  (if (not (dired-utils-is-file-p))
+      (message "We can only encrypt single files.")
+    (epa-encrypt-file (dired-utils-get-filename) nil)
+    (revert-buffer)))
+
+
+;;;_. other-marker-do
+(defun my-dired-with-marker-do (marker-char)
+  (interactive "cMarker char: ")
+  (let ((dired-marker-char marker-char))
+    (call-interactively (key-binding (read-key-sequence "Dired command: " t)))))
 
 ;;;_. Local var settings
 

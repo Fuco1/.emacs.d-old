@@ -311,15 +311,95 @@ The point is moved to the end of the match."
                   (backward-char)
                   (insert ", " plural))))))))))
 
+;; should go into s.el
+(defun my-next-property-value (start prop val &optional object limit)
+  "Find next position where PROP has value VAL."
+  (let ((point start) done)
+    (or (and (equal (plist-get (text-properties-at point object) prop) val)
+             point)
+        (progn
+          (while (and (not done)
+                      (if (or (not object)
+                              (bufferp object))
+                          (/= point (point-max))
+                        (/= point (1- (length object))))
+                      (setq point (next-single-property-change point prop object limit)))
+            (setq done (equal (plist-get (text-properties-at point object) prop) val)))
+          point))))
+
+;; should go into s.el
+(defun my-next-property-not-value (start prop val &optional object limit)
+  "Find next position where PROP does not have value VAL."
+  (let ((point start) done)
+    (or (and (not (equal (plist-get (text-properties-at point object) prop) val))
+             point)
+        (progn
+          (while (and (not done)
+                      (if (or (not object)
+                              (bufferp object))
+                          (/= point (point-max))
+                        (/= point (1- (length object))))
+                      (setq point (next-single-property-change point prop object limit)))
+            (setq done (not (equal (plist-get (text-properties-at point object) prop) val))))
+          point))))
+
+;; ported from gnus-*... should go into s.el
+;; TODO: add more general version where we can pass a predicate
+(defun my-remove-text-properties-when
+  (property value start end properties &optional object)
+  "Like `remove-text-properties', only applied on where PROPERTY is VALUE."
+  (let (point)
+    (setq start (my-next-property-value start property value object end))
+    (while (and start
+                (< start end)
+                (setq point (my-next-property-not-value start property value object end)))
+      (remove-text-properties start point properties object)
+      (setq start (my-next-property-value point property value object end)))
+    object))
+
+(defun my-sprunge (text &optional language)
+  "Paste TEXT to sprunge.us.
+
+With non-nil prefix argument, ask for LANGUAGE."
+  (interactive (list (if (use-region-p)
+                         (buffer-substring-no-properties (region-beginning) (region-end))
+                       (read-from-minibuffer "Text: "))
+                     (when current-prefix-arg (read-from-minibuffer "Language: " nil
+                                                                    nil nil nil "cl"))))
+  (let* ((buf (get-buffer-create " *sprunge-result*"))
+         (url (with-current-buffer buf
+                (shell-command (concat "echo "
+                                       (shell-quote-argument text)
+                                       " | curl -s -F 'sprunge=<-' http://sprunge.us")
+                               buf)
+                (s-trim (buffer-string)))))
+    (kill-buffer buf)
+    (kill-new (if language (concat url "?" language) url))))
+
+;; TODO: abstract the feature detection and the final assembly
 (defun my-emacs-status ()
-  (let ((org-active-task (cond
-                          ((not (marker-buffer org-clock-marker))
-                           "<fc=#d3d7cf>-:--</fc>")
-                          (t
-                           (let* ((status (substring-no-properties org-mode-line-string 1
-                                                                   (1- (length org-mode-line-string))))
-                                  (split-status (split-string status " (")))
-                             (concat "<fc=#8ae234>" (car split-status) "</fc>")))))
-        (unread-mail-count (let ((count (notmuch-unread-count)))
-                             (if (> count 0) (format "<fc=#ef2929>[✉ %d]</fc>" count) ""))))
-    (concat unread-mail-count org-active-task)))
+  (let ((org-active-task (and (featurep 'org)
+                              (cond
+                               ((not (marker-buffer org-clock-marker))
+                                "<fc=#d3d7cf>-:--</fc>")
+                               (t
+                                (let* ((status (substring-no-properties org-mode-line-string 1
+                                                                        (1- (length org-mode-line-string))))
+                                       (split-status (split-string status " (")))
+                                  (concat "<fc=#8ae234>" (car split-status) "</fc>"))))))
+        (unread-mail-count (and (featurep 'notmuch)
+                                (let ((count (notmuch-unread-count)))
+                                  (if (> count 0) (format "<fc=#ef2929>[✉ %d]</fc>" count) ""))))
+        (tracking-urgent (and (featurep 'tracking)
+                              (let* ((shortened (tracking-shorten tracking-buffers))
+                                     (urgent-buffers (--filter (text-property-any 0 (length it)
+                                                                                  'face 'circe-highlight-nick-face
+                                                                                  it)
+                                                               shortened))
+                                     (status (concat "<fc=#ef2929>["
+                                                     (mapconcat 'identity urgent-buffers ",")
+                                                     "]</fc>")))
+                                (when urgent-buffers (substring-no-properties status 0 (length status)))))))
+    (concat (or tracking-urgent "")
+            (or unread-mail-count "")
+            (or org-active-task ""))))

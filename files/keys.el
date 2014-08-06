@@ -80,7 +80,6 @@
 
 ;; Easier buffer killing
 (bind-key "M-k" 'my-kill-this-buffer)
-(bind-key "M-K" (lambda () (interactive) (kill-buffer (window-buffer (next-window)))))
 (bind-key "C-x C-k" 'kill-buffer-and-window)
 
 ;; imenu
@@ -200,14 +199,6 @@
 (bind-key "M-`" 'jump-to-mark)
 (global-set-key [remap exchange-point-and-mark] 'exchange-point-and-mark-no-activate)
 
-;; customize
-(bind-keys :prefix "C-c c"
-           :prefix-map ctl-c-c-map
-           :prefix-docstring "Customize map"
-  ("v" . customize-variable)
-  ("f" . customize-face)
-  ("g" . customize-group))
-
 (bind-keys :prefix "C-h e"
            :prefix-map ctl-h-e-map
            :prefix-docstring "List find/help map"
@@ -227,26 +218,23 @@
 
 (bind-key "C-h D" 'describe-personal-keybindings)
 
-(defvar ctl-dot-prefix-map)
-(define-prefix-command 'ctl-dot-prefix-map)
-(bind-key "C-." 'ctl-dot-prefix-map)
-(bind-key "C-. p f" 'elp-instrument-function)
-(bind-key "C-. p r" 'elp-results)
-(bind-key "C-. p R" 'elp-restore-all)
-
-(bind-key "C-. u" 'unfill-paragraph)
-(bind-key "C-. c" 'create-scratch-buffer)
-(bind-key "C-. k" 'browse-kill-ring)
-
-(bind-key "C-. m s" 'kmacro-set-counter)
-(bind-key "C-. m a" 'kmacro-add-counter)
-(bind-key "C-. m f" 'kmacro-set-format)
+(bind-keys :prefix "C-."
+           :prefix-map ctl-dot-prefix-map
+           :prefix-docstring "Second auxiliary map on C-."
+  ("p f" . elp-instrument-function)
+  ("p r" . elp-results)
+  ("p R" . elp-restore-all)
+  ("c" . create-scratch-buffer)
+  ("k" . browse-kill-ring)
+  ("m s" . kmacro-set-counter)
+  ("m a" . kmacro-add-counter)
+  ("m f" . kmacro-set-format)
+  ("z" . my-insert-no-move)
+  ("-" . macrostep-expand)
+  ("0" . my-kill-pp-eval-expression-window)
+  ("s" . my-sprunge))
 
 (bind-key "C-. e" 'eval-region emacs-lisp-mode-map)
-
-(bind-key "C-. z" 'my-insert-no-move)
-
-(bind-key "C-. -" 'macrostep-expand)
 
 (bind-key "<XF86HomePage>" 'toggle-input-method)
 (bind-keys :prefix "C-. i"
@@ -259,10 +247,12 @@
   ("r" . (lambda () "Toggle on russian-computer input method." (interactive) (set-input-method "russian-computer")))
   ("q" . (lambda () "Toggle on cyrillic-translit input method." (interactive) (set-input-method "cyrillic-translit")))
   ("i" . (lambda () "Toggle on italian-keyboard input method." (interactive) (set-input-method "italian-keyboard")))
-  ("g" . (lambda () "Toggle on german input method." (interactive) (set-input-method "german")))
+  ("d" . (lambda () "Toggle on german input method." (interactive) (set-input-method "german")))
   ("t" . (lambda () "Toggle on TeX input method." (interactive) (set-input-method "TeX")))
   ("l" . (lambda () "Toggle on latin-macrons input method." (interactive) (set-input-method "latin-macrons")))
-  ("f" . (lambda () "Toggle on french-keyboard input method." (interactive) (set-input-method "french-keyboard"))))
+  ("f" . (lambda () "Toggle on french-keyboard input method." (interactive) (set-input-method "french-keyboard")))
+  ("g" . (lambda () "Toggle on greek-mizuochi input method." (interactive) (set-input-method "greek-mizuochi")))
+  ("j" . (lambda () "Toggle on japanese input method." (interactive) (set-input-method "japanese"))))
 
 (bind-key "H-u" 'universal-argument)
 (bind-key "H-u" 'universal-argument-more universal-argument-map)
@@ -280,20 +270,6 @@
 
 (bind-keys :prefix "C-c s"
            :prefix-map ctl-c-s-map)
-
-(bind-keys :prefix "C-c m"
-           :prefix-map ctl-c-m-map
-           :prefix-docstring "Magit map"
-  ("b" . magit-key-mode-popup-branching)
-  ("c" . magit-key-mode-popup-committing)
-  ("d" . magit-key-mode-popup-dispatch)
-  ("f" . magit-key-mode-popup-fetching)
-  ("i" . magit-key-mode-popup-diff-options)
-  ("l" . magit-key-mode-popup-logging)
-  ("m" . magit-key-mode-popup-merging)
-  ("p" . magit-key-mode-popup-pushing)
-  ("v" . magit-branch-manager)
-  ("s" . magit-status))
 
 ;; zapping
 (bind-key "M-z" 'zap-up-to-char)

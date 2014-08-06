@@ -20,6 +20,9 @@
     (require 'thingatpt)
     (use-package eldoc :diminish eldoc-mode)
 
+    (font-lock-add-keywords 'emacs-lisp-mode '(("\\(?:^\\| \\)\\('\\sw\\(?:\\sw\\|\\s_\\)*\\)"
+                                                1 'font-lock-constant-face)))
+
     (defvar my-emacs-lisp-open-line-list '(
                                            if
                                               when
@@ -59,7 +62,7 @@ function on `my-emacs-lisp-open-line-list'."
       (let ((function (function-called-at-point))
             (variable (variable-at-point)))
         (cond
-         ((/= variable 0) (describe-variable variable))
+         ((not (numberp variable)) (describe-variable variable))
          (function (describe-function function)))))
 
     (defun backward-down-list (&optional n)

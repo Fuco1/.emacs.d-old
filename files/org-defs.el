@@ -35,13 +35,23 @@
 (use-package org-agenda
   :defer t
   :config
-  (bind-keys :map org-agenda-mode-map
-             ("C-n" . org-agenda-next-item)
-             ("C-p" . org-agenda-previous-item)
-             ("P" . my-org-narrow-to-project)
-             ("U" . my-org-narrow-to-parent)
-             ("N" . my-org-narrow-to-subtree)
-             ("W" . my-org-widen)))
+  (progn
+    (defun my-org-agenda-open-at-point (&optional arg)
+      "Open the first link after the headline under point."
+      (interactive "P")
+      (org-with-point-at (org-get-at-bol 'org-hd-marker)
+        (my-org-open-at-point arg)))
+
+    (bind-keys :map org-agenda-mode-map
+      ("C-n" . org-agenda-next-item)
+      ("C-p" . org-agenda-previous-item)
+      ("P" . my-org-narrow-to-project)
+      ("U" . my-org-narrow-to-parent)
+      ("N" . my-org-narrow-to-subtree)
+      ("W" . my-org-widen)
+      ("/" . my-org-agenda-filter-by-tag)
+      ("\\" . my-org-agenda-filter-by-tag-refine)
+      ("o" . my-org-agenda-open-at-point))))
 
 (use-package org-protocol
   :init
@@ -61,6 +71,8 @@
             :kill-client nil)
           org-protocol-protocol-alist)))
 
+(use-package org-contacts)
+
 (defface my-org-bold
   '((t (:weight bold :inherit font-lock-variable-name-face)))
   "The face used to highlight pair overlays.")
@@ -79,7 +91,16 @@
 
 (font-lock-add-keywords 'org-mode
                         `(("[[:space:]]+\\(\\$[^[:space:]].*?\\$\\)[^[:word:]]+"
-                           1 'my-org-math)))
+                           1 'my-org-math)
+                          ;; TODO: nefunguje ak je {... \n ...}
+                          ("\\(?:^\\| \\)\\({.*?}\\)\\(?:$\\| \\|\\s.\\)"
+                           1 (progn (put-text-property
+                                     (match-beginning 1)
+                                     (match-end 1)
+                                     'face
+                                     'shadow)
+                                    (backward-char 1)
+                                    nil))))
 
 (bind-keys :map org-mode-map
   ("TAB" . smart-tab)
@@ -97,7 +118,9 @@
 
   ("C-c M-`" . org-mark-ring-goto)
 
-  ("C-c C-N" . my-org-add-sibling))
+  ("C-c C-S-n" . my-org-add-sibling)
+  ("C-c C-n" . outline-next-visible-heading))
+
 
 ;; global keys
 (bind-keys
@@ -327,8 +350,13 @@ point and rebuild the agenda view."
         ("w" "water" table-line (file+datetree "~/org/water.org")
          "|%<%H:%M:%S>|%?|" :table-line-pos "III-1")
         ("b" "bookmark" entry (file+function "~/org/bookmarks.org" my-org-handle-bookmark)
-         "* %:description\n- source: %:link\n%(if (not (equal %:initial \"\"))
-                                                        (concat \"- selection:\n  \" %:initial) \"\")")))
+         "* %:description\n- %:link\n%(if (not (equal %:initial \"\"))
+                                        (concat \"- \" %:initial) \"\")")
+        ("c" "contact" entry (file "~/org/contacts.org")
+         "* %(org-contacts-template-name)
+    :PROPERTIES:
+    :EMAIL: %(org-contacts-template-email)
+    :END:")))
 
 (defun my-org-handle-bookmark ()
   (let ((link (caar org-stored-links)))
@@ -355,28 +383,28 @@ point and rebuild the agenda view."
 
 ;; TODO KEYWORDS SETTINGS
 (setq org-todo-keywords
-      '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d!)")
-        (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)")
-        (sequence "SOMEDAY(S)" "|")))
+      '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d!)" "MOVE(m@)")
+        (sequence "WAIT(w@/!)" "HOLD(h@/!)" "|" "STOP(s@/!)")
+        (sequence "IDEA(i)" "|")))
 
 (setq org-todo-keyword-faces
       (quote (("TODO" :foreground "IndianRed1" :weight bold)
               ("NEXT" :foreground "RoyalBlue" :weight bold)
               ("DONE" :foreground "LimeGreen" :weight bold)
-              ("WAITING" :foreground "orange" :weight bold)
+              ("WAIT" :foreground "orange" :weight bold)
               ("HOLD" :foreground "orange" :weight bold)
-              ("CANCELLED" :foreground "LimeGreen" :weight bold)
-              ("SOMEDAY" :foreground "pink" :weight bold))))
+              ("STOP" :foreground "LimeGreen" :weight bold)
+              ("IDEA" :foreground "pink" :weight bold))))
 
 (setq org-todo-state-tags-triggers
-      (quote (("CANCELLED" ("CANCELLED" . t))
-              ("WAITING" ("WAITING" . t))
-              ("HOLD" ("WAITING" . t) ("HOLD" . t))
-              (done ("WAITING") ("HOLD"))
-              ("TODO" ("WAITING") ("CANCELLED") ("HOLD"))
-              ("SOMEDAY" ("WAITING") ("CANCELLED") ("HOLD"))
-              ("NEXT" ("WAITING") ("CANCELLED") ("HOLD"))
-              ("DONE" ("WAITING") ("CANCELLED") ("HOLD")))))
+      (quote (("STOP" ("STOP" . t))
+              ("WAIT" ("WAIT" . t))
+              ("HOLD" ("HOLD" . t))
+              (done ("WAIT") ("HOLD"))
+              ("TODO" ("WAIT") ("STOP") ("HOLD"))
+              ("IDEA" ("WAIT") ("STOP") ("HOLD"))
+              ("NEXT" ("WAIT") ("STOP") ("HOLD"))
+              ("DONE" ("WAIT") ("STOP") ("HOLD")))))
 
 ;; Tags shortcuts
 (setq org-tag-alist (quote ((:startgroup)
@@ -412,18 +440,20 @@ point and rebuild the agenda view."
                    "Stuck Projects"
                    "Next Tasks"
                    "Tasks"
+                   "Waiting Tasks"
                    "Projects"
-                   "Waiting and Postponed Tasks"
+                   "Subprojects (and children tasks)"
+                   "Postponed Projects and Tasks"
                    "Reading")))
     (let ((case-fold-search nil))
       (--each headers
         (save-excursion
           (goto-char (point-min))
-          (re-search-forward (concat "^" (regexp-quote it)) nil t)
-          (unless (save-excursion
-                    (forward-line)
-                    (my-org-agenda-is-task-p))
-            (delete-region (line-beginning-position) (1+ (line-end-position))))))
+          (when (re-search-forward (concat "^" (regexp-quote it)) nil t)
+            (unless (save-excursion
+                      (forward-line)
+                      (my-org-agenda-is-task-p))
+              (delete-region (line-beginning-position) (1+ (line-end-position)))))))
       (save-excursion
         (goto-char (point-min))
         (when (re-search-forward (concat "^" (regexp-opt headers)) nil t)
@@ -480,10 +510,10 @@ point and rebuild the agenda view."
           (tags-todo "BUG/!NEXT"
                      ((org-agenda-overriding-header "Bugs")
                       (org-tags-match-list-sublevels nil)))
-          (tags-todo "-CANCELLED/!"
+          (tags-todo "-STOP/!-WAIT"
                      ((org-agenda-overriding-header "Stuck Projects")
                       (org-agenda-skip-function 'my-org-skip-non-stuck-projects)))
-          (tags-todo "-WAITING-CANCELLED-BOOKS-BUG/!NEXT"
+          (tags-todo "-WAIT-HOLD-STOP-BOOKS-BUG/!NEXT"
                      ((org-agenda-overriding-header "Next Tasks")
                       (org-agenda-skip-function 'my-org-skip-projects-and-habits-and-single-tasks)
                       (org-agenda-todo-ignore-scheduled t)
@@ -491,30 +521,56 @@ point and rebuild the agenda view."
                       (org-agenda-todo-ignore-with-date t)
                       (org-tags-match-list-sublevels t)
                       (org-agenda-sorting-strategy '(priority-down todo-state-down effort-up category-keep))))
-          (tags-todo "-REFILE-CANCELLED-Reading/!-HOLD-WAITING-SOMEDAY"
+          (tags-todo "-REFILE-STOP-BOOKS/!-HOLD-WAIT-IDEA"
                      ((org-agenda-overriding-header "Tasks")
                       (org-agenda-skip-function 'my-org-skip-project-tasks-maybe)
                       (org-agenda-todo-ignore-scheduled t)
                       (org-agenda-todo-ignore-deadlines t)
                       (org-agenda-todo-ignore-with-date t)
                       (org-agenda-sorting-strategy '(priority-down category-keep))))
-          (tags-todo "-HOLD-CANCELLED-GENERAL/!"
-                     ((org-agenda-overriding-header "Projects")
-                      (org-agenda-skip-function 'my-org-skip-non-projects)
-                      (org-agenda-sorting-strategy '(priority-down category-keep))))
-          (tags-todo "-CANCELLED+WAITING/!"
-                     ((org-agenda-overriding-header "Waiting and Postponed Tasks")
-                      (org-agenda-skip-function 'my-org-skip-stuck-projects)
+          (tags-todo "-STOP/!+WAIT"
+                     ((org-agenda-overriding-header "Waiting Tasks")
+                      (org-agenda-skip-function 'my-org-skip-projects)
                       (org-tags-match-list-sublevels nil)
                       (org-agenda-todo-ignore-scheduled 'future)
                       (org-agenda-todo-ignore-deadlines 'future)))
-          (tags-todo "Reading"
-                     ((org-agenda-overriding-header "Reading"))))
+          ;; Active projects and projects that wait on something
+          ;; Things we are working on
+          ;; TODO: should show immediate children tasks if narrowed
+          (tags-todo "-HOLD-STOP-GENERAL/!"
+                     ((org-agenda-overriding-header (if (my-org-restricted-p)
+                                                        "Subprojects (and children tasks)"
+                                                      "Projects"))
+                      (org-agenda-skip-function 'my-org-skip-non-projects)
+                      (org-tags-match-list-sublevels 'indented)
+                      (org-agenda-sorting-strategy '(priority-down category-keep))))
+          ;; Projects/tasks on HOLD: projects that are not cancelled, but we don't want to work on them now
+          (tags-todo "-STOP/!+HOLD"
+                     ((org-agenda-overriding-header "Postponed Projects and Tasks")
+                      (org-agenda-skip-function 'my-org-skip-stuck-projects)
+                      (org-tags-match-list-sublevels nil)
+                      (org-agenda-todo-ignore-scheduled 'future)
+                      (org-agenda-todo-ignore-deadlines 'future))))
          nil)
-        ("h" "Habits" tags-todo "STYLE=\"habit\""
-         ((org-agenda-overriding-header "Habits")
-          (org-agenda-sorting-strategy '(todo-state-down effort-up category-keep))))
-        ,@(my-org-agenda-filter "f" "Media filter" '("b" . "BOOKS") '("m" . "MOV"))))
+        ,@(my-org-agenda-filter "f" "Media filter" '("b" . "BOOKS") '("m" . "MOV"))
+        ("k" . "Knowledge-base operations")
+        ("ks" "Knowledge-base search" search nil
+         ((org-agenda-files '("~/org/kb.org"))))
+        ("km" "Knowledge-base tag match" tags nil
+         ((org-agenda-files '("~/org/kb.org"))))
+        ("b" . "Bookmarks operations")
+        ("bs" "Bookmarks search" search nil
+         ((org-agenda-files '("~/org/bookmarks.org"))))
+        ("bm" "Bookmakrs tag match" tags nil
+         ((org-agenda-files '("~/org/bookmarks.org"))))
+        ;; Reading items are not marked with TODO, we use this view instead.
+        ;; Item that we are reading at the moment, however, is marked
+        ;; NEXT as every other current task.
+        ("r" "Reading"
+         ((tags "+Reading/-DONE"
+                ((org-agenda-overriding-header "To read")))
+          (tags "+Reading/DONE"
+                ((org-agenda-overriding-header "Finished")))))))
 
 (defun my-org-compare-closed-entries (a b)
   "Compare two agenda entries A and B based on CLOSED time."
@@ -528,17 +584,21 @@ point and rebuild the agenda view."
 ;; Resume clocking task when emacs is restarted
 (org-clock-persistence-insinuate)
 
-;; this is added to the clock-in hook
 (defun my-org-clock-in-to-next (kw)
   "Switch a task from TODO to NEXT when clocking in.
-Skips capture tasks, projects, and subprojects.
+
+Skips capture tasks, standalone tasks, projects, and subprojects.
+
 Switch projects and subprojects from NEXT back to TODO"
-  (when (not (and (boundp 'org-capture-mode) org-capture-mode))
+  (when (not (bound-and-true-p org-capture-mode))
     (cond
      ((and (member (org-get-todo-state) (list "TODO"))
            (my-org-is-task-p)
+           (not (my-org-is-standalone-task-p))
            (not (org-is-habit-p)))
       "NEXT")
+     ;; Handles the case when we clock in into a project.  We want
+     ;; projects to always have TODO keyword
      ((and (member (org-get-todo-state) (list "NEXT"))
            (my-org-is-project-p))
       "TODO"))))
@@ -792,3 +852,80 @@ sibling before the next header."
       (outline-next-heading)))
     (if (= (point) (point-max)) (newline) (open-line 1))
     (insert (make-string cdepth ?*) " ")))
+
+
+;; better org-agenda s/m UI
+;; TODO: move to defun-macros
+(defmacro my-with-each-line (&rest body)
+  (declare (indent 0)
+           (debug (body)))
+  `(save-excursion
+     (goto-char (point-min))
+     ,@body
+     (while (= (forward-line) 0)
+       ,@body)))
+
+(defun my-org--get-agenda-tags ()
+  "Return all tags present in current agenda view."
+  (let (tags)
+    (my-with-each-line
+      (--when-let (org-get-at-bol 'tags)
+        (--each it (push it tags))))
+    (-uniq tags)))
+
+(defun my-org-agenda-filter-by-tag-refine (strip &optional char)
+  "Just like `org-agenda-filter-by-tag-refine' but with tags from
+current agenda view added to `org-tag-alist'."
+  (interactive "P")
+  (unless (local-variable-p 'org-global-tags-completion-table (current-buffer))
+    (org-set-local 'org-global-tags-completion-table
+                   (-uniq (-map 'downcase
+                                (-concat (my-org--get-agenda-tags)
+                                         (-filter 'stringp (-map 'car org-tag-alist)))))))
+  (org-agenda-filter-by-tag-refine strip char))
+
+(defun my-org-agenda-filter-by-tag (strip &optional char narrow)
+  "Just like `org-agenda-filter-by-tag' but with tags from
+current agenda view added to `org-tag-alist'."
+  (interactive "P")
+  (unless (local-variable-p 'org-global-tags-completion-table (current-buffer))
+    (org-set-local 'org-global-tags-completion-table
+                   (-uniq (-map 'downcase
+                                (-concat (my-org--get-agenda-tags)
+                                         (-filter 'stringp (-map 'car org-tag-alist)))))))
+  (org-agenda-filter-by-tag strip char narrow))
+
+
+;; tags
+(defun my-org-add-tags-at (tags)
+  "Add TAGS to current entry."
+  (let* ((ctags (org-get-local-tags-at))
+         (tags (-union tags ctags)))
+    (org-set-tags-to tags)))
+
+(defun my-org-remove-tags-at (tags)
+  "Remove TAGS from current entry."
+  (let* ((ctags (org-get-local-tags-at))
+         (tags (-difference ctags tags)))
+    (org-set-tags-to tags)))
+
+
+;; more org macros
+(defmacro my-org-with-children (&rest body)
+  "Execute BODY with point at the beginning of each child of current node."
+  (declare (indent 0)
+           (debug (body)))
+  `(let ((start-level (org-current-level)))
+     (while (and (outline-next-heading)
+                 (> (org-current-level) start-level))
+       (when (= (org-current-level) (1+ start-level))
+         ,@body))))
+
+(defmacro my-org-with-descendants (&rest body)
+  "Execute BODY with point at the beginning of each descendant of current node."
+  (declare (indent 0)
+           (debug (body)))
+  `(let ((start-level (org-current-level)))
+     (while (and (outline-next-heading)
+                 (> (org-current-level) start-level))
+       ,@body)))

@@ -27,12 +27,13 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Some text-mode settings
 
+;; TODO: move this to the settings of these respective modes
 (setq-default cursor-type 'box)
 (dolist (hook '(LaTeX-mode-hook
                 org-mode-hook
                 markdown-mode-hook
                 gnus-article-mode-hook))
-  (add-hook hook 'init-text-based-modes))
+  (add-hook hook 'my-init-text-based-modes))
 
 ;; Use variable width font faces in current buffer
 (defun my-buffer-face-mode-variable ()
@@ -47,8 +48,12 @@
   (setq buffer-face-mode-face '(:family "Consolas" :height 100))
   (buffer-face-mode))
 
-(defun init-text-based-modes ()
+(defun my-init-text-based-modes ()
   (my-buffer-face-mode-variable)
   (setq cursor-type 'bar)
   (setq indent-tabs-mode t)
-  (turn-on-visual-line-mode))
+  (turn-on-visual-line-mode)
+  (smartparens-mode 1))
+
+(add-hook 'prog-mode-hook 'turn-on-smartparens-strict-mode)
+(add-hook 'minibuffer-setup-hook 'turn-on-smartparens-strict-mode)

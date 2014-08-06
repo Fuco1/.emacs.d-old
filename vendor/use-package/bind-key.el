@@ -73,6 +73,14 @@
 ;; Additionally, :prefix-docstring can be specified to set
 ;; documentation of created :prefix-map variable.
 ;;
+;; To bind multiple keys in a `bind-key*' way (to be sure that your bindings
+;; will not be overridden by other modes), you may use `bind-keys*' macro:
+;;
+;;    (bind-keys*
+;;     ("C-o" . other-window)
+;;     ("C-M-n" . forward-page)
+;;     ("C-M-p" . backward-page))
+;;
 ;; After Emacs loads, you can see a summary of all your personal keybindings
 ;; currently in effect with this command:
 ;;
@@ -87,6 +95,11 @@
 (defgroup bind-key nil
   "A simple way to manage personal keybindings"
   :group 'emacs)
+
+(defcustom bind-key-column-widths '(18 . 40)
+  "Width of columns in `describe-personal-keybindings'."
+  :type '(cons integer integer)
+  :group 'bind-key)
 
 (defcustom bind-key-segregation-regexp
   "\\`\\(\\(C-[chx] \\|M-[gso] \\)\\([CM]-\\)?\\|.+-\\)"
@@ -114,27 +127,38 @@
 (add-to-list 'emulation-mode-map-alists
              `((override-global-mode . ,override-global-map)))
 
-(defvar personal-keybindings nil)
+(defvar personal-keybindings nil
+  "List of bindings performed by `bind-key'.
+
+Elements have the form ((KEY . [MAP]) CMD ORIGINAL-CMD)")
 
 (defmacro bind-key (key-name command &optional keymap)
+  "Bind KEY-NAME to COMMAND in KEYMAP (`global-map' if not passed).
+
+KEY-NAME may be a vector, in which case it is passed straight to
+`define-key'. Or it may be a string to be interpreted as
+spelled-out keystrokes, e.g., \"C-c C-z\". See documentation of
+`edmacro-mode' for details."
   (let ((namevar (make-symbol "name"))
         (keyvar (make-symbol "key"))
+        (kdescvar (make-symbol "kdesc"))
         (bindingvar (make-symbol "binding"))
         (entryvar (make-symbol "entry")))
-    `(let* ((,namevar ,(eval key-name))
-            (,keyvar (read-kbd-macro ,namevar))
+    `(let* ((,namevar ,key-name)
+            (,keyvar (if (vectorp ,namevar) ,namevar
+                       (read-kbd-macro ,namevar)))
+            (,kdescvar (cons (if (stringp ,namevar) ,namevar
+                               (key-description ,namevar))
+                             (quote ,keymap)))
             (,bindingvar (lookup-key (or ,keymap global-map)
-                                     ,keyvar)))
-       (let ((,entryvar (assoc (cons ,namevar (quote ,keymap))
-                               personal-keybindings)))
-         (if ,entryvar
-             (setq personal-keybindings
-                   (delq ,entryvar personal-keybindings))))
-       (setq personal-keybindings
-             (cons (list (cons ,namevar (quote ,keymap))
-                         ,command
-                         (unless (numberp ,bindingvar) ,bindingvar))
-                   personal-keybindings))
+                                     ,keyvar))
+            (,entryvar (assoc ,kdescvar personal-keybindings)))
+       (when ,entryvar
+         (setq personal-keybindings
+               (delq ,entryvar personal-keybindings)))
+       (push (list ,kdescvar ,command
+                   (unless (numberp ,bindingvar) ,bindingvar))
+             personal-keybindings)
        (define-key (or ,keymap global-map) ,keyvar ,command))))
 
 (defmacro unbind-key (key-name &optional keymap)
@@ -154,6 +178,7 @@ Accepts keyword arguments:
               these bindings
 :prefix - prefix key for these bindings
 :prefix-docstring - docstring for the prefix-map variable
+:menu-name - optional menu string for prefix map
 
 The rest of the arguments are conses of keybinding string and a
 function symbol (unquoted)."
@@ -161,6 +186,7 @@ function symbol (unquoted)."
         (doc (plist-get args :prefix-docstring))
         (prefix-map (plist-get args :prefix-map))
         (prefix (plist-get args :prefix))
+        (menu-name (plist-get args :menu-name))
         (key-bindings (progn
                         (while (keywordp (car args))
                           (pop args)
@@ -171,18 +197,24 @@ function symbol (unquoted)."
               (and prefix
                    (not prefix-map)))
       (error "Both :prefix-map and :prefix must be supplied"))
+    (when (and menu-name (not prefix))
+      (error "If :menu-name is supplied, :prefix must be too"))
     `(progn
        ,@(when prefix-map
            `((defvar ,prefix-map)
-             ,@(when doc `((put ',prefix-map'variable-documentation ,doc)))
-             (define-prefix-command ',prefix-map)
-             (bind-key ,prefix ',prefix-map ,@(when map (list map)))))
-       ,@(mapcar (lambda (form) `(bind-key ,(if prefix
-                                                (concat prefix " " (car form))
-                                              (car form))
-                                           ',(cdr form)
-                                           ,@(when map (list map))))
+             ,@(when doc `((put ',prefix-map 'variable-documentation ,doc)))
+             ,@(if menu-name
+                   `((define-prefix-command ',prefix-map nil ,menu-name))
+                   `((define-prefix-command ',prefix-map)))
+             (bind-key ,prefix ',prefix-map ,map)))
+       ,@(mapcar (lambda (form)
+                   `(bind-key ,(car form) ',(cdr form)
+                              ,(or prefix-map map)))
                  key-bindings))))
+
+(defmacro bind-keys* (&rest args)
+  `(bind-keys :map override-global-map
+              ,@args))
 
 (defun get-binding-description (elem)
   (cond
@@ -244,24 +276,26 @@ function symbol (unquoted)."
   "Display all the personal keybindings defined by `bind-key'."
   (interactive)
   (with-output-to-temp-buffer "*Personal Keybindings*"
-    (princ "Key name          Command                                 Comments
------------------ --------------------------------------- ---------------------
-")
+    (princ (format "Key name%s Command%s Comments\n%s %s ---------------------\n"
+                   (make-string (- (car bind-key-column-widths) 9) ? )
+                   (make-string (- (cdr bind-key-column-widths) 8) ? )
+                   (make-string (1- (car bind-key-column-widths)) ?-)
+                   (make-string (1- (cdr bind-key-column-widths)) ?-)))
     (let (last-binding)
       (dolist (binding
                (setq personal-keybindings
                      (sort personal-keybindings
                            #'(lambda (l r)
                                (car (compare-keybindings l r))))))
-
+        
         (if (not (eq (cdar last-binding) (cdar binding)))
             (princ (format "\n\n%s\n%s\n\n"
                            (cdar binding)
-                           (make-string 79 ?-)))
+                           (make-string (+ 21 (car bind-key-column-widths) (cdr bind-key-column-widths)) ?-)))
           (if (and last-binding
                    (cdr (compare-keybindings last-binding binding)))
               (princ "\n")))
-
+        
         (let* ((key-name (caar binding))
                (at-present (lookup-key (or (symbol-value (cdar binding))
                                            (current-global-map))
@@ -275,7 +309,7 @@ function symbol (unquoted)."
                )
           (let ((line
                  (format
-                  "%-18s%-40s%s\n"
+                  (format "%%-%ds%%-%ds%%s\n" (car bind-key-column-widths) (cdr bind-key-column-widths))
                   key-name (format "`%s\'" command-desc)
                   (if (string= command-desc at-present-desc)
                       (if (or (null was-command)
@@ -286,7 +320,7 @@ function symbol (unquoted)."
             (princ (if (string-match "[ \t]+\n" line)
                        (replace-match "\n" t t line)
                      line))))
-
+        
         (setq last-binding binding)))))
 
 (provide 'bind-key)

@@ -62,6 +62,7 @@
       '(
         beautify-smex
         beginning-of-buffer
+        dired-up-directory
         elwm-activate-window
         eval-and-replace
         handle-switch-frame

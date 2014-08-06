@@ -56,29 +56,57 @@ return to regular interpretation of self-insert characters."
 (use-package better-jump
   :bind (("C-\\" . bjump-word-jump)
          ("A-l" . bjump-word-jump-line)
-         ("A-;" . bjump-word-jump-paragraph))
+         ("A-;" . bjump-word-jump-paragraph)
+         ("s-o" . bjump-window-jump)
+         ("A-k" . bjump-window-delete))
   :config
   (progn
     (define-key Info-mode-map "o" 'bjump-info-link-jump)
     (define-key help-mode-map "o" 'bjump-help-link-jump)))
 
 (use-package bookmark+
-  :bind ("C-x j t t" . my-tag-jump)
+  :defer t
   :init
   (progn
-    (require 'bookmark+-autoloads))
+    (require 'bookmark+-autoloads)
+    (autoload #'my-bmkp-tag-jump "bookmark+" nil t)
+    (autoload #'my-bmkp-tag-dired "bookmark+" nil t)
+    ;; TODO: funguje ako autoload, ale ked sa nacita package `bkmp'
+    ;; tak to asi predefinuje mapu C-x j t a bindy sa zrusia.
+    (bind-key "C-x j t t" 'my-bmkp-tag-jump)
+    (bind-key "C-x j t d" 'my-bmkp-tag-dired))
   :config
   (progn
-    (defun my-tag-jump (tag)
+    (defun my-bmkp-tag-jump (tag)
       "Jump to bookmark that has TAG.
 
 This is like `bmkp-some-tags-jump' but reads only one tag."
-      (bookmark-maybe-load-default-file)
-      (interactive (list (completing-read "Tag: " bmkp-tags-alist nil t)))
+      (interactive (list (progn
+                           (bookmark-maybe-load-default-file)
+                           (completing-read "Tag: " (or bmkp-tags-alist (bmkp-tags-list)) nil t))))
       (let* ((alist (bmkp-some-tags-alist-only (list tag))))
         (unless alist (error "No bookmarks have any of the specified tags"))
         (bookmark-jump
          (bookmark-completing-read "Bookmark" (bmkp-default-bookmark-name alist) alist))))
+
+    (defun my-bmkp-tag-dired (tags)
+      "Dieplay a dired buffer containing all files tagged with TAGS."
+      (interactive (list (bmkp-read-tags-completing)))
+      (let* ((alist (bmkp-all-tags-alist-only tags))
+             (files (-map 'f-canonical (--map (cdr (assoc 'filename it)) alist)))
+             (common-parent (f-common-parent files))
+             (files (--map (s-chop-prefix common-parent it) files))
+             ;; the following two settings take care of dired bullshit
+             (dired-buffers nil)
+             (default-directory common-parent))
+        (dired (cons (concat common-parent) files))
+        (rename-buffer (with-temp-buffer
+                         (insert "Tags")
+                         (--each tags (insert ":") (insert it))
+                         (insert ":" common-parent)
+                         (buffer-string))
+                       :uniquify)))
+
     (bind-key "M-o" 'elwm-activate-window bookmark-bmenu-mode-map)))
 
 (use-package calc
@@ -103,6 +131,138 @@ This is like `bmkp-some-tags-jump' but reads only one tag."
         ad-do-it
         (mapc (lambda (w) (when (car w) (delete-window (cdr w)))) wins-to-kill)))))
 
+(use-package circe
+  :commands circe
+  :init
+  (progn
+    (autoload #'my-circe-open-irc-frame "circe" nil t)
+    (setq circe-networks nil))
+  :config
+  (progn
+    (tracking-mode 1)
+
+    (defun my-circe-get-dasnet-irssi-passwd (_)
+      (with-temp-buffer
+        (insert-file-contents "~/secrets/dasnet-irssi-proxy")
+        (buffer-string)))
+
+    ;; TODO: write a macro to fontify nicks
+    (setq lui-highlight-keywords
+          '(("^--> .*" (face (:foreground "#4e9a06")))
+            ;; specific nick highlights
+            ("^<taylanub[`_]*>" (face (:foreground "#3465a4")))
+            ("<queen[`_]*>" (face (:foreground "#e6a8df")))
+            ("<jordigh[`_]*>" (face (:foreground "#e6a8df")))
+            ("<fsbot[`_]*>" (face (:foreground "#41423f")))
+            ("<rudybot[`_]*>" (face (:foreground "#41423f")))
+            ("<rhemaxx0s[`_]*>" (face (:foreground "#8ae234")))
+            ("<rhemax0s[`_]*>" (face (:foreground "#8ae234")))
+            ("<rhemaxxos[`_]*>" (face (:foreground "#8ae234")))
+            ("<rhemaxos[`_]*>" (face (:foreground "#8ae234")))
+            ("<magnars[`_]*>" (face (:foreground "#5c3566")))
+            ("<tanagoljerova[`_]*>" (face (:foreground "#ef2929")))
+            ("<nicferrier[`_]*>" (face (:foreground "#ef2929")))
+            ("<macrobat[`_]*>" (face (:foreground "#5c3566")))
+            ("<ijp[`_]*>" (face (:foreground "#729fcf")))
+            ("<johnw[`_]*>" (face (:foreground "#5c3566")))
+            ("<godmy[`_]*>" (face (:foreground "#ef2929")))
+            ("<lambdabot[`_]*>" (face (:foreground "#41423f")))
+            ("<wgreenhouse[`_]*>" (face (:foreground "#8ae234")))
+            ("<tali713[`_]*>" (face (:foreground "#8ae234")))
+            ("<forcer[`_]*>" (face (:foreground "#4e9a06")))
+            ("<tonitrus[`_]*>" (face (:foreground "#4e9a06")))
+            ;; default nick
+            ("^<.*?>" circe-originator-face)))
+
+    (defun my-circe-after-colon (_ _ _)
+      (save-excursion
+        (backward-char 1)
+        (looking-back ":")))
+
+    (sp-with-modes 'circe-channel-mode
+      (sp-local-pair "`" "'")
+      (sp-local-pair "(" nil :unless '(:add my-circe-after-colon)))
+
+    (add-hook 'circe-channel-mode-hook 'my-circe-channel-setup)
+    (add-hook 'circe-query-mode-hook 'my-circe-channel-setup)
+    (defun my-circe-channel-setup ()
+      "Setup channel buffer."
+      (my-init-text-based-modes)
+      (smartparens-mode t)
+      (set (make-local-variable 'sp-autoescape-string-quote) nil))
+
+    (defvar my-lui-highlight-buffer "*Circe-Highlights*"
+      "Name of the highlight buffer.")
+
+    (defvar my-lui-highlight-filter (lambda ()
+                                      (memq 'circe-highlight-nick-face
+                                            (lui-faces-in-region (point-min)
+                                                                 (point-max))))
+      "A function used to filter messages which should go into highlight buffer.
+
+Should return non-nil if we want to keep the message.
+
+Called with zero argument in a buffer narrowed to the current
+message.")
+
+    (defun my-lui-highlight-filter ()
+      "Return non-nil if we should keep the message."
+      (and (memq 'circe-highlight-nick-face
+                 (lui-faces-in-region (point-min)
+                                      (point-max)))
+           (not (text-property-any (point-min) (point-max)
+                                   'lui-format 'circe-format-server-numeric))))
+
+    (setq my-lui-highlight-filter 'my-lui-highlight-filter)
+
+    ;; TODO: napisat "go to mention" ktore skoci na miesto kde nastal highlight
+    (add-hook 'lui-post-output-hook 'my-lui-save-highlights)
+    (defun my-lui-save-highlights ()
+      (when (funcall my-lui-highlight-filter)
+        (let ((buffer (buffer-name))
+              (target circe-chat-target)
+              (network (with-circe-server-buffer
+                         circe-server-network))
+              (text (buffer-substring (next-single-property-change (point-min) 'face) (point-max))))
+          (with-current-buffer (get-buffer-create my-lui-highlight-buffer)
+            (goto-char (point-max))
+            (save-restriction
+              ;; TODO: abstract this into a formatter
+              (narrow-to-region (point) (point))
+              (insert (propertize (format-time-string "[%Y-%m-%d %H:%M:%S]")
+                                  'face 'lui-time-stamp-face)
+                      " "
+                      (propertize
+                       (concat (or target buffer)
+                               "@"
+                               network)
+                       'face '(:foreground "#8ae234"))
+                      " "
+                      (my-remove-text-properties-when
+                       'face '(circe-highlight-nick-face)
+                       0 (1- (length text))
+                       '(face)
+                       text))
+              (lui-buttonize))))))
+
+    ;; autoloaded
+    (defun my-circe-open-irc-frame ()
+      "Open an IRC frame."
+      (interactive)
+      (select-frame (make-frame-command))
+      (set-frame-parameter (selected-frame) :frame-type :circe)
+      (set-frame-parameter (selected-frame) 'name "Circe")
+      (set-frame-parameter (selected-frame) 'explicit-name "Circe")
+      (set-frame-parameter (selected-frame) 'background-color "#111111"))
+
+    (defun my-circe-kill-all-irc-buffers ()
+      "Kill all circe buffers."
+      (interactive)
+      (--each (buffer-list)
+        (with-current-buffer it
+          (when (eq major-mode 'circe-server-mode)
+            (kill-buffer it)))))))
+
 (use-package clippy
   :commands clippy-describe-function)
 
@@ -116,7 +276,13 @@ This is like `bmkp-some-tags-jump' but reads only one tag."
     (add-hook 'css-mode-hook 'my-css-mode-setup)))
 
 (use-package custom
-  :defer t
+  :pre-init
+  (bind-keys :prefix "C-c c"
+             :prefix-map ctl-c-c-map
+             :prefix-docstring "Customize map")
+  :bind (("C-c c v" . customize-variable)
+         ("C-c c f" . customize-face)
+         ("C-c c g" . customize-group))
   :config
   (progn
     (defun my-custom-jump-to-state ()
@@ -181,7 +347,21 @@ This is like `bmkp-some-tags-jump' but reads only one tag."
         (ido-dired))))
   :config
   (progn
-    (load "files/dired-defs")))
+    (load "files/dired-defs")
+
+    ;; overload to fix bullshit
+    (defun dired-hack-local-variables () nil)))
+
+(use-package dired-tagsistant
+  :pre-init
+  (bind-keys :prefix-map ctl-x-t-map
+             :prefix "C-x T"
+             :prefix-docstring "C-x T prefix map")
+  :bind (("C-x T r" . dired-tagsistant-add-relation)
+         ("C-x T +" . dired-tagsistant-some-tags)
+         ("C-x T *" . dired-tagsistant-all-tags)
+         ("C-x T % +" . dired-tagsistant-some-tags-regexp)
+         ("C-x T % *" . dired-tagsistant-all-tags-regexp)))
 
 (use-package ediff
   :pre-init
@@ -230,7 +410,7 @@ This is like `bmkp-some-tags-jump' but reads only one tag."
     (add-hook 'ediff-quit-hook 'my-ediff-quit)))
 
 (use-package elfeed
-  :bind (("C-. f" . elfeed))
+  :bind (("C-. C-f" . elfeed))
   :config
   (progn
     (bind-keys :map elfeed-show-mode-map
@@ -278,6 +458,28 @@ This is like `bmkp-some-tags-jump' but reads only one tag."
 
 (use-package google-maps
   :commands google-maps)
+
+(use-package google-this
+  :defer t
+  :init
+  (progn
+    (defvar google-this-mode-submap)
+    (define-prefix-command 'google-this-mode-submap)
+    (define-key google-this-mode-submap [return] 'google-search)
+    (define-key google-this-mode-submap " " 'google-region)
+    (define-key google-this-mode-submap "t" 'google-this)
+    (define-key google-this-mode-submap "g" 'google-lucky-search)
+    (define-key google-this-mode-submap "i" 'google-lucky-and-insert-url)
+    (define-key google-this-mode-submap "w" 'google-word)
+    (define-key google-this-mode-submap "s" 'google-symbol)
+    (define-key google-this-mode-submap "l" 'google-line)
+    (define-key google-this-mode-submap "e" 'google-error)
+    (define-key google-this-mode-submap "f" 'google-forecast)
+    (define-key google-this-mode-submap "r" 'google-cpp-reference)
+    (define-key google-this-mode-submap "m" 'google-maps)
+    ;; "c" is for "convert language" :-P
+    (define-key google-this-mode-submap "c" 'google-translate-query-or-region)
+    (bind-key "C-x g" google-this-mode-submap)))
 
 (use-package guide-key
   :diminish guide-key-mode
@@ -415,7 +617,20 @@ called, percentage usage and the command."
   :commands letcheck-mode)
 
 (use-package magit
-  :defer t
+  :pre-init
+  (bind-keys :prefix "C-c m"
+             :prefix-map ctl-c-m-map
+             :prefix-docstring "Magit map")
+  :bind (("C-c m b" . magit-key-mode-popup-branching)
+         ("C-c m c" . magit-key-mode-popup-committing)
+         ("C-c m d" . magit-key-mode-popup-dispatch)
+         ("C-c m f" . magit-key-mode-popup-fetching)
+         ("C-c m i" . magit-key-mode-popup-diff-options)
+         ("C-c m l" . magit-key-mode-popup-logging)
+         ("C-c m m" . magit-key-mode-popup-merging)
+         ("C-c m p" . magit-key-mode-popup-pushing)
+         ("C-c m v" . magit-branch-manager)
+         ("C-c m s" . magit-status))
   :config
   (progn
     (require 'flyspell)))
@@ -436,9 +651,20 @@ called, percentage usage and the command."
     (setq mweb-filename-extensions '("php" "htm" "html" "ctp" "phtml" "php4" "php5"))))
 
 (use-package notmuch
-  :defer t
+  :bind (("C-. C-n" . notmuch))
+  :init
+  (progn
+    ;; TODO: create an autoload from this
+    (defun my-notmuch-unread ()
+      "Display buffer with unread mail."
+      (interactive)
+      (require 'notmuch)
+      (notmuch-search "tag:unread"))
+
+    (bind-key "C-. C-u" 'my-notmuch-unread))
   :config
   (progn
+    (use-package notmuch-unread)
     ;; REDEFINED FROM notmuch-unread-mode
     ;; Don't show anything if there's no unread mail
     (defun notmuch-unread-update-handler ()
@@ -451,6 +677,7 @@ called, percentage usage and the command."
       (force-mode-line-update))
 
     (defun my-notmuch-update-mail ()
+      (interactive)
       (start-process "mail-update" nil "/bin/bash" "/home/matus/bin/run-getmail"))
 
     (defvar my-notmuch-update-mail-timer
@@ -467,7 +694,8 @@ called, percentage usage and the command."
           (notmuch-show-tag change))))
 
     (bind-key "d" 'my-notmuch-delete-mail notmuch-show-mode-map)
-    (bind-key "d" 'my-notmuch-delete-mail notmuch-search-mode-map)))
+    (bind-key "d" 'my-notmuch-delete-mail notmuch-search-mode-map)
+    (bind-key "g" 'notmuch-poll-and-refresh-this-buffer notmuch-search-mode-map)))
 
 (use-package org
   :mode ("\\.org\\'" . org-mode)
@@ -479,6 +707,7 @@ called, percentage usage and the command."
   :config
   (progn
     (load "files/org-defs.el")
+    ;; TODO: move to org-defs
     (load "projects/org-velocity/org-velocity.el")
     (bind-key "C-c s" 'org-velocity org-mode-map)))
 
@@ -528,14 +757,6 @@ The current directory is assumed to be the project's root otherwise."
                     (concat "-path \"*/" x "\"")) projectile-globally-ignored-directories " -not ")
        " -type f -print0"))))
 
-(use-package recentf
-  :bind (("C-c r f" . recentf-open-files)
-         ("C-x C-r" . recentf-open-files)
-         ("C-c r c" . recentf-cleanup))
-  :config
-  (progn
-    (load "files/recentf-defs")))
-
 (use-package revbufs
   :bind ("C-<f5>" . revbufs))
 
@@ -555,7 +776,7 @@ The current directory is assumed to be the project's root otherwise."
     (add-hook 'html-mode-hook 'my-html-mode-setup)))
 
 (use-package skeleton-complete
-  :defer t
+  :commands skeleton-complete-mode
   :diminish skeleton-complete-mode)
 
 (use-package smartparens
@@ -653,7 +874,7 @@ The current directory is assumed to be the project's root otherwise."
              yas-expand)
   :init
   (progn
-    (autoload 'yas/hippie-try-expand "yasnippet"))
+    (autoload #'yas/hippie-try-expand "yasnippet"))
   :config
   (progn
     (require 'dropdown-list)
